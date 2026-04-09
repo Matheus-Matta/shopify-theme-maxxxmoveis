@@ -1,0 +1,139 @@
+<style>
+  #shopify-section-{{ section.id }} .pp-muted { color: {{ section.settings.description_text_color }}; }
+  #shopify-section-{{ section.id }} .pp-description-title {
+    color: {{ section.settings.description_title_color }};
+  }
+  #shopify-section-{{ section.id }} .pp-description-title {
+    font-size: {{ section.settings.description_title_size }}px;
+  }
+  #shopify-section-{{ section.id }} .pp-description-body {
+    color: {{ section.settings.description_text_color }};
+    font-size: {{ section.settings.description_text_size }}px;
+  }
+  #shopify-section-{{ section.id }} .pp-description-body .gizmo-bot-avatar {
+    display: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .pp-meta-title {
+    color: {{ section.settings.meta_title_color }};
+    font-size: {{ section.settings.meta_title_size }}px;
+  }
+
+  #shopify-section-{{ section.id }} .pp-meta-badges {
+    gap: {{ section.settings.badge_gap }}px;
+  }
+
+  #shopify-section-{{ section.id }} .pp-meta-badge {
+    background-color: {{ section.settings.badge_bg_color }};
+    color: {{ section.settings.badge_text_color }};
+    border: 1px solid {{ section.settings.badge_border_color }};
+    border-radius: {{ section.settings.badge_radius }}px;
+    font-size: {{ section.settings.badge_text_size }}px;
+    padding: {{ section.settings.badge_padding_y }}px {{ section.settings.badge_padding_x }}px;
+    line-height: 1.2;
+  }
+</style>
+
+{% assign cleaned_product_description = product.description
+  | replace: 'gizmo-bot-avatar flex h-8 w-8 items-center justify-center overflow-hidden rounded-full', ''
+  | replace: 'gizmo-bot-avatar', ''
+%}
+{% assign dimension_height = product.metafields.custom.altura_cm.value | default: product.metafields.custom.altura.value %}
+{% assign dimension_width = product.metafields.custom.largura_cm.value | default: product.metafields.custom.largura.value %}
+{% assign dimension_depth = product.metafields.custom.profundidade_cm.value | default: product.metafields.custom.profundidade.value %}
+
+<section class="section-layout-py" style="background-color: var(--color-surface, #fff);">
+  <div class="max-w-none mx-auto section-layout-px" style="max-width: {{ settings.global_layout_max_width | default: 1440 }}px;">
+  <div class="grid grid-cols-1 gap-4 md:gap-6 items-start border-t border-surface-container">
+    <div class="space-y-4">
+      <h3 class="pp-description-title font-bold font-headline">{{ section.settings.description_title }}</h3>
+      <div class="pp-description-body space-y-4 leading-relaxed">{{ cleaned_product_description }}</div>
+
+      <div class="space-y-2 pt-2 border-t border-surface-container">
+        <div class="flex items-center justify-between text-sm">
+          <span class="pp-muted">Altura (cm)</span>
+          <span class="font-semibold">{% if dimension_height != blank %}{{ dimension_height }}{% else %}Sem Altura{% endif %}</span>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="pp-muted">Largura (cm)</span>
+          <span class="font-semibold">{% if dimension_width != blank %}{{ dimension_width }}{% else %}Sem Largura{% endif %}</span>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="pp-muted">Profundidade (cm)</span>
+          <span class="font-semibold">{% if dimension_depth != blank %}{{ dimension_depth }}{% else %}Sem Profundidade{% endif %}</span>
+        </div>
+        <p class="text-[11px] italic pp-muted">Imagens meramente ilustrativas! Objetos de decoração não inclusos.</p>
+      </div>
+
+      {% assign primary_collection = product.collections.first %}
+      {% assign has_meta_badges = false %}
+      {% if section.settings.show_product_type and product.type != blank %}
+        {% assign has_meta_badges = true %}
+      {% endif %}
+      {% if section.settings.show_primary_collection and primary_collection != blank %}
+        {% assign has_meta_badges = true %}
+      {% endif %}
+      {% if section.settings.show_product_tags and product.tags.size > 0 %}
+        {% assign has_meta_badges = true %}
+      {% endif %}
+
+      {% if has_meta_badges %}
+        <div class="space-y-3">
+          <h4 class="pp-meta-title font-semibold">{{ section.settings.meta_title }}</h4>
+          <div class="pp-meta-badges flex flex-wrap">
+            {% if section.settings.show_product_type and product.type != blank %}
+              <a class="pp-meta-badge inline-flex items-center" href="{{ routes.search_url }}?q={{ product.type | url_encode }}&type=product">{{ section.settings.product_type_prefix }}{{ product.type }}</a>
+            {% endif %}
+
+            {% if section.settings.show_primary_collection and primary_collection != blank %}
+              <a class="pp-meta-badge inline-flex items-center" href="{{ routes.search_url }}?q={{ primary_collection.title | url_encode }}&type=product">{{ section.settings.collection_prefix }}{{ primary_collection.title }}</a>
+            {% endif %}
+
+            {% if section.settings.show_product_tags and product.tags.size > 0 %}
+              {% for tag in product.tags limit: section.settings.max_tags %}
+                <a class="pp-meta-badge inline-flex items-center" href="{{ routes.search_url }}?q={{ tag | url_encode }}&type=product">{{ section.settings.tag_prefix }}{{ tag }}</a>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Produto descrição custom",
+  "settings": [
+    { "type": "text", "id": "description_title", "label": "Titulo da descrição", "default": "Descrição Detalhada" },
+    { "type": "range", "id": "description_title_size", "label": "Tamanho do titulo da descrição", "min": 18, "max": 44, "step": 1, "default": 30, "unit": "px" },
+    { "type": "color", "id": "description_title_color", "label": "Cor do titulo da descrição", "default": "#0058BB" },
+    { "type": "color", "id": "description_text_color", "label": "Cor do texto da descrição", "default": "#6B7280" },
+    { "type": "range", "id": "description_text_size", "label": "Tamanho do texto da descrição", "min": 12, "max": 22, "step": 1, "default": 16, "unit": "px" },
+
+    { "type": "header", "content": "Badges de categoria e tags" },
+    { "type": "text", "id": "meta_title", "label": "Titulo da area de badges", "default": "Categorias e tags" },
+    { "type": "range", "id": "meta_title_size", "label": "Tamanho do titulo de badges", "min": 12, "max": 28, "step": 1, "default": 16, "unit": "px" },
+    { "type": "color", "id": "meta_title_color", "label": "Cor do titulo de badges", "default": "#0058BB" },
+    { "type": "checkbox", "id": "show_product_type", "label": "Mostrar tipo do produto", "default": true },
+    { "type": "checkbox", "id": "show_primary_collection", "label": "Mostrar colecao principal", "default": true },
+    { "type": "checkbox", "id": "show_product_tags", "label": "Mostrar tags do produto", "default": true },
+    { "type": "range", "id": "max_tags", "label": "Quantidade máxima de tags", "min": 1, "max": 20, "step": 1, "default": 8 },
+    { "type": "text", "id": "product_type_prefix", "label": "Prefixo para tipo", "default": "Tipo: " },
+    { "type": "text", "id": "collection_prefix", "label": "Prefixo para colecao", "default": "Colecao: " },
+    { "type": "text", "id": "tag_prefix", "label": "Prefixo para tag", "default": "#" },
+    { "type": "color", "id": "badge_bg_color", "label": "Badges: fundo", "default": "#f5f3ef" },
+    { "type": "color", "id": "badge_text_color", "label": "Badges: texto", "default": "#1a1c1c" },
+    { "type": "color", "id": "badge_border_color", "label": "Badges: borda", "default": "#ddd6cb" },
+    { "type": "range", "id": "badge_text_size", "label": "Badges: tamanho do texto", "min": 10, "max": 18, "step": 1, "default": 12, "unit": "px" },
+    { "type": "range", "id": "badge_radius", "label": "Badges: arredondamento", "min": 0, "max": 40, "step": 1, "default": 20, "unit": "px" },
+    { "type": "range", "id": "badge_padding_x", "label": "Badges: padding horizontal", "min": 6, "max": 22, "step": 1, "default": 12, "unit": "px" },
+    { "type": "range", "id": "badge_padding_y", "label": "Badges: padding vertical", "min": 2, "max": 12, "step": 1, "default": 6, "unit": "px" },
+    { "type": "range", "id": "badge_gap", "label": "Badges: espacamento", "min": 4, "max": 20, "step": 1, "default": 8, "unit": "px" }
+  ],
+  "presets": [
+    { "name": "Produto descrição custom" }
+  ]
+}
+{% endschema %}

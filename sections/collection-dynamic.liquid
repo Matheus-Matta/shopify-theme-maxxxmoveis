@@ -1,0 +1,641 @@
+{% liquid
+  assign section_bg = settings.global_surface_base_color | default: '#F7F7F7'
+  assign section_text = settings.global_text_primary_color | default: '#1a1c1c'
+  assign chip_bg = section.settings.category_bg_color | default: settings.global_surface_card_color | default: '#eeeeee'
+  assign title_color = section.settings.category_title_color | default: section_text
+
+  assign rec_heading_size_mobile = settings.global_tabs_title_size_mobile | default: 28
+  assign rec_heading_size_desktop = settings.global_tabs_title_size_desktop | default: 36
+  assign rec_secondary_color = settings.global_primary_color | default: '#0058BB'
+  assign rec_card_bg = settings.global_product_card_bg_color | default: settings.global_surface_card_color
+  assign rec_card_border = settings.global_product_card_border_color | default: settings.global_border_color
+  assign rec_card_border_hover = settings.global_product_card_border_hover_color | default: settings.global_primary_color
+  assign rec_card_border_width = settings.global_product_card_border_width | default: 1
+  assign rec_card_radius = settings.global_product_card_radius | default: 16
+  assign rec_card_padding = settings.global_product_card_padding | default: 16
+  assign rec_card_height_mobile = settings.global_product_card_height_mobile | default: 430
+  assign rec_card_height_desktop = settings.global_product_card_height_desktop | default: 500
+  assign rec_media_height_mobile = settings.global_product_card_media_height_mobile | default: 230
+  assign rec_media_height_desktop = settings.global_product_card_media_height_desktop | default: 270
+  assign rec_title_color = settings.global_product_card_title_color | default: settings.global_text_primary_color
+  assign rec_title_hover_color = settings.global_product_card_title_hover_color | default: settings.global_primary_color
+  assign rec_meta_color = settings.global_product_card_meta_color | default: settings.global_text_muted_color
+  assign rec_price_color = settings.global_product_card_price_color | default: settings.global_text_primary_color
+  assign rec_discount_badge_bg = settings.global_product_card_discount_badge_bg | default: settings.global_primary_color
+  assign rec_discount_badge_text = settings.global_product_card_discount_badge_text | default: settings.global_button_primary_text_color
+  assign rec_buy_bg = settings.global_button_primary_bg_color | default: settings.global_primary_color
+  assign rec_buy_bg_hover = settings.global_button_primary_bg_hover_color | default: '#004A9D'
+  assign rec_buy_text = settings.global_button_primary_text_color
+  assign rec_buy_radius = settings.global_button_primary_radius | default: 12
+  assign rec_buy_text_size = settings.global_button_primary_text_size | default: 14
+  assign rec_title_size_mobile = settings.global_product_title_size_mobile | default: 14
+  assign rec_title_size_desktop = settings.global_product_title_size_desktop | default: 16
+  assign rec_price_size_mobile = settings.global_product_price_size_mobile | default: 24
+  assign rec_price_size_desktop = settings.global_product_price_size_desktop | default: 28
+  assign rec_meta_size_mobile = settings.global_product_card_meta_size_mobile | default: 12
+  assign rec_meta_size_desktop = settings.global_product_card_meta_size_desktop | default: 12
+  assign rec_show_ratings = settings.global_product_card_show_ratings
+  assign rec_show_buy_button = settings.global_product_card_show_buy_button
+  assign rec_show_discount_badge = settings.global_product_card_show_discount_badge
+  assign rec_buy_label = settings.global_product_card_buy_label | default: 'COMPRAR'
+  assign global_product_card_min_inventory = settings.global_product_card_min_inventory | default: 0 | plus: 0
+  assign rec_media_bg_color = settings.global_recommended_media_bg_color | default: settings.global_product_card_media_bg_color | default: '#F7F7F7'
+  assign rec_rating_color = settings.global_recommended_rating_color | default: settings.global_product_card_rating_color | default: '#facc15'
+  assign global_installments_count = settings.global_installments_count | default: 10 | plus: 0
+
+  if global_installments_count < 1
+    assign global_installments_count = 1
+  endif
+
+  assign categories_menu = linklists[section.settings.categories_menu]
+  assign has_children = false
+  if categories_menu != blank
+    for parent_link in categories_menu.links
+      if parent_link.handle == collection.handle and parent_link.links.size > 0
+        assign has_children = true
+        break
+      endif
+    endfor
+  endif
+%}
+
+<style>
+  #shopify-section-{{ section.id }} .col-dyn-shell { background-color: {{ section_bg }}; color: {{ section_text }}; }
+  #shopify-section-{{ section.id }} .col-dyn-heading { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem); line-height: 1.15; }
+  #shopify-section-{{ section.id }} .col-dyn-subtitle { color: color-mix(in srgb, {{ section_text }} 75%, transparent); }
+
+  #shopify-section-{{ section.id }} .col-dyn-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .col-dyn-card {
+    text-decoration: none;
+    text-align: center;
+    min-width: 0;
+  }
+  #shopify-section-{{ section.id }} .col-dyn-media {
+    aspect-ratio: 1 / 1;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-color: {{ chip_bg }};
+    overflow: hidden;
+    transition: border-color 200ms ease;
+    margin-bottom: 0.75rem;
+  }
+  #shopify-section-{{ section.id }} .col-dyn-card:hover .col-dyn-media { border-color: {{ rec_secondary_color }}; }
+  #shopify-section-{{ section.id }} .col-dyn-media-bg {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 300ms ease;
+  }
+  #shopify-section-{{ section.id }} .col-dyn-card:hover .col-dyn-media-bg { transform: scale(1.06); }
+  #shopify-section-{{ section.id }} .col-dyn-title {
+    color: {{ title_color }};
+    font-weight: 400;
+    line-height: 1.35;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .pp-secondary { color: {{ rec_secondary_color }}; }
+  #shopify-section-{{ section.id }} .pp-rec-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  #shopify-section-{{ section.id }} .pp-rec-card {
+    background-color: var(--gc-card-bg);
+    border: var(--gc-card-border-width) solid var(--gc-card-border);
+    border-radius: var(--gc-card-radius);
+    padding: var(--gc-card-padding);
+    min-height: var(--gc-card-height-mobile);
+    max-height: var(--gc-card-height-mobile);
+    display: flex;
+    flex-direction: column;
+  }
+  #shopify-section-{{ section.id }} .pp-rec-card:hover {
+    border-color: var(--gc-card-border-hover);
+  }
+  #shopify-section-{{ section.id }} .pp-rec-title {
+    color: {{ rec_title_color }};
+    font-size: {{ rec_title_size_mobile }}px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .pp-rec-card:hover .pp-rec-title { color: {{ rec_title_hover_color }}; }
+  #shopify-section-{{ section.id }} .pp-rec-meta { color: var(--gc-meta-color); font-size: var(--gc-meta-size-mobile); }
+  #shopify-section-{{ section.id }} .pp-rec-price { color: var(--gc-price-color); font-size: var(--gc-price-size-mobile); }
+  #shopify-section-{{ section.id }} .pp-rec-price-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #shopify-section-{{ section.id }} .pp-discount-badge {
+    background-color: {{ rec_discount_badge_bg }};
+    color: {{ rec_discount_badge_text }};
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1;
+  }
+  #shopify-section-{{ section.id }} .pp-rec-rating { color: {{ rec_rating_color }}; }
+  #shopify-section-{{ section.id }} .pp-rec-buy {
+    background-color: var(--gc-buy-bg);
+    color: var(--gc-buy-text);
+    font-size: var(--gc-buy-text-size);
+    border-radius: var(--gc-buy-radius);
+  }
+  #shopify-section-{{ section.id }} .pp-rec-buy:hover { background-color: var(--gc-buy-bg-hover); }
+  #shopify-section-{{ section.id }} .pp-rec-empty {
+    grid-column: 1 / -1;
+    border: 1px dashed {{ rec_card_border }};
+    border-radius: 14px;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: var(--gc-meta-color);
+    background-color: color-mix(in srgb, {{ rec_card_bg }} 70%, #ffffff);
+  }
+  #shopify-section-{{ section.id }} .pp-recommended-title { font-size: {{ rec_heading_size_mobile }}px; }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .col-dyn-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; }
+    #shopify-section-{{ section.id }} .pp-rec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+    #shopify-section-{{ section.id }} .pp-rec-card { min-height: var(--gc-card-height-desktop); max-height: var(--gc-card-height-desktop); }
+    #shopify-section-{{ section.id }} .pp-rec-title { font-size: {{ rec_title_size_desktop }}px; }
+    #shopify-section-{{ section.id }} .pp-rec-meta { font-size: var(--gc-meta-size-desktop); }
+    #shopify-section-{{ section.id }} .pp-rec-price { font-size: var(--gc-price-size-desktop); }
+    #shopify-section-{{ section.id }} .pp-recommended-title { font-size: {{ rec_heading_size_desktop }}px; }
+  }
+
+  @media (min-width: 1024px) {
+    #shopify-section-{{ section.id }} .col-dyn-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.5rem; }
+    #shopify-section-{{ section.id }} .pp-rec-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; }
+  }
+
+  /* ── Paginação AJAX ─────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .cdyn-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+  #shopify-section-{{ section.id }} .cdyn-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid {{ rec_card_border }};
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: {{ section_text }};
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+    text-decoration: none;
+    line-height: 1;
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+  }
+  #shopify-section-{{ section.id }} .cdyn-page-btn:not(.cdyn-page-disabled):not(.cdyn-page-ellipsis):not(.cdyn-page-active):hover {
+    border-color: {{ rec_secondary_color }};
+    color: {{ rec_secondary_color }};
+  }
+  #shopify-section-{{ section.id }} .cdyn-page-btn.cdyn-page-active {
+    background-color: {{ rec_secondary_color }};
+    border-color: {{ rec_secondary_color }};
+    color: #ffffff;
+    pointer-events: none;
+  }
+  #shopify-section-{{ section.id }} .cdyn-page-btn.cdyn-page-disabled {
+    cursor: default;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  #shopify-section-{{ section.id }} .cdyn-page-btn.cdyn-page-ellipsis {
+    cursor: default;
+    border-color: transparent;
+    background: transparent;
+  }
+
+  /* ── Skeleton de loading ────────────────────────────────── */
+  #shopify-section-{{ section.id }} .cdyn-sk-card {
+    background-color: {{ rec_card_bg }};
+    border: {{ rec_card_border_width }}px solid {{ rec_card_border }};
+    border-radius: {{ rec_card_radius }}px;
+    padding: {{ rec_card_padding }}px;
+    min-height: var(--gc-card-height-mobile);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .cdyn-sk-card { min-height: var(--gc-card-height-desktop); }
+  }
+  #shopify-section-{{ section.id }} .cdyn-sk-media {
+    height: var(--gc-media-height-mobile);
+    border-radius: 12px;
+    background: linear-gradient(90deg, var(--color-bg-soft,#f3f4f6) 25%, var(--color-bg-hover,#e5e7eb) 50%, var(--color-bg-soft,#f3f4f6) 75%);
+    background-size: 200% 100%;
+    animation: gc-shimmer 1.4s linear infinite;
+    flex-shrink: 0;
+  }
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .cdyn-sk-media { height: var(--gc-media-height-desktop); }
+  }
+  #shopify-section-{{ section.id }} .cdyn-sk-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  #shopify-section-{{ section.id }} .cdyn-sk-line {
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--color-bg-soft,#f3f4f6) 25%, var(--color-bg-hover,#e5e7eb) 50%, var(--color-bg-soft,#f3f4f6) 75%);
+    background-size: 200% 100%;
+    animation: gc-shimmer 1.4s linear infinite;
+  }
+  #shopify-section-{{ section.id }} .cdyn-sk-line-title { height: 14px; width: 80%; }
+  #shopify-section-{{ section.id }} .cdyn-sk-line-meta  { height: 12px; width: 55%; }
+  #shopify-section-{{ section.id }} .cdyn-sk-line-price { height: 22px; width: 45%; margin-top: 6px; }
+</style>
+
+<section class="col-dyn-shell section-layout-py" style="--gc-card-bg: {{ rec_card_bg }}; --gc-card-border: {{ rec_card_border }}; --gc-card-border-hover: {{ rec_card_border_hover }}; --gc-card-border-width: {{ rec_card_border_width }}px; --gc-card-radius: {{ rec_card_radius }}px; --gc-card-padding: {{ rec_card_padding }}px; --gc-card-height-mobile: {{ rec_card_height_mobile }}px; --gc-card-height-desktop: {{ rec_card_height_desktop }}px; --gc-media-height-mobile: {{ rec_media_height_mobile }}px; --gc-media-height-desktop: {{ rec_media_height_desktop }}px; --gc-meta-color: {{ rec_meta_color }}; --gc-price-color: {{ rec_price_color }}; --gc-meta-size-mobile: {{ rec_meta_size_mobile }}px; --gc-meta-size-desktop: {{ rec_meta_size_desktop }}px; --gc-price-size-mobile: {{ rec_price_size_mobile }}px; --gc-price-size-desktop: {{ rec_price_size_desktop }}px; --gc-buy-bg: {{ rec_buy_bg }}; --gc-buy-bg-hover: {{ rec_buy_bg_hover }}; --gc-buy-text: {{ rec_buy_text }}; --gc-buy-text-size: {{ rec_buy_text_size }}px; --gc-buy-radius: {{ rec_buy_radius }}px; --gc-card-shadow-rest: var(--card-shadow-rest); --gc-card-shadow-hover: var(--card-shadow-hover); --gc-card-lift-hover: -2px;">
+  <div class="max-w-[1440px] mx-auto section-layout-px">
+    <header class="mb-6 md:mb-8">
+      <a class="text-sm font-semibold" href="{{ routes.collections_url }}">Voltar para categorias</a>
+      <h1 class="col-dyn-heading font-headline font-extrabold mt-3">{{ collection.title | escape }}</h1>
+      {% if collection.description != blank %}
+        <p class="col-dyn-subtitle mt-2">{{ collection.description | strip_html | escape }}</p>
+      {% endif %}
+    </header>
+
+    {% if categories_menu != blank %}
+      <div class="col-dyn-grid mb-8 md:mb-10 lg:mb-12">
+        {% if has_children %}
+          {% for parent_link in categories_menu.links %}
+            {% if parent_link.handle == collection.handle %}
+              {% for child_link in parent_link.links %}
+                {% liquid
+                  assign child_object = child_link.object
+                  assign child_image = blank
+                  if child_object != blank and child_object.featured_image != blank
+                    assign child_image = child_object.featured_image
+                  endif
+                %}
+                <a class="col-dyn-card" href="{{ child_link.url }}">
+                  <div class="col-dyn-media">
+                    {% if child_image != blank %}
+                      <div class="col-dyn-media-bg" style="background-image: url('{{ child_image | image_url: width: 900 }}');"></div>
+                    {% endif %}
+                  </div>
+                  <span class="col-dyn-title">{{ child_link.title | escape }}</span>
+                </a>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% for parent_link in categories_menu.links %}
+            {% liquid
+              assign parent_object = parent_link.object
+              assign parent_image = blank
+              if parent_object != blank and parent_object.featured_image != blank
+                assign parent_image = parent_object.featured_image
+              endif
+            %}
+            <a class="col-dyn-card" href="{{ parent_link.url }}">
+              <div class="col-dyn-media">
+                {% if parent_image != blank %}
+                  <div class="col-dyn-media-bg" style="background-image: url('{{ parent_image | image_url: width: 900 }}');"></div>
+                {% endif %}
+              </div>
+              <span class="col-dyn-title">{{ parent_link.title | escape }}</span>
+            </a>
+          {% endfor %}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% paginate collection.products by section.settings.products_limit %}
+    <section class="py-2 md:py-4 lg:py-4">
+      <div class="mb-6 md:mb-8 text-center md:text-left">
+        <span class="text-primary font-bold uppercase tracking-widest text-xs mb-2 block">{{ section.settings.products_eyebrow | escape }}</span>
+        <h2 class="font-extrabold font-headline pp-secondary pp-recommended-title">{{ section.settings.products_title | escape }}</h2>
+      </div>
+
+      <div id="cdyn-products-{{ section.id }}">
+        <div class="pp-rec-grid">
+          {% assign related_products_shown = 0 %}
+        {% for related in collection.products %}
+          {% liquid
+            assign product_inventory_qty = related.total_inventory | default: 0 | plus: 0
+            assign product_inventory_tracked = false
+            for inventory_variant in related.variants
+              if inventory_variant.inventory_management != blank
+                assign product_inventory_tracked = true
+                break
+              endif
+            endfor
+
+            assign meets_min_inventory = true
+            if global_product_card_min_inventory > 0
+              if related.available == false
+                assign meets_min_inventory = false
+              elsif product_inventory_tracked and product_inventory_qty < global_product_card_min_inventory
+                assign meets_min_inventory = false
+              endif
+            endif
+
+            if meets_min_inventory == false
+              continue
+            endif
+
+            assign rating_value = related.metafields.custom.rating_value | default: 5
+            assign review_count = related.metafields.custom.review_count | default: 0
+            assign primary_category_title = blank
+            assign price_block_class = 'pt-1'
+            assign has_discount = false
+            assign discount_percent = 0
+            assign primary_collection = related.collections | first
+            if primary_collection != blank
+              assign primary_category_title = primary_collection.title
+            elsif related.type != blank
+              assign primary_category_title = related.type
+            endif
+            assign rec_display_price = 0
+            assign rec_display_compare = 0
+            for v in related.variants
+              if v.available
+                if rec_display_price == 0 or v.price < rec_display_price
+                  assign rec_display_price = v.price
+                  assign rec_display_compare = v.compare_at_price | default: 0
+                endif
+              endif
+            endfor
+            if rec_display_price == 0
+              assign rec_fallback_var = related.selected_or_first_available_variant
+              assign rec_display_price = rec_fallback_var.price | default: related.price
+              assign rec_display_compare = rec_fallback_var.compare_at_price | default: 0
+            endif
+            if rec_display_compare > rec_display_price and rec_display_compare > 0
+              assign has_discount = true
+              assign discount_percent = rec_display_compare | minus: rec_display_price | times: 100.0 | divided_by: rec_display_compare | round
+            endif
+            if rec_show_buy_button
+              assign price_block_class = price_block_class | append: ' mt-auto'
+            endif
+          %}
+          <article class="pp-rec-card gc-unified-card gc-product-card group" data-card-url="{{ related.url }}" role="link" tabindex="0" aria-label="Abrir produto {{ related.title | escape }}">
+            <div class="gc-product-media-frame mb-4 rounded-xl overflow-hidden relative" style="background-color: {{ rec_media_bg_color }};">
+              {% if related.featured_image %}
+                <div class="gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ related.featured_image | image_url: width: 900 }}');" aria-label="{{ related.title | escape }}"></div>
+              {% endif %}
+            </div>
+
+            <div class="flex flex-col gap-2 gc-product-card-content">
+              <h3 class="pp-rec-title font-medium">{{ related.title | escape }}</h3>
+              {% if primary_category_title != blank %}
+                <p class="pp-rec-meta">{{ primary_category_title | escape }}</p>
+              {% endif %}
+
+              {% if rec_show_ratings %}
+                <div class="flex items-center gap-1">
+                  <div class="flex pp-rec-rating">
+                    {% for i in (1..5) %}
+                      {% if i <= rating_value %}
+                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                      {% else %}
+                        <span class="material-symbols-outlined text-sm">star</span>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  {% if review_count > 0 %}
+                    <span class="pp-rec-meta">({{ review_count }})</span>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              <div class="{{ price_block_class }}">
+                {% if rec_display_compare > rec_display_price %}
+                  <span class="pp-rec-meta line-through" style="color: var(--color-promo-old-price)">{{ rec_display_compare | money }}</span>
+                {% endif %}
+                <div class="pp-rec-price-row">
+                  <div class="flex items-baseline gap-1">
+                    <span class="pp-rec-meta font-bold italic"{% if has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>R$</span>
+                    <span class="pp-rec-price font-black"{% if has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>{{ rec_display_price | money_without_currency }}</span>
+                  </div>
+                  {% if rec_show_discount_badge and has_discount %}
+                    <span class="pp-discount-badge">-{{ discount_percent }}%</span>
+                  {% endif %}
+                </div>
+                <span class="pp-rec-meta">{{ global_installments_count }}x de {{ rec_display_price | divided_by: global_installments_count | money }} sem juros</span>
+              </div>
+
+              {% if rec_show_buy_button %}
+                <a class="pp-rec-buy py-3 mt-3 font-bold text-center" href="{{ related.url }}">{{ rec_buy_label | escape }}</a>
+              {% endif %}
+            </div>
+          </article>
+          {% assign related_products_shown = related_products_shown | plus: 1 %}
+        {% endfor %}
+        {% if related_products_shown == 0 %}
+          <div class="pp-rec-empty">Nenhum produto atende ao estoque mínimo configurado para esta coleção.</div>
+        {% endif %}
+        </div>
+
+        {%- assign cdyn_cur = paginate.current_page | append: '' -%}
+        {% if paginate.pages > 1 %}
+          <nav class="cdyn-pagination" aria-label="Paginação de produtos">
+            {% if paginate.previous %}
+              <button class="cdyn-page-btn" type="button" aria-label="Página anterior" onclick="cdynGoTo(this)" data-page-url="{{ paginate.previous.url }}">
+                <span class="material-symbols-outlined" style="font-size:20px;line-height:1;">chevron_left</span>
+              </button>
+            {% else %}
+              <span class="cdyn-page-btn cdyn-page-disabled" aria-disabled="true">
+                <span class="material-symbols-outlined" style="font-size:20px;line-height:1;">chevron_left</span>
+              </span>
+            {% endif %}
+
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <button class="cdyn-page-btn" type="button" onclick="cdynGoTo(this)" data-page-url="{{ part.url }}">{{ part.title }}</button>
+              {% elsif part.title == cdyn_cur %}
+                <span class="cdyn-page-btn cdyn-page-active" aria-current="page">{{ part.title }}</span>
+              {% else %}
+                <span class="cdyn-page-btn cdyn-page-ellipsis">{{ part.title }}</span>
+              {% endif %}
+            {% endfor %}
+
+            {% if paginate.next %}
+              <button class="cdyn-page-btn" type="button" aria-label="Próxima página" onclick="cdynGoTo(this)" data-page-url="{{ paginate.next.url }}">
+                <span class="material-symbols-outlined" style="font-size:20px;line-height:1;">chevron_right</span>
+              </button>
+            {% else %}
+              <span class="cdyn-page-btn cdyn-page-disabled" aria-disabled="true">
+                <span class="material-symbols-outlined" style="font-size:20px;line-height:1;">chevron_right</span>
+              </span>
+            {% endif %}
+          </nav>
+        {% endif %}
+
+      </div>
+    </section>
+    {% endpaginate %}
+  </div>
+</section>
+
+<script>
+(function () {
+  var sectionId = '{{ section.id }}';
+  var perPage = {{ section.settings.products_limit }};
+
+  function getRegion() {
+    return document.getElementById('cdyn-products-' + sectionId);
+  }
+
+  function buildSkeleton(n) {
+    n = Math.min(Math.max(n || perPage, 2), 12);
+    var cards = '';
+    for (var i = 0; i < n; i++) {
+      cards +=
+        '<div class="cdyn-sk-card">' +
+          '<div class="cdyn-sk-media"></div>' +
+          '<div class="cdyn-sk-body">' +
+            '<div class="cdyn-sk-line cdyn-sk-line-title"></div>' +
+            '<div class="cdyn-sk-line cdyn-sk-line-meta"></div>' +
+            '<div class="cdyn-sk-line cdyn-sk-line-price"></div>' +
+          '</div>' +
+        '</div>';
+    }
+    return '<div class="pp-rec-grid">' + cards + '</div>';
+  }
+
+  function showSkeleton() {
+    var region = getRegion();
+    if (!region) return;
+    region.innerHTML = buildSkeleton(perPage);
+  }
+
+  function fetchPage(url) {
+    var region = getRegion();
+    if (!region) return;
+
+    showSkeleton();
+
+    var top = region.getBoundingClientRect().top + window.scrollY - 120;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+
+    var sep = url.indexOf('?') >= 0 ? '&' : '?';
+    var fetchUrl = url + sep + 'section_id=' + sectionId;
+
+    fetch(fetchUrl)
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(function (html) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, 'text/html');
+        var wrapper = doc.getElementById('shopify-section-' + sectionId);
+        var newRegion = wrapper ? wrapper.querySelector('#cdyn-products-' + sectionId) : null;
+        var curRegion = getRegion();
+        if (!curRegion || !newRegion) throw new Error('Region not found');
+
+        curRegion.innerHTML = newRegion.innerHTML;
+        window.history.pushState({ cdynUrl: url }, '', url);
+        attachCardClicks();
+      })
+      .catch(function () {
+        window.location.href = url;
+      });
+  }
+
+  function cdynGoTo(btn) {
+    var url = btn && btn.getAttribute('data-page-url');
+    if (url) fetchPage(url);
+  }
+  window.cdynGoTo = cdynGoTo;
+
+  function attachCardClicks() {
+    var region = getRegion();
+    if (region && window.bindClickableCards) {
+      window.bindClickableCards(region, '.gc-product-card[data-card-url]');
+    }
+  }
+
+  window.addEventListener('popstate', function (e) {
+    if (e.state && e.state.cdynUrl) {
+      fetchPage(window.location.pathname + window.location.search);
+    }
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachCardClicks);
+  } else {
+    attachCardClicks();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Collection dynamic",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "categories_menu",
+      "label": "Menu de categorias (pai/filho)"
+    },
+    {
+      "type": "color",
+      "id": "category_bg_color",
+      "label": "Fundo dos chips de categoria",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "color",
+      "id": "category_title_color",
+      "label": "Cor do título da categoria",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "text",
+      "id": "products_eyebrow",
+      "label": "Texto pequeno dos produtos",
+      "default": "Mais vendidos"
+    },
+    {
+      "type": "text",
+      "id": "products_title",
+      "label": "Título dos produtos",
+      "default": "Produtos recomendados"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Produtos por página",
+      "min": 4,
+      "max": 48,
+      "step": 4,
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection dynamic"
+    }
+  ]
+}
+{% endschema %}

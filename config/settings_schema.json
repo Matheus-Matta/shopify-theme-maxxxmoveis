@@ -1,0 +1,1498 @@
+[
+  {
+    "name": "Branding",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Largura do logo",
+        "min": 80,
+        "max": 320,
+        "step": 5,
+        "default": 220
+      },
+      {
+        "type": "text",
+        "id": "brand_name",
+        "label": "Nome da marca",
+        "default": "Mercado Home"
+      }
+    ]
+  },
+  {
+    "name": "Cores",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Marca"
+      },
+      {
+        "type": "color",
+        "id": "global_primary_color",
+        "label": "Cor primária",
+        "default": "#0058BB"
+      },
+      {
+        "type": "color",
+        "id": "global_primary_hover_color",
+        "label": "Cor primária (hover)",
+        "default": "#004A9D"
+      },
+      {
+        "type": "color",
+        "id": "global_primary_active_color",
+        "label": "Cor primária (active)",
+        "default": "#003E84"
+      },
+      {
+        "type": "color",
+        "id": "global_primary_soft_color",
+        "label": "Cor primária (fundo suave)",
+        "default": "#EAF3FF"
+      },
+      {
+        "type": "color",
+        "id": "global_primary_border_color",
+        "label": "Cor primária (borda suave)",
+        "default": "#B9D5F5"
+      },
+      {
+        "type": "header",
+        "content": "Texto"
+      },
+      {
+        "type": "color",
+        "id": "global_text_primary_color",
+        "label": "Texto principal",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "color",
+        "id": "global_text_secondary_color",
+        "label": "Texto secundário",
+        "default": "#4B5563"
+      },
+      {
+        "type": "color",
+        "id": "global_text_muted_color",
+        "label": "Texto auxiliar",
+        "default": "#6B7280"
+      },
+      {
+        "type": "color",
+        "id": "global_text_disabled_color",
+        "label": "Texto desabilitado",
+        "default": "#9CA3AF"
+      },
+      {
+        "type": "header",
+        "content": "Bordas"
+      },
+      {
+        "type": "color",
+        "id": "global_border_color",
+        "label": "Borda padrão",
+        "default": "#E5E7EB"
+      },
+      {
+        "type": "color",
+        "id": "global_border_strong_color",
+        "label": "Borda forte",
+        "default": "#D1D5DB"
+      },
+      {
+        "type": "header",
+        "content": "Superfícies"
+      },
+      {
+        "type": "color",
+        "id": "global_surface_base_color",
+        "label": "Superfície base",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "global_surface_card_color",
+        "label": "Superfície de card",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_surface_subtle_color",
+        "label": "Superfície sutil",
+        "default": "#F7F7F7"
+      },
+      {
+        "type": "color",
+        "id": "global_surface_hover_color",
+        "label": "Superfície hover",
+        "default": "#F3F4F6"
+      },
+      {
+        "type": "header",
+        "content": "Fundos de seção"
+      },
+      {
+        "type": "color",
+        "id": "global_hero_bg_color",
+        "label": "Fundo: hero",
+        "default": "#F7F7F7"
+      },
+      {
+        "type": "color",
+        "id": "global_review_bg_color",
+        "label": "Fundo: avaliações",
+        "default": "#F7F7F7"
+      },
+      {
+        "type": "color",
+        "id": "global_footer_bg_color",
+        "label": "Fundo: rodapé",
+        "default": "#f7f7f7"
+      },
+      {
+        "type": "color",
+        "id": "global_social_bg_color",
+        "label": "Fundo: redes sociais",
+        "default": "#F7F7F7"
+      },
+      {
+        "type": "header",
+        "content": "Favoritos"
+      },
+      {
+        "type": "color",
+        "id": "global_favorite_badge_bg_color",
+        "label": "Favoritos: badge fundo",
+        "default": "#ef4444"
+      },
+      {
+        "type": "color",
+        "id": "global_favorite_badge_text_color",
+        "label": "Favoritos: badge texto",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Utilitários"
+      },
+      {
+        "type": "color",
+        "id": "global_focus_ring_color",
+        "label": "Foco (acessibilidade)",
+        "default": "#0058BB"
+      },
+      {
+        "type": "color",
+        "id": "global_overlay_color",
+        "label": "Overlay",
+        "default": "#00000066"
+      }
+    ]
+  },
+  {
+    "name": "Estados",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Sucesso"
+      },
+      {
+        "type": "color",
+        "id": "global_success_color",
+        "label": "Sucesso",
+        "default": "#16A34A"
+      },
+      {
+        "type": "color",
+        "id": "global_success_hover_color",
+        "label": "Sucesso (hover)",
+        "default": "#15803D"
+      },
+      {
+        "type": "color",
+        "id": "global_success_active_color",
+        "label": "Sucesso (active)",
+        "default": "#166534"
+      },
+      {
+        "type": "color",
+        "id": "global_success_soft_color",
+        "label": "Sucesso (fundo suave)",
+        "default": "#ECFDF3"
+      },
+      {
+        "type": "color",
+        "id": "global_success_border_color",
+        "label": "Sucesso (borda suave)",
+        "default": "#BBF7D0"
+      },
+      {
+        "type": "header",
+        "content": "Alerta"
+      },
+      {
+        "type": "color",
+        "id": "global_warning_color",
+        "label": "Alerta",
+        "default": "#f59e0b"
+      },
+      {
+        "type": "header",
+        "content": "Perigo"
+      },
+      {
+        "type": "color",
+        "id": "global_danger_color",
+        "label": "Perigo",
+        "default": "#ef4444"
+      },
+      {
+        "type": "color",
+        "id": "global_danger_hover_color",
+        "label": "Perigo (hover)",
+        "default": "#DC2626"
+      },
+      {
+        "type": "color",
+        "id": "global_danger_active_color",
+        "label": "Perigo (active)",
+        "default": "#B91C1C"
+      },
+      {
+        "type": "color",
+        "id": "global_danger_soft_color",
+        "label": "Perigo (fundo suave)",
+        "default": "#FEF2F2"
+      },
+      {
+        "type": "color",
+        "id": "global_danger_border_color",
+        "label": "Perigo (borda suave)",
+        "default": "#FECACA"
+      }
+    ]
+  },
+  {
+    "name": "Tipografia",
+    "settings": [
+      {
+        "type": "select",
+        "id": "heading_font_family",
+        "label": "Fonte de títulos",
+        "default": "Plus Jakarta Sans",
+        "options": [
+          {
+            "value": "Plus Jakarta Sans",
+            "label": "Plus Jakarta Sans"
+          },
+          {
+            "value": "Inter",
+            "label": "Inter"
+          },
+          {
+            "value": "DM Sans",
+            "label": "DM Sans"
+          },
+          {
+            "value": "Source Sans 3",
+            "label": "Source Sans 3"
+          },
+          {
+            "value": "Poppins",
+            "label": "Poppins"
+          },
+          {
+            "value": "Montserrat",
+            "label": "Montserrat"
+          },
+          {
+            "value": "Playfair Display",
+            "label": "Playfair Display"
+          },
+          {
+            "value": "Lora",
+            "label": "Lora"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "body_font_family",
+        "label": "Fonte do corpo",
+        "default": "Inter",
+        "options": [
+          {
+            "value": "Inter",
+            "label": "Inter"
+          },
+          {
+            "value": "DM Sans",
+            "label": "DM Sans"
+          },
+          {
+            "value": "Source Sans 3",
+            "label": "Source Sans 3"
+          },
+          {
+            "value": "Poppins",
+            "label": "Poppins"
+          },
+          {
+            "value": "Montserrat",
+            "label": "Montserrat"
+          },
+          {
+            "value": "Lora",
+            "label": "Lora"
+          },
+          {
+            "value": "Plus Jakarta Sans",
+            "label": "Plus Jakarta Sans"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Pesos"
+      },
+      {
+        "type": "range",
+        "id": "global_font_black_weight",
+        "label": "Peso da classe font-black",
+        "min": 100,
+        "max": 900,
+        "step": 50,
+        "default": 900
+      },
+      {
+        "type": "header",
+        "content": "Tamanhos — produto"
+      },
+      {
+        "type": "range",
+        "id": "global_product_title_size_mobile",
+        "label": "Título do produto (mobile)",
+        "min": 11,
+        "max": 24,
+        "step": 1,
+        "default": 14,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_title_size_desktop",
+        "label": "Título do produto (desktop)",
+        "min": 12,
+        "max": 28,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_price_size_mobile",
+        "label": "Preço do produto (mobile)",
+        "min": 16,
+        "max": 36,
+        "step": 1,
+        "default": 24,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_price_size_desktop",
+        "label": "Preço do produto (desktop)",
+        "min": 18,
+        "max": 40,
+        "step": 1,
+        "default": 28,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_meta_size_mobile",
+        "label": "Texto auxiliar do produto (mobile)",
+        "min": 10,
+        "max": 18,
+        "step": 1,
+        "default": 12,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_meta_size_desktop",
+        "label": "Texto auxiliar do produto (desktop)",
+        "min": 10,
+        "max": 20,
+        "step": 1,
+        "default": 12,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Botões",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Primário"
+      },
+      {
+        "type": "color",
+        "id": "global_button_primary_bg_color",
+        "label": "Fundo",
+        "default": "#0058BB"
+      },
+      {
+        "type": "color",
+        "id": "global_button_primary_bg_hover_color",
+        "label": "Fundo hover",
+        "default": "#004A9D"
+      },
+      {
+        "type": "color",
+        "id": "global_button_primary_bg_active_color",
+        "label": "Fundo active",
+        "default": "#003E84"
+      },
+      {
+        "type": "color",
+        "id": "global_button_primary_text_color",
+        "label": "Texto",
+        "default": "#ffffff"
+      },
+      {
+        "type": "range",
+        "id": "global_button_primary_radius",
+        "label": "Arredondamento",
+        "min": 0,
+        "max": 28,
+        "step": 1,
+        "default": 12,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_button_primary_text_size",
+        "label": "Tamanho do texto",
+        "min": 10,
+        "max": 24,
+        "step": 1,
+        "default": 14,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Secundário"
+      },
+      {
+        "type": "color",
+        "id": "global_button_secondary_bg_color",
+        "label": "Fundo",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "global_button_secondary_border_color",
+        "label": "Borda",
+        "default": "#E5E7EB"
+      },
+      {
+        "type": "color",
+        "id": "global_button_secondary_text_color",
+        "label": "Texto",
+        "default": "#1A1C1C"
+      },
+      {
+        "type": "color",
+        "id": "global_button_secondary_bg_hover_color",
+        "label": "Fundo hover",
+        "default": "#F7F7F7"
+      },
+      {
+        "type": "color",
+        "id": "global_button_secondary_bg_active_color",
+        "label": "Fundo active",
+        "default": "#F3F4F6"
+      }
+    ]
+  },
+  {
+    "name": "Cards de produto",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Comportamento"
+      },
+      {
+        "type": "checkbox",
+        "id": "global_product_card_show_ratings",
+        "label": "Mostrar avaliação",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "global_product_card_show_buy_button",
+        "label": "Mostrar botão comprar",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "global_product_card_show_discount_badge",
+        "label": "Mostrar badge de desconto",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "global_product_card_buy_label",
+        "label": "Texto do botão comprar",
+        "default": "COMPRAR"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_min_inventory",
+        "label": "Estoque mínimo para exibir",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "Dimensões"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_width_mobile",
+        "label": "Largura (mobile)",
+        "min": 180,
+        "max": 340,
+        "step": 5,
+        "default": 230,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_width_desktop",
+        "label": "Largura (desktop)",
+        "min": 220,
+        "max": 420,
+        "step": 5,
+        "default": 270,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_height_mobile",
+        "label": "Altura (mobile)",
+        "min": 320,
+        "max": 620,
+        "step": 5,
+        "default": 430,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_height_desktop",
+        "label": "Altura (desktop)",
+        "min": 360,
+        "max": 700,
+        "step": 5,
+        "default": 500,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_border_width",
+        "label": "Largura da borda",
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "default": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_radius",
+        "label": "Arredondamento",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_padding",
+        "label": "Padding interno",
+        "min": 8,
+        "max": 36,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      },
+      {
+        "type": "checkbox",
+        "id": "global_product_card_media_full_bleed",
+        "label": "Imagem ocupa topo (bleed)",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_media_height_mobile",
+        "label": "Altura da imagem (mobile)",
+        "min": 140,
+        "max": 340,
+        "step": 2,
+        "default": 230,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_product_card_media_height_desktop",
+        "label": "Altura da imagem (desktop)",
+        "min": 160,
+        "max": 420,
+        "step": 5,
+        "default": 270,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Imagem"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_media_bg_color",
+        "label": "Fundo da imagem",
+        "default": "#F7F7F7"
+      },
+      {
+        "type": "select",
+        "id": "global_product_card_image_fit",
+        "label": "Ajuste da imagem",
+        "default": "cover",
+        "options": [
+          {
+            "value": "cover",
+            "label": "Cover"
+          },
+          {
+            "value": "contain",
+            "label": "Contain"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "global_product_card_media_render_mode",
+        "label": "Modo de render",
+        "default": "background",
+        "options": [
+          {
+            "value": "background",
+            "label": "Background image"
+          },
+          {
+            "value": "image",
+            "label": "Image tag"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "global_product_card_image_position",
+        "label": "Posição da imagem",
+        "default": "center center",
+        "options": [
+          {
+            "value": "center center",
+            "label": "Centro"
+          },
+          {
+            "value": "top center",
+            "label": "Topo"
+          },
+          {
+            "value": "bottom center",
+            "label": "Base"
+          },
+          {
+            "value": "left center",
+            "label": "Esquerda"
+          },
+          {
+            "value": "right center",
+            "label": "Direita"
+          },
+          {
+            "value": "top left",
+            "label": "Topo esquerdo"
+          },
+          {
+            "value": "top right",
+            "label": "Topo direito"
+          },
+          {
+            "value": "bottom left",
+            "label": "Base esquerda"
+          },
+          {
+            "value": "bottom right",
+            "label": "Base direita"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Cores"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_bg_color",
+        "label": "Fundo do card",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_border_color",
+        "label": "Borda",
+        "default": "#E5E7EB"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_border_hover_color",
+        "label": "Borda hover",
+        "default": "#0058BB"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_title_color",
+        "label": "Título",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_title_hover_color",
+        "label": "Título hover",
+        "default": "#0058BB"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_price_color",
+        "label": "Preço",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_meta_color",
+        "label": "Texto auxiliar",
+        "default": "#6B7280"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_rating_color",
+        "label": "Estrelas",
+        "default": "#facc15"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_discount_badge_bg",
+        "label": "Badge desconto: fundo",
+        "default": "#ef4444"
+      },
+      {
+        "type": "color",
+        "id": "global_product_card_discount_badge_text",
+        "label": "Badge desconto: texto",
+        "default": "#ffffff"
+      }
+    ]
+  },
+  {
+    "name": "Carrosséis e setas",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Espaçamento entre cards"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_track_gap_mobile",
+        "label": "Gap carrossel (mobile)",
+        "min": 6,
+        "max": 30,
+        "step": 1,
+        "default": 14,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_track_gap_desktop",
+        "label": "Gap carrossel (desktop)",
+        "min": 8,
+        "max": 40,
+        "step": 1,
+        "default": 20,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_recommended_track_gap",
+        "label": "Gap recomendados",
+        "min": 8,
+        "max": 40,
+        "step": 1,
+        "default": 20,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Hover de imagem"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_hover_image_count",
+        "label": "Fotos no hover",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_hover_image_interval",
+        "label": "Velocidade troca (ms)",
+        "min": 400,
+        "max": 2000,
+        "step": 100,
+        "default": 900,
+        "unit": "ms"
+      },
+      {
+        "type": "header",
+        "content": "Setas"
+      },
+      {
+        "type": "color",
+        "id": "global_arrow_bg_color",
+        "label": "Fundo",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_arrow_border_color",
+        "label": "Borda",
+        "default": "#D1D5DB"
+      },
+      {
+        "type": "color",
+        "id": "global_arrow_icon_color",
+        "label": "Ícone",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "color",
+        "id": "global_arrow_bg_hover_color",
+        "label": "Fundo hover",
+        "default": "#F3F4F6"
+      },
+      {
+        "type": "color",
+        "id": "global_arrow_border_hover_color",
+        "label": "Borda hover",
+        "default": "#0058BB"
+      },
+      {
+        "type": "color",
+        "id": "global_arrow_icon_hover_color",
+        "label": "Ícone hover",
+        "default": "#0058BB"
+      }
+    ]
+  },
+  {
+    "name": "Vitrines e abas",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Configurações gerais"
+      },
+      {
+        "type": "text",
+        "id": "global_tabs_title",
+        "label": "Título padrão",
+        "default": "Ofertas exclusivas"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_products_limit",
+        "label": "Produtos por aba",
+        "min": 4,
+        "max": 20,
+        "step": 1,
+        "default": 8
+      },
+      {
+        "type": "checkbox",
+        "id": "global_tabs_show_discount_percent",
+        "label": "Mostrar % de desconto",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "global_tabs_show_view_all",
+        "label": "Exibir link ver tudo",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "global_tabs_view_all_label",
+        "label": "Texto do link ver tudo",
+        "default": "VER TUDO"
+      },
+      {
+        "type": "header",
+        "content": "Títulos"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_title_size_mobile",
+        "label": "Título seção (mobile)",
+        "min": 18,
+        "max": 48,
+        "step": 1,
+        "default": 28,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_title_size_desktop",
+        "label": "Título seção (desktop)",
+        "min": 20,
+        "max": 64,
+        "step": 1,
+        "default": 36,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_recommended_title_size_mobile",
+        "label": "Título recomendados (mobile)",
+        "min": 16,
+        "max": 42,
+        "step": 1,
+        "default": 26,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_recommended_title_size_desktop",
+        "label": "Título recomendados (desktop)",
+        "min": 18,
+        "max": 62,
+        "step": 1,
+        "default": 32,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_recommended_limit",
+        "label": "Quantidade de cards recomendados",
+        "min": 6,
+        "max": 12,
+        "step": 1,
+        "default": 8
+      },
+      {
+        "type": "header",
+        "content": "Cores da seção"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_section_bg_color",
+        "label": "Fundo",
+        "default": "#F7F7F7"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_section_text_color",
+        "label": "Texto",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_section_title_color",
+        "label": "Título",
+        "default": "#0058BB"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_section_border_color",
+        "label": "Borda",
+        "default": "#E5E7EB"
+      },
+      {
+        "type": "header",
+        "content": "Botões de aba"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_tab_text_size_mobile",
+        "label": "Tamanho do texto (mobile)",
+        "min": 11,
+        "max": 20,
+        "step": 1,
+        "default": 13,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_tab_text_size_desktop",
+        "label": "Tamanho do texto (desktop)",
+        "min": 12,
+        "max": 22,
+        "step": 1,
+        "default": 14,
+        "unit": "px"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_tab_bg_color",
+        "label": "Fundo da aba",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_tab_text_color",
+        "label": "Texto aba inativa",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_tab_hover_text_color",
+        "label": "Texto aba hover",
+        "default": "#004A9D"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_tab_active_bg_color",
+        "label": "Sublinhado aba ativa",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_tab_active_text_color",
+        "label": "Texto aba ativa",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_tab_border_color",
+        "label": "Borda da aba",
+        "default": "#D1D5DB"
+      },
+      {
+        "type": "header",
+        "content": "Badge e preços promocionais"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_promo_badge_bg_color",
+        "label": "Badge promoção: fundo",
+        "default": "#16a34a"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_promo_badge_text_color",
+        "label": "Badge promoção: texto",
+        "default": "#ffffff"
+      },
+      {
+        "type": "range",
+        "id": "global_tabs_promo_badge_text_size",
+        "label": "Badge promoção: tamanho",
+        "min": 9,
+        "max": 18,
+        "step": 1,
+        "default": 10,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "global_tabs_promo_badge_text_weight",
+        "label": "Badge promoção: peso",
+        "default": "700",
+        "options": [
+          {
+            "value": "500",
+            "label": "500"
+          },
+          {
+            "value": "600",
+            "label": "600"
+          },
+          {
+            "value": "700",
+            "label": "700"
+          },
+          {
+            "value": "800",
+            "label": "800"
+          }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_promo_old_price_color",
+        "label": "Preço riscado",
+        "default": "#7b7f86"
+      },
+      {
+        "type": "color",
+        "id": "global_tabs_promo_final_price_color",
+        "label": "Preço final promocional",
+        "default": "#1a1c1c"
+      },
+      {
+        "type": "header",
+        "content": "Recomendados"
+      },
+      {
+        "type": "color",
+        "id": "global_recommended_media_bg_color",
+        "label": "Fundo da imagem",
+        "default": "#F7F7F7"
+      },
+      {
+        "type": "color",
+        "id": "global_recommended_rating_color",
+        "label": "Cor das estrelas",
+        "default": "#facc15"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "global_layout_max_width",
+        "label": "Largura máxima da página",
+        "min": 960,
+        "max": 1920,
+        "step": 20,
+        "default": 1440,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_gap",
+        "label": "Espaçamento entre sections",
+        "min": 0,
+        "max": 80,
+        "step": 1,
+        "default": 24,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Padding interno das sections"
+      },
+      {
+        "type": "range",
+        "id": "section_py_mobile",
+        "label": "Padding vertical (mobile)",
+        "min": 0,
+        "max": 80,
+        "step": 1,
+        "default": 24,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_py_md",
+        "label": "Padding vertical (tablet / md)",
+        "min": 0,
+        "max": 96,
+        "step": 1,
+        "default": 32,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_py_lg",
+        "label": "Padding vertical (desktop / lg)",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 40,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_px_mobile",
+        "label": "Padding horizontal (mobile)",
+        "min": 0,
+        "max": 80,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_px_md",
+        "label": "Padding horizontal (desktop / md)",
+        "min": 0,
+        "max": 96,
+        "step": 1,
+        "default": 24,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "global_installments_count",
+        "label": "Parcelas sem juros",
+        "min": 1,
+        "max": 24,
+        "step": 1,
+        "default": 10
+      },
+      {
+        "type": "header",
+        "content": "Loading de página"
+      },
+      {
+        "type": "checkbox",
+        "id": "global_page_loader_enabled",
+        "label": "Exibir loading ao navegar",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "global_page_loader_bg_color",
+        "label": "Cor de fundo do loading",
+        "default": "#ffffff"
+      },
+      {
+        "type": "range",
+        "id": "global_page_loader_duration",
+        "label": "Duração do loading",
+        "min": 100,
+        "max": 1000,
+        "step": 50,
+        "default": 300,
+        "unit": "ms"
+      },
+      {
+        "type": "header",
+        "content": "Elemento de loading"
+      },
+      {
+        "type": "select",
+        "id": "global_page_loader_type",
+        "label": "Tipo de elemento",
+        "default": "spinner",
+        "options": [
+          { "value": "spinner", "label": "Spinner padrão" },
+          { "value": "gif",     "label": "GIF personalizado" },
+          { "value": "video",   "label": "Vídeo personalizado" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "global_page_loader_spinner_color",
+        "label": "Cor do spinner",
+        "info": "Usado apenas quando o tipo é Spinner",
+        "default": "#0058BB"
+      },
+      {
+        "type": "text",
+        "id": "global_page_loader_media_url",
+        "label": "URL do GIF ou vídeo",
+        "info": "Cole a URL do arquivo .gif, .webp, .mp4 ou .webm",
+        "default": "none"
+      },
+      {
+        "type": "range",
+        "id": "global_page_loader_media_size",
+        "label": "Tamanho do elemento",
+        "min": 24,
+        "max": 240,
+        "step": 4,
+        "default": 64,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Acesso de clientes",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_customer_page_protection",
+        "label": "Ativar proteção de páginas por login",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "protected_page_handles",
+        "label": "Handles de páginas protegidas (1 por linha)",
+        "info": "Exemplo: politica-de-trocas",
+        "default": "-"
+      },
+      {
+        "type": "textarea",
+        "id": "protected_custom_paths",
+        "label": "Caminhos protegidos (1 por linha)",
+        "info": "Exemplo: /apps/area-cliente",
+        "default": "-"
+      }
+    ]
+  },
+  {
+    "name": "Portal do Cliente (Conta)",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout e Fundo"
+      },
+      {
+        "type": "color",
+        "id": "global_account_bg_color",
+        "label": "Cor de fundo geral",
+        "default": "#f1f2f4"
+      },
+      {
+        "type": "color",
+        "id": "global_account_sidebar_bg_color",
+        "label": "Fundo do menu lateral",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_account_card_bg_color",
+        "label": "Fundo do conteúdo principal",
+        "default": "transparent"
+      },
+      {
+        "type": "color",
+        "id": "global_account_inner_card_bg_color",
+        "label": "Fundo de cards internos",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_account_border_color",
+        "label": "Bordas e divisórias",
+        "default": "#e2e5e9"
+      },
+      {
+        "type": "header",
+        "content": "Textos"
+      },
+      {
+        "type": "color",
+        "id": "global_account_text_primary",
+        "label": "Texto principal",
+        "default": "#111827"
+      },
+      {
+        "type": "color",
+        "id": "global_account_text_muted",
+        "label": "Texto secundário",
+        "default": "#64748b"
+      },
+      {
+        "type": "header",
+        "content": "Links e Botões"
+      },
+      {
+        "type": "color",
+        "id": "global_account_link_color",
+        "label": "Links",
+        "default": "#3b82f6"
+      },
+      {
+        "type": "color",
+        "id": "global_account_btn_primary_bg",
+        "label": "Botão principal: fundo",
+        "default": "#0058BB"
+      },
+      {
+        "type": "color",
+        "id": "global_account_btn_primary_text",
+        "label": "Botão principal: texto",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_account_btn_secondary_bg",
+        "label": "Botão secundário: fundo",
+        "default": "#eaf1ff"
+      },
+      {
+        "type": "color",
+        "id": "global_account_btn_secondary_text",
+        "label": "Botão secundário: texto",
+        "default": "#3478f6"
+      },
+      {
+        "type": "header",
+        "content": "Navegação Lateral"
+      },
+      {
+        "type": "color",
+        "id": "global_account_nav_text_color",
+        "label": "Texto padrão",
+        "default": "#64748b"
+      },
+      {
+        "type": "color",
+        "id": "global_account_nav_hover_bg",
+        "label": "Fundo hover",
+        "default": "#f8fafc"
+      },
+      {
+        "type": "color",
+        "id": "global_account_nav_active_bg",
+        "label": "Fundo item selecionado",
+        "default": "#f8fafc"
+      },
+      {
+        "type": "color",
+        "id": "global_account_nav_active_text",
+        "label": "Texto item selecionado",
+        "default": "#111827"
+      },
+      {
+        "type": "color",
+        "id": "global_account_nav_active_border",
+        "label": "Barra de destaque",
+        "default": "#0058BB"
+      },
+      {
+        "type": "header",
+        "content": "Cabeçalho de Pedidos"
+      },
+      {
+        "type": "color",
+        "id": "global_account_order_header_bg",
+        "label": "Fundo do cabeçalho do pedido",
+        "default": "#f6f7f9"
+      },
+      {
+        "type": "color",
+        "id": "global_account_order_header_border",
+        "label": "Borda inferior do cabeçalho",
+        "default": "#e8ebef"
+      }
+    ]
+  }
+]

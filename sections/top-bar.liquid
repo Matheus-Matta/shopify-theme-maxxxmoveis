@@ -1,0 +1,193 @@
+{% liquid
+  assign topbar_items_count = 0
+
+  for block in section.blocks
+    if block.type == 'advantage'
+      if block.settings.title != blank or block.settings.subtitle != blank
+        assign topbar_items_count = topbar_items_count | plus: 1
+      endif
+    endif
+  endfor
+%}
+
+{% if section.settings.show_topbar and topbar_items_count > 0 %}
+  <style>
+    #shopify-section-{{ section.id }} .topbar-track {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    #shopify-section-{{ section.id }} .topbar-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .topbar-item {
+      width: 280px;
+      min-width: 280px;
+      flex: 0 0 280px;
+    }
+
+    @media (min-width: 768px) {
+      #shopify-section-{{ section.id }} .topbar-item {
+        width: 320px;
+        min-width: 320px;
+        flex: 0 0 320px;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      #shopify-section-{{ section.id }} .topbar-track {
+        justify-content: space-between;
+      }
+    }
+  </style>
+
+  <section style="background-color: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }}; border-bottom: 1px solid {{ section.settings.border_color }};">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-6 py-2.5">
+      <ul class="topbar-track flex items-stretch gap-3 md:gap-4 overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none lg:flex-wrap lg:justify-center xl:justify-between">
+        {% for block in section.blocks %}
+          {% if block.type == 'advantage' %}
+            {% if block.settings.title != blank or block.settings.subtitle != blank %}
+              <li class="topbar-item snap-start flex items-center gap-3" {{ block.shopify_attributes }}>
+                <span class="material-symbols-outlined" style="color: {{ section.settings.icon_color }}; font-size: 20px;">{{ block.settings.icon | default: 'local_shipping' }}</span>
+                <div class="min-w-0">
+                  {% if block.settings.title != blank %}
+                    <p class="font-headline font-bold uppercase leading-tight truncate" style="font-size: {{ section.settings.title_font_size }}px; color: {{ section.settings.text_color }};">{{ block.settings.title }}</p>
+                  {% endif %}
+                  {% if block.settings.subtitle != blank %}
+                    <p class="font-medium leading-tight truncate" style="font-size: {{ section.settings.subtitle_font_size }}px; color: {{ section.settings.subtitle_color }};">{{ block.settings.subtitle }}</p>
+                  {% endif %}
+                </div>
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Top Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_topbar",
+      "label": "Mostrar topbar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Tipografia"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Tamanho do título",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "default": 11,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Tamanho do subtítulo",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Cores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fundo",
+      "default": "#1a1c2c"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borda inferior",
+      "default": "rgba(255,255,255,0.10)"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Cor do título",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Cor do subtítulo",
+      "default": "#a1a1aa"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Cor do ícone",
+      "default": "#0058BB"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "advantage",
+      "name": "Vantagem",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Ícone Material Symbols",
+          "default": "local_shipping"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Entrega expressa!"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtítulo",
+          "default": "Em 48 horas úteis a partir do contato de confirmação."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Top Bar",
+      "blocks": [
+        {
+          "type": "advantage"
+        },
+        {
+          "type": "advantage",
+          "settings": {
+            "icon": "payments",
+            "title": "Pagamento na entrega!",
+            "subtitle": "Maquininha de cartão: PIX, Crédito ou Débito."
+          }
+        },
+        {
+          "type": "advantage",
+          "settings": {
+            "icon": "credit_card",
+            "title": "Parcelamos em 18x sem juros!",
+            "subtitle": "Via Mercado Pago."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

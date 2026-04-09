@@ -1,0 +1,231 @@
+{% liquid
+  assign badge_text = blank
+  assign badge_class = 'bg-primary text-white'
+  assign card_show_ratings = true
+  assign card_show_buy_button = true
+  assign card_buy_button_label = buy_button_label | default: 'COMPRAR'
+  assign card_bg_color = settings.global_product_card_bg_color | default: settings.surface_card_color | default: '#ffffff'
+  assign card_border_color = settings.global_product_card_border_color | default: settings.global_border_color | default: settings.border_color | default: '#E5E7EB'
+  assign card_border_hover_color = settings.global_product_card_border_hover_color | default: settings.global_primary_color | default: settings.accent_color | default: '#0058BB'
+  assign card_border_width = settings.global_product_card_border_width | default: 1
+  assign card_radius = settings.global_product_card_radius | default: 16
+  assign card_padding = settings.global_product_card_padding | default: 16
+  assign card_width_mobile = settings.global_product_card_width_mobile | default: 230
+  assign card_width_desktop = settings.global_product_card_width_desktop | default: 270
+  assign card_height_mobile = settings.global_product_card_height_mobile | default: 430
+  assign card_height_desktop = settings.global_product_card_height_desktop | default: 500
+  assign card_title_color = settings.global_product_card_title_color | default: settings.global_text_primary_color | default: settings.text_color | default: '#1a1c1c'
+  assign card_title_hover_color = settings.global_product_card_title_hover_color | default: settings.global_primary_color | default: settings.accent_color | default: '#0058BB'
+  assign card_muted_color = settings.global_product_card_meta_color | default: settings.global_text_muted_color | default: settings.muted_color | default: '#6B7280'
+  assign card_price_color = settings.global_product_card_price_color | default: settings.global_text_primary_color | default: settings.text_color | default: '#1a1c1c'
+  assign card_button_bg = settings.global_button_primary_bg_color | default: settings.global_primary_color | default: settings.accent_color | default: '#0058BB'
+  assign card_button_hover_bg = settings.global_button_primary_bg_hover_color | default: settings.global_primary_hover_color | default: '#004A9D'
+  assign card_button_text = settings.global_button_primary_text_color | default: settings.accent_contrast | default: '#ffffff'
+  assign card_button_radius = settings.global_button_primary_radius | default: 12
+  assign card_button_text_size = settings.global_button_primary_text_size | default: 14
+  assign card_title_size_mobile = settings.global_product_title_size_mobile | default: 14
+  assign card_title_size_desktop = settings.global_product_title_size_desktop | default: 16
+  assign card_meta_size_mobile = settings.global_product_card_meta_size_mobile | default: 12
+  assign card_meta_size_desktop = settings.global_product_card_meta_size_desktop | default: 12
+  assign card_price_size_mobile = settings.global_product_price_size_mobile | default: 24
+  assign card_price_size_desktop = settings.global_product_price_size_desktop | default: 28
+  assign card_media_bg = settings.global_product_card_media_bg_color | default: '#F7F7F7'
+  assign card_image_fit = settings.global_product_card_image_fit | default: 'cover'
+  assign card_image_position = settings.global_product_card_image_position | default: 'center center'
+  assign card_media_height_mobile = settings.global_product_card_media_height_mobile | default: 230
+  assign card_media_height_desktop = settings.global_product_card_media_height_desktop | default: 270
+  assign global_installments_count = settings.global_installments_count | default: 10 | plus: 0
+  assign card_placeholder_price = 159999
+
+  if global_installments_count < 1
+    assign global_installments_count = 1
+  endif
+
+  if show_ratings == false or show_ratings == 'false'
+    assign card_show_ratings = false
+  elsif show_ratings == true or show_ratings == 'true'
+    assign card_show_ratings = true
+  endif
+
+  if show_buy_button == false or show_buy_button == 'false'
+    assign card_show_buy_button = false
+  elsif show_buy_button == true or show_buy_button == 'true'
+    assign card_show_buy_button = true
+  endif
+
+  if product != blank
+    if product.tags contains 'TOP OFERTA'
+      assign badge_text = 'TOP OFERTA'
+    elsif product.tags contains 'FRETE GRÁTIS'
+      assign badge_text = 'FRETE GRÁTIS'
+      assign badge_class = 'bg-[#16A34A] text-white'
+    elsif product.tags contains 'MAIS BUSCADO'
+      assign badge_text = 'MAIS BUSCADO'
+      assign badge_class = 'bg-[#1A1C1C] text-white'
+    elsif product.tags contains 'QUERIDINHO'
+      assign badge_text = 'QUERIDINHO'
+    elsif product.tags contains '5% CASHBACK'
+      assign badge_text = '5% CASHBACK'
+      assign badge_class = 'bg-[#16A34A] text-white'
+    elsif product.tags contains 'OFERTA DO DIA'
+      assign badge_text = 'OFERTA DO DIA'
+      assign badge_class = 'bg-[#16A34A] text-white'
+    endif
+  endif
+%}
+
+<style>
+    .pcard-root {
+      background-color: var(--pcard-bg);
+      border: var(--pcard-border-width) solid var(--pcard-border);
+      border-radius: var(--pcard-radius);
+      padding: var(--pcard-padding);
+      width: 100%;
+      max-width: var(--pcard-width-mobile);
+      min-height: var(--pcard-height-mobile);
+      max-height: var(--pcard-height-mobile);
+      margin-inline: auto;
+    }
+    .pcard-root:hover {
+      border-color: var(--pcard-border-hover);
+    }
+    .pcard-title {
+      color: var(--pcard-title);
+      font-size: var(--pcard-title-size);
+      transition: color 180ms ease;
+    }
+    .pcard-root:hover .pcard-title {
+      color: var(--pcard-title-hover);
+    }
+    .pcard-price,
+    .pcard-price-currency {
+      color: var(--pcard-price);
+    }
+    .pcard-price {
+      font-size: var(--pcard-price-size);
+    }
+    .pcard-muted {
+      color: var(--pcard-muted);
+    }
+    .pcard-meta {
+      font-size: var(--pcard-meta-size-mobile);
+    }
+    .pcard-buy-btn {
+      background-color: var(--pcard-btn-bg);
+      color: var(--pcard-btn-text);
+      border-radius: var(--pcard-btn-radius);
+      font-size: var(--pcard-btn-text-size);
+    }
+    .pcard-buy-btn:hover {
+      background-color: var(--pcard-btn-bg-hover);
+    }
+    .pcard-media-frame {
+      height: var(--pcard-media-height-mobile);
+      background-color: var(--pcard-media-bg);
+    }
+    .pcard-media-image {
+      object-fit: var(--pcard-image-fit);
+      object-position: var(--pcard-image-position);
+    }
+    @media (min-width: 768px) {
+      .pcard-root {
+        max-width: var(--pcard-width-desktop);
+        min-height: var(--pcard-height-desktop);
+        max-height: var(--pcard-height-desktop);
+      }
+      .pcard-title {
+        font-size: var(--pcard-title-size-desktop);
+      }
+      .pcard-price {
+        font-size: var(--pcard-price-size-desktop);
+      }
+      .pcard-meta {
+        font-size: var(--pcard-meta-size-desktop);
+      }
+      .pcard-media-frame {
+        height: var(--pcard-media-height-desktop);
+      }
+    }
+  </style>
+<article class="pcard-root gc-product-card gc-reveal hover:shadow-2xl transition-all relative group flex flex-col" style="--pcard-bg: {{ card_bg_color }}; --pcard-border: {{ card_border_color }}; --pcard-border-hover: {{ card_border_hover_color }}; --pcard-border-width: {{ card_border_width }}px; --pcard-radius: {{ card_radius }}px; --pcard-padding: {{ card_padding }}px; --pcard-width-mobile: {{ card_width_mobile }}px; --pcard-width-desktop: {{ card_width_desktop }}px; --pcard-height-mobile: {{ card_height_mobile }}px; --pcard-height-desktop: {{ card_height_desktop }}px; --pcard-title: {{ card_title_color }}; --pcard-title-hover: {{ card_title_hover_color }}; --pcard-muted: {{ card_muted_color }}; --pcard-price: {{ card_price_color }}; --pcard-btn-bg: {{ card_button_bg }}; --pcard-btn-bg-hover: {{ card_button_hover_bg }}; --pcard-btn-text: {{ card_button_text }}; --pcard-btn-radius: {{ card_button_radius }}px; --pcard-btn-text-size: {{ card_button_text_size }}px; --pcard-title-size: {{ card_title_size_mobile }}px; --pcard-title-size-desktop: {{ card_title_size_desktop }}px; --pcard-meta-size-mobile: {{ card_meta_size_mobile }}px; --pcard-meta-size-desktop: {{ card_meta_size_desktop }}px; --pcard-price-size: {{ card_price_size_mobile }}px; --pcard-price-size-desktop: {{ card_price_size_desktop }}px; --pcard-media-bg: {{ card_media_bg }}; --pcard-image-fit: {{ card_image_fit }}; --pcard-image-position: {{ card_image_position }}; --pcard-media-height-mobile: {{ card_media_height_mobile }}px; --pcard-media-height-desktop: {{ card_media_height_desktop }}px;">
+  <div class="pcard-media-frame gc-product-media-frame mb-4 rounded-xl overflow-hidden relative">
+    {% if product != blank and product.featured_image != blank %}
+      <a href="{{ product.url }}">
+        {{ product.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: product.title, class: 'pcard-media-image w-full h-full group-hover:scale-105 transition-transform duration-500' }}
+      </a>
+      <div class="gc-img-shimmer" aria-hidden="true"></div>
+    {% endif %}
+
+    {% if badge_text != blank %}
+      <div class="absolute top-3 left-3 flex flex-col gap-2">
+        <div class="{{ badge_class }} text-[10px] font-bold px-2 py-1 rounded shadow-sm">{{ badge_text }}</div>
+      </div>
+    {% endif %}
+
+    {% if product != blank %}
+      <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-favorite-btn="{{ product.handle }}">
+        <span class="material-symbols-outlined text-xl">favorite</span>
+      </button>
+    {% endif %}
+  </div>
+
+  <div class="pcard-content gc-product-card-content">
+  <h3 class="pcard-title font-medium line-clamp-2 mb-2 min-h-[40px]">{% if product != blank %}{{ product.title }}{% else %}Produto exemplo {{ index }}{% endif %}</h3>
+
+  {% if card_show_ratings %}
+    <div class="flex items-center gap-1 mb-4">
+      <div class="flex text-yellow-400">
+        {% if product != blank %}
+          {% liquid
+            assign rating_value = product.metafields.custom.rating_value | default: 5
+          %}
+          {% for i in (1..5) %}
+            {% if i <= rating_value %}
+              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+            {% else %}
+              <span class="material-symbols-outlined text-sm">star</span>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star_half</span>
+        {% endif %}
+      </div>
+      <span class="pcard-muted pcard-meta font-medium">{% if product != blank %}({{ product.metafields.custom.review_count | default: 0 }}){% else %}(124){% endif %}</span>
+    </div>
+  {% endif %}
+
+  <div class="mt-auto">
+    {%- assign card_active_variant = product.selected_or_first_available_variant -%}
+    {%- assign card_active_price = card_active_variant.price | default: product.price -%}
+    {%- assign card_active_compare = card_active_variant.compare_at_price | default: 0 -%}
+    <div class="flex flex-col">
+      {% if product != blank and card_active_compare > card_active_price %}
+        <span class="pcard-muted pcard-meta line-through" style="color: var(--color-promo-old-price)">{{ card_active_compare | money }}</span>
+      {% elsif product == blank %}
+        <span class="pcard-muted pcard-meta line-through">R$ 2.799,00</span>
+      {% endif %}
+      <div class="flex items-baseline gap-1">
+        <span class="pcard-price-currency pcard-meta font-bold italic"{% if product != blank and card_active_compare > card_active_price %} style="color: var(--color-promo-final-price)"{% endif %}>R$</span>
+        <span class="pcard-price font-black"{% if product != blank and card_active_compare > card_active_price %} style="color: var(--color-promo-final-price)"{% endif %}>
+          {% if product != blank %}
+            {{ card_active_price | money_without_currency }}
+          {% else %}
+            1.599,99
+          {% endif %}
+        </span>
+      </div>
+      <span class="pcard-muted pcard-meta font-medium">{% if product != blank %}{{ global_installments_count }}x de {{ card_active_price | divided_by: global_installments_count | money }} sem juros{% else %}{{ global_installments_count }}x de {{ card_placeholder_price | divided_by: global_installments_count | money }} sem juros{% endif %}</span>
+    </div>
+
+    {% if card_show_buy_button %}
+      <a class="pcard-buy-btn w-full py-3 font-bold mt-4 flex items-center justify-center gap-2 transition-colors shadow-lg" href="{% if product != blank %}{{ product.url }}{% else %}#{% endif %}">
+        <span class="material-symbols-outlined text-lg">add_shopping_cart</span> {{ card_buy_button_label }}
+      </a>
+    {% endif %}
+  </div>
+  </div>
+</article>

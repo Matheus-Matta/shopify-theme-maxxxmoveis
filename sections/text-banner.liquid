@@ -1,0 +1,212 @@
+{% assign bg_color = section.settings.bg_color %}
+{% assign text_color = section.settings.text_color %}
+{% assign button_bg = section.settings.button_bg %}
+{% assign button_text = section.settings.button_text %}
+{% assign border_radius = section.settings.border_radius %}
+{% assign padding_vertical = section.settings.padding_vertical %}
+
+<style>
+  #text-banner-{{ section.id }} {
+    background-color: {{ bg_color }};
+    padding-top: {{ padding_vertical }}px;
+    padding-bottom: {{ padding_vertical }}px;
+    border-radius: {{ border_radius }}px;
+    {% if section.settings.border_size > 0 %}
+      border: {{ section.settings.border_size }}px solid {{ section.settings.border_color }};
+    {% endif %}
+  }
+  #text-banner-{{ section.id }} .text-banner__content {
+    color: {{ text_color }};
+  }
+  #text-banner-{{ section.id }} .button--custom {
+    background-color: {{ button_bg }};
+    color: {{ button_text }};
+    border-radius: {{ section.settings.button_radius }}px;
+    padding: 12px 24px;
+    display: inline-block;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  #text-banner-{{ section.id }} .button--custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    opacity: 0.9;
+  }
+</style>
+
+<section id="text-banner-{{ section.id }}" class="section section-layout-py overflow-hidden transition-all duration-300">
+  <div class="max-w-[1440px] mx-auto section-layout-px">
+  <div class="px-6 py-8 md:px-12 md:py-16 text-center text-banner__content flex flex-col items-center justify-center gap-4">
+    {% if section.settings.eyebrow != blank %}
+      <p class="font-bold tracking-widest uppercase text-sm opacity-80" style="font-size: {{ section.settings.eyebrow_size }}px;">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+    {% if section.settings.title != blank %}
+      <h2 class="text-3xl md:text-5xl font-extrabold mb-2" style="font-size: {{ section.settings.title_size }}px;">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.text != blank %}
+      <p class="max-w-2xl text-lg md:text-xl opacity-90 mx-auto" style="font-size: {{ section.settings.text_size }}px;">{{ section.settings.text }}</p>
+    {% endif %}
+
+    {% if section.settings.button_label != blank %}
+      <div class="mt-6">
+        <a class="button--custom" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+      </div>
+    {% endif %}
+  </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Text banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Conteúdo"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Selo",
+      "default": "Campanha"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamanho do Selo",
+      "default": 14
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Comece com uma base limpa e evolua o tema sem retrabalho."
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamanho do Título",
+      "default": 48
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Texto",
+      "default": "Esse ponto de entrada já organiza a home em seções editáveis, com blocos de destaque, coleção e chamada para ação."
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamanho do Texto",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Botão"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto do botão",
+      "default": "Editar tema"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link do botão"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Arredondamento do Botão",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Cores e Layout"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Cor de Fundo",
+      "default": "#f3f4f6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Cor do Texto principal",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Cor de Fundo do Botão",
+      "default": "#2563eb"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Cor do Texto do Botão",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Arredondamento do Banner",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_size",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Espessura da Borda",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Cor da Borda",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Espaçamento Vertical (Padding)",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text banner"
+    }
+  ]
+}
+{% endschema %}

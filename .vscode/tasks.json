@@ -1,0 +1,90 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Fix: settings_data.json",
+			"type": "shell",
+			"command": "node scripts/fix-settings-json.mjs",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Shopify: Login",
+			"type": "shell",
+			"command": "shopify",
+			"args": [
+				"auth",
+				"login"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Shopify: Theme Push Unpublished",
+			"type": "shell",
+1			"command": "node scripts/fix-settings-json.mjs ; shopify theme push --nodelete --unpublished --store totvsrj-maxxxmoveis-dc.myshopify.com",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Shopify: Theme Push Live",
+			"type": "shell",
+			"command": "shopify theme pull --theme 143413805174 --only 'config/settings_data.json' --only 'templates/*.json' --store totvsrj-maxxxmoveis-dc.myshopify.com ; node scripts/fix-settings-json.mjs ; shopify theme push --theme 143413805174 --nodelete --allow-live --store totvsrj-maxxxmoveis-dc.myshopify.com",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Shopify: Theme Push",
+			"type": "shell",
+			"command": "node scripts/fix-settings-json.mjs ; shopify theme push --nodelete --allow-live --store totvsrj-maxxxmoveis-dc.myshopify.com",
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Shopify: Sync Page Routes",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"scripts/sync-shopify-page-routes.mjs"
+			],
+			"options": {
+				"env": {
+					"SHOPIFY_STORE_DOMAIN": "totvsrj-maxxxmoveis-dc.myshopify.com"
+				}
+			},
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Shopify: Watch Page Routes",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"scripts/watch-shopify-page-routes.mjs"
+			],
+			"isBackground": true,
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"options": {
+				"env": {
+					"SHOPIFY_STORE_DOMAIN": "totvsrj-maxxxmoveis-dc.myshopify.com"
+				}
+			},
+			"problemMatcher": {
+				"owner": "custom",
+				"pattern": [
+					{
+						"regexp": ".*"
+					}
+				],
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "\\[watch\\] monitorando",
+					"endsPattern": "Sincronizacao finalizada com sucesso\\."
+				}
+			},
+			"group": "build"
+		}
+	]
+}

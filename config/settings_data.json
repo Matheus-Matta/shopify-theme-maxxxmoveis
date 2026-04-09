@@ -1,0 +1,646 @@
+{
+  "current": {
+    "logo": "shopify://shop_images/Logo_Maxxx_Sem_fundo_Familia_corte_sem_frase.png",
+    "brand_name": "Maxxx Moveis",
+    "global_primary_soft_color": "#ffffff",
+    "global_primary_border_color": "#9CA3AF",
+    "global_border_color": "#F3F4F6",
+    "global_border_strong_color": "#F3F4F6",
+    "global_surface_subtle_color": "#ffffff",
+    "global_hero_bg_color": "#ffffff",
+    "global_review_bg_color": "#ffffff",
+    "global_footer_bg_color": "#ffffff",
+    "global_social_bg_color": "#ffffff",
+    "heading_font_family": "Poppins",
+    "body_font_family": "Inter",
+    "global_font_black_weight": 650,
+    "global_product_price_size_mobile": 16,
+    "global_product_price_size_desktop": 18,
+    "global_button_secondary_bg_color": "#ffffff",
+    "global_button_secondary_border_color": "#F3F4F6",
+    "global_button_secondary_bg_hover_color": "#f7f7f7",
+    "global_product_card_show_ratings": false,
+    "global_product_card_show_buy_button": false,
+    "global_product_card_min_inventory": 1,
+    "global_product_card_width_mobile": 220,
+    "global_product_card_width_desktop": 260,
+    "global_product_card_height_mobile": 410,
+    "global_product_card_height_desktop": 430,
+    "global_product_card_padding": 10,
+    "global_product_card_media_height_desktop": 240,
+    "global_product_card_media_bg_color": "#ffffff",
+    "global_product_card_border_color": "#E5E7EB",
+    "global_product_card_price_color": "#1a1c1c",
+    "global_product_card_meta_color": "#4B5563",
+    "global_product_card_discount_badge_bg": "#16A34A",
+    "global_tabs_track_gap_mobile": 6,
+    "global_tabs_track_gap_desktop": 8,
+    "global_recommended_track_gap": 8,
+    "global_arrow_border_color": "#F3F4F6",
+    "global_tabs_title_size_mobile": 18,
+    "global_tabs_title_size_desktop": 24,
+    "global_tabs_section_bg_color": "#ffffff",
+    "global_tabs_section_border_color": "#F7F7F7",
+    "global_tabs_promo_badge_text_size": 12,
+    "global_tabs_promo_badge_text_weight": "600",
+    "global_tabs_promo_old_price_color": "#4B5563",
+    "global_tabs_promo_final_price_color": "#16A34A",
+    "global_layout_max_width": 1360,
+    "section_gap": 0,
+    "section_py_mobile": 8,
+    "section_py_md": 12,
+    "section_py_lg": 16,
+    "section_px_mobile": 14,
+    "global_installments_count": 12,
+    "global_page_loader_duration": 100,
+    "global_page_loader_type": "gif",
+    "global_page_loader_media_url": "https://i.imgur.com/G2JN3C8.gif",
+    "global_page_loader_media_size": 200,
+    "secondary_color": "#4B5563",
+    "global_neutral_gray": "#4B5563",
+    "sections": {
+      "top-bar": {
+        "type": "top-bar",
+        "settings": {
+          "show_topbar": true,
+          "title_font_size": 11,
+          "subtitle_font_size": 10,
+          "bg_color": "#1a1c2c",
+          "border_color": "#ffffff1a",
+          "text_color": "#ffffff",
+          "subtitle_color": "#a1a1aa",
+          "icon_color": "#0058bb"
+        }
+      },
+      "header": {
+        "type": "header",
+        "blocks": {
+          "department_mega_item_fGXPNU": {
+            "type": "department_mega_item",
+            "settings": {
+              "item_title": "Seu Quarto"
+            }
+          },
+          "department_mega_menu_ekALJ6": {
+            "type": "department_mega_menu",
+            "settings": {
+              "menu_title": "Quarto infantil",
+              "menu": "quarto-infantil"
+            }
+          },
+          "department_mega_menu_DQk9A9": {
+            "type": "department_mega_menu",
+            "settings": {
+              "menu_title": "",
+              "menu": "quarto"
+            }
+          },
+          "department_mega_item_AErPWE": {
+            "type": "department_mega_item",
+            "settings": {
+              "item_title": "Sua cozinha"
+            }
+          },
+          "department_mega_menu_NKqfPb": {
+            "type": "department_mega_menu",
+            "settings": {
+              "menu_title": "",
+              "menu": "cozinha"
+            }
+          },
+          "department_mega_menu_jiJaKT": {
+            "type": "department_mega_menu",
+            "settings": {
+              "menu_title": "",
+              "menu": "sala-de-jantar"
+            }
+          },
+          "department_mega_menu_nKniNY": {
+            "type": "department_mega_menu",
+            "settings": {
+              "menu_title": "",
+              "menu": "sala-de-estar"
+            }
+          },
+          "nav_link_item_deYfBK": {
+            "type": "nav_link_item",
+            "settings": {
+              "label": "Liquidação",
+              "url": "shopify://collections/ultimas-unidades",
+              "highlight": true
+            }
+          },
+          "nav_link_item_rmXLdw": {
+            "type": "nav_link_item",
+            "settings": {
+              "label": "Toda loja Maxxx",
+              "url": "shopify://collections",
+              "highlight": false
+            }
+          },
+          "nav_link_item_yTQR8w": {
+            "type": "nav_link_item",
+            "settings": {
+              "label": "Lançamentos",
+              "url": "shopify://collections/aparadores-e-buffets",
+              "highlight": false
+            }
+          },
+          "nav_dropdown_menu_mCjxMW": {
+            "type": "nav_dropdown_menu",
+            "settings": {
+              "label": "Cozinha",
+              "url": "",
+              "menu": "cozinha",
+              "highlight": false
+            }
+          },
+          "nav_dropdown_menu_y6pYwT": {
+            "type": "nav_dropdown_menu",
+            "settings": {
+              "label": "Quarto",
+              "url": "",
+              "menu": "quarto",
+              "highlight": false
+            }
+          },
+          "nav_dropdown_menu_GENPEg": {
+            "type": "nav_dropdown_menu",
+            "settings": {
+              "label": "Quarto Infantil",
+              "url": "",
+              "menu": "quarto-infantil",
+              "highlight": false
+            }
+          },
+          "nav_dropdown_menu_VAJdMU": {
+            "type": "nav_dropdown_menu",
+            "settings": {
+              "label": "Sala de Estar",
+              "url": "",
+              "menu": "sala-de-estar",
+              "highlight": false
+            }
+          },
+          "nav_dropdown_menu_JPLPUj": {
+            "type": "nav_dropdown_menu",
+            "settings": {
+              "label": "Sala de Jantar",
+              "url": "",
+              "menu": "sala-de-jantar",
+              "highlight": false
+            }
+          },
+          "nav_dropdown_menu_4RE9bD": {
+            "type": "nav_dropdown_menu",
+            "settings": {
+              "label": "Escritório",
+              "url": "",
+              "menu": "escrit-rio",
+              "highlight": false
+            }
+          }
+        },
+        "block_order": [
+          "department_mega_item_fGXPNU",
+          "department_mega_menu_ekALJ6",
+          "department_mega_menu_DQk9A9",
+          "department_mega_item_AErPWE",
+          "department_mega_menu_NKqfPb",
+          "department_mega_menu_jiJaKT",
+          "department_mega_menu_nKniNY",
+          "nav_link_item_deYfBK",
+          "nav_link_item_rmXLdw",
+          "nav_link_item_yTQR8w",
+          "nav_dropdown_menu_mCjxMW",
+          "nav_dropdown_menu_y6pYwT",
+          "nav_dropdown_menu_GENPEg",
+          "nav_dropdown_menu_VAJdMU",
+          "nav_dropdown_menu_JPLPUj",
+          "nav_dropdown_menu_4RE9bD"
+        ],
+        "settings": {
+          "announcement_text": "Frete especial e ofertas exclusivas para a loja online",
+          "search_placeholder": "O que você está procurando hoje?",
+          "search_dropdown_products_title": "Produtos mais relevantes",
+          "search_dropdown_view_all_label": "Ver todos os resultados",
+          "search_dropdown_limit": 5,
+          "show_departments": false,
+          "departments_label": "Departamentos",
+          "departments_dropdown_title": "Categorias",
+          "show_account": true,
+          "account_label": "Minha conta",
+          "account_dropdown_login_label": "Entre ou Cadastre-se",
+          "account_dropdown_logged_menu": "footer-minha-conta",
+          "account_dropdown_guest_menu": "footer-minha-conta",
+          "account_dropdown_bg_color": "#ffffff",
+          "account_dropdown_border_color": "#f7f7f7",
+          "account_dropdown_divider_color": "#f7f7f7",
+          "account_dropdown_text_color": "#4b5563",
+          "account_dropdown_text_hover_color": "#0058bb",
+          "account_dropdown_login_bg_color": "#0058bb",
+          "account_dropdown_login_bg_hover_color": "#003e84",
+          "account_dropdown_login_text_color": "#ffffff",
+          "desktop_favorite_label": "Favoritos",
+          "desktop_cart_label": "Carrinho",
+          "desktop_actions_icon_size": 24,
+          "desktop_actions_text_size": 12,
+          "show_favorite": true,
+          "favorite_link": "shopify://pages/favoritos",
+          "desktop_actions_panel_bg_color": "#ffffff1f",
+          "desktop_actions_item_bg_color": "rgba(0,0,0,0)",
+          "desktop_actions_item_bg_hover_color": "#ffffff14",
+          "desktop_actions_icon_color": "#1a1c1c",
+          "desktop_actions_icon_hover_color": "#0058bb",
+          "desktop_actions_text_color": "#1a1c1c",
+          "desktop_actions_text_hover_color": "#0058bb",
+          "brand_font_size": 24,
+          "search_font_size": 14,
+          "account_font_size": 14,
+          "departments_font_size": 16,
+          "nav_item_font_size": 16,
+          "dropdown_item_font_size": 16,
+          "badge_font_size": 10,
+          "header_top_bar_bg_color": "#0058bb",
+          "header_bg_color": "#ffffff",
+          "header_text_color": "#1a1c1c",
+          "logo_color": "#1a1c1c",
+          "nav_bg_color": "#ffffff",
+          "nav_text_color": "#1a1c1c",
+          "nav_border_color": "#ffffff",
+          "search_bg_color": "#f7f7f7",
+          "search_text_color": "#1a1c1c",
+          "search_icon_color": "#1a1c1c",
+          "search_placeholder_color": "#4b5563",
+          "search_border_color": "#f2f2f2",
+          "search_focus_ring_color": "#0058bb",
+          "action_panel_bg_color": "#ffffff1f",
+          "action_divider_color": "#ffffff40",
+          "account_text_color": "#1a1c1c",
+          "account_hover_color": "#0058bb",
+          "favorite_icon_color": "#1a1c1c",
+          "favorite_hover_color": "#0058bb",
+          "cart_icon_color": "#1a1c1c",
+          "cart_icon_hover_color": "#0058bb",
+          "search_dropdown_bg_color": "#ffffff",
+          "search_dropdown_text_color": "#1a1c1c",
+          "search_dropdown_heading_color": "#6b7280",
+          "search_dropdown_border_color": "#e5e7eb",
+          "search_dropdown_link_color": "#0058bb",
+          "search_dropdown_price_color": "#1a1c1c",
+          "search_dropdown_promo_price_color": "#16a34a",
+          "search_dropdown_compare_price_color": "#6b7280",
+          "search_dropdown_promo_badge_bg_color": "#16a34a",
+          "search_dropdown_promo_badge_text_color": "#ffffff",
+          "search_dropdown_item_hover_bg_color": "#f7f7f7",
+          "search_dropdown_border_width": 1,
+          "search_dropdown_radius": 16,
+          "search_dropdown_image_size_desktop": 64,
+          "search_dropdown_image_size_mobile": 56,
+          "search_dropdown_item_padding_desktop": 10,
+          "search_dropdown_item_padding_mobile": 8,
+          "search_dropdown_title_size_desktop": 14,
+          "search_dropdown_title_size_mobile": 13,
+          "search_dropdown_price_size_desktop": 15,
+          "search_dropdown_price_size_mobile": 14,
+          "search_dropdown_max_height_desktop": 520,
+          "search_dropdown_max_height_mobile": 60,
+          "search_dropdown_empty_color": "#6b7280",
+          "search_dropdown_cta_bg_color": "#0058bb",
+          "search_dropdown_cta_text_color": "#ffffff",
+          "departments_bg_color": "#0058bb",
+          "departments_text_color": "#ffffff",
+          "departments_bg_hover_color": "#004a9d",
+          "departments_text_hover_color": "#ffffff",
+          "cart_badge_bg_color": "#0058bb",
+          "cart_badge_text_color": "#ffffff",
+          "dropdown_bg_color": "#ffffff",
+          "dropdown_sidebar_bg_color": "#ffffff",
+          "dropdown_content_bg_color": "#ffffff",
+          "dropdown_text_color": "#1a1c1c",
+          "dropdown_border_color": "#ffffff",
+          "dropdown_heading_color": "#4b5563",
+          "dropdown_item_text_color": "#1a1c1c",
+          "dropdown_item_hover_bg_color": "#f2f2f2",
+          "dropdown_item_hover_text_color": "#0058bb",
+          "dropdown_empty_color": "#6b7280",
+          "nav_item_color": "#4b5563",
+          "nav_item_hover_color": "#0058bb",
+          "nav_highlight_color": "#0058bb",
+          "mobile_categories_title_text": "Categorias Principais",
+          "mobile_categories_title_color": "#1a1c1c",
+          "mobile_categories_title_size": 12,
+          "mobile_services_title_text": "Servicos",
+          "mobile_services_title_color": "#1a1c1c",
+          "mobile_services_title_size": 12,
+          "mobile_top_bg_color": "#0058bb",
+          "mobile_top_text_color": "#ffffff",
+          "mobile_account_button_bg_color": "#ffffff",
+          "mobile_account_button_bg_hover_color": "#ffffff",
+          "mobile_account_button_text_color": "#1f2226",
+          "mobile_extra_muted_bg_color": "#ffffff",
+          "mobile_extra_section_title_color": "#4b5563",
+          "mobile_extra_section_title_size": 11,
+          "mobile_extra_item_text_color": "#4b5563",
+          "mobile_extra_item_text_hover_color": "#0058bb",
+          "mobile_extra_item_bg_hover_color": "#f7f7f7",
+          "mobile_extra_item_text_size": 14,
+          "mobile_extra_item_padding_x": 16,
+          "mobile_extra_item_padding_y": 12,
+          "mobile_quick_card_bg_color": "#ffffff",
+          "mobile_quick_card_border_color": "#f7f7f7",
+          "mobile_quick_card_icon_color": "#1a1c1c",
+          "mobile_quick_card_text_color": "#1a1c1c",
+          "mobile_quick_card_text_size": 10,
+          "mobile_btn1_label": "Minha Conta",
+          "mobile_btn1_link": "",
+          "mobile_btn1_destination": "custom",
+          "mobile_btn1_icon": "person",
+          "mobile_btn2_label": "Meus Favoritos",
+          "mobile_btn2_link": "",
+          "mobile_btn2_destination": "custom",
+          "mobile_btn2_icon": "favorite",
+          "mobile_btn3_label": "Carrinho",
+          "mobile_btn3_link": "",
+          "mobile_btn3_destination": "custom",
+          "mobile_btn3_icon": "shopping_cart",
+          "mobile_show_view_all_categories": true,
+          "mobile_view_all_categories_label": "Ver todas as categorias",
+          "mobile_view_all_categories_bg_color": "#ffffff",
+          "mobile_view_all_categories_text_color": "#0058bb",
+          "mobile_view_all_categories_text_size": 14,
+          "mobile_show_promo": false,
+          "mobile_promo_eyebrow": "Novidade",
+          "mobile_promo_title": "Baixe nosso app e receba ofertas exclusivas",
+          "mobile_promo_button_label": "Saber mais",
+          "mobile_promo_link": "",
+          "mobile_promo_bg_start": "#0058bb",
+          "mobile_promo_bg_end": "#ef4444",
+          "mobile_promo_text_color": "#ffffff",
+          "mobile_promo_button_bg": "#ffffff",
+          "mobile_promo_button_text": "#0058bb",
+          "mobile_promo_eyebrow_size": 10,
+          "mobile_promo_title_size": 14,
+          "mobile_promo_button_size": 12
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "menu_column_9gWbRf": {
+            "type": "menu_column",
+            "settings": {
+              "title": "Minha conta",
+              "menu": "footer-minha-conta"
+            }
+          },
+          "menu_column_3dPYyE": {
+            "type": "menu_column",
+            "settings": {
+              "title": "Politicas",
+              "menu": "footer-politicas"
+            }
+          },
+          "menu_column_9PzEeD": {
+            "type": "menu_column",
+            "settings": {
+              "title": "Sobre nós",
+              "menu": "sobre-1"
+            }
+          }
+        },
+        "block_order": [
+          "menu_column_9gWbRf",
+          "menu_column_3dPYyE",
+          "menu_column_9PzEeD"
+        ],
+        "settings": {
+          "top_note": "",
+          "company_panel_title": "Fale Conosco",
+          "company_name": "Maxxx Móveis",
+          "support_phone_title": "Central de Vendas",
+          "support_phone_number": "(21) 99730-7980",
+          "company_whatsapp": "SAC, MONTAGEM E INFO. (21) 99565-9546",
+          "company_email": "sac@maxxxmoveis.com.br",
+          "company_cnpj": "37.897.108/0001-39",
+          "company_address": "📍 São Gonçalo – RJ",
+          "support_phone_schedule": "Segunda à Sexta: 09:00 ás 17:00\nSábado 09:00 ás 12:00",
+          "support_menu": "",
+          "footer_title_size_mobile": 16,
+          "footer_title_size_desktop": 18,
+          "footer_link_size_mobile": 13,
+          "footer_link_size_desktop": 14,
+          "footer_link_color": "#6b7280",
+          "footer_link_hover_color": "#0058bb",
+          "footer_padding_mobile": 40,
+          "footer_grid_gap_mobile": 32,
+          "footer_grid_gap_desktop": 48
+        }
+      },
+      "product-page-main-custom": {
+        "type": "product-page-main-custom",
+        "settings": {
+          "breadcrumb_size": 14,
+          "breadcrumb_color": "#6b7280",
+          "breadcrumb_hover_color": "#0058bb",
+          "breadcrumb_separator_color": "#9ca3af",
+          "mobile_title_size": 24,
+          "mobile_title_color": "#0058bb",
+          "mobile_price_size": 36,
+          "mobile_price_color": "#1a1c1c",
+          "sticky_buy_max_width": 360,
+          "sticky_price_size": 18,
+          "sticky_compare_size": 16,
+          "main_image_position": "center center",
+          "main_image_size": "cover",
+          "thumb_size": 80,
+          "product_title_size": 40,
+          "product_price_size": 30,
+          "product_compare_size_mobile": 16,
+          "product_compare_size_desktop": 20,
+          "buy_btn_label": "COMPRAR AGORA",
+          "add_cart_btn_label": "ADICIONAR AO CARRINHO",
+          "cart_plus_btn_size": 52,
+          "cart_plus_btn_radius": 8,
+          "add_cart_btn_text_size": 16,
+          "cart_plus_btn_icon_size": 22,
+          "qty_radius": 8,
+          "enable_shipping_calculator": true,
+          "shipping_calc_title": "Calcular frete e prazo",
+          "shipping_calc_icon": "local_shipping",
+          "shipping_calc_placeholder": "Digite seu CEP",
+          "shipping_calc_button_label": "Ok",
+          "shipping_calc_button_loading_label": "Calculando...",
+          "shipping_calc_country": "Brazil",
+          "shipping_calc_province": "auto",
+          "shipping_calc_invalid_cep_message": "Digite um CEP valido com 8 numeros.",
+          "shipping_calc_no_rates_message": "Nao encontramos opcoes de frete para este CEP.",
+          "shipping_calc_empty_cart_message": "Adicione o produto ao carrinho para calcular o frete.",
+          "shipping_calc_error_message": "Nao foi possivel calcular o frete agora. Tente novamente.",
+          "shipping_calc_title_size": 14,
+          "shipping_calc_icon_size": 20,
+          "shipping_calc_input_text_size": 14,
+          "shipping_calc_result_text_size": 13,
+          "shipping_calc_radius": 8,
+          "shipping_calc_bg_color": "#ffffff",
+          "shipping_calc_border_color": "#f1f1f1",
+          "shipping_calc_input_bg_color": "#f8f8f8",
+          "shipping_calc_input_placeholder_color": "#9ca3af",
+          "shipping_calc_result_bg_color": "#ffffff",
+          "shipping_calc_result_text_color": "#374151",
+          "shipping_calc_price_color": "#1a1c1c"
+        }
+      },
+      "product-page-recommended-custom": {
+        "type": "product-page-recommended-custom",
+        "settings": {
+          "secondary_color": "#0058bb",
+          "recommended_eyebrow": "Curadoria",
+          "recommended_title": "Quem viu, viu tambem",
+          "list_best_sellers_collection": ""
+        }
+      },
+      "product-page-description-custom": {
+        "type": "product-page-description-custom",
+        "settings": {
+          "description_title": "Descricao Detalhada",
+          "description_title_size": 30,
+          "description_title_color": "#0058bb",
+          "description_text_color": "#6b7280",
+          "description_text_size": 16,
+          "meta_title": "Categorias e tags",
+          "meta_title_size": 16,
+          "meta_title_color": "#0058bb",
+          "show_product_type": true,
+          "show_primary_collection": true,
+          "show_product_tags": true,
+          "max_tags": 8,
+          "product_type_prefix": "Tipo:",
+          "collection_prefix": "Colecao:",
+          "tag_prefix": "#",
+          "badge_bg_color": "#f5f3ef",
+          "badge_text_color": "#1a1c1c",
+          "badge_border_color": "#ddd6cb",
+          "badge_text_size": 12,
+          "badge_radius": 20,
+          "badge_padding_x": 12,
+          "badge_padding_y": 6,
+          "badge_gap": 8
+        }
+      },
+      "collection-plp-reusable": {
+        "type": "collection-plp-reusable",
+        "settings": {
+          "products_per_page": 12,
+          "cards_per_row": 4,
+          "collection_title_size_mobile": 20,
+          "collection_title_size_desktop": 24,
+          "section_max_width_cap": 1440,
+          "search_title": "Resultados da busca",
+          "priority_card_width_mobile": "",
+          "priority_card_height_mobile": "320",
+          "priority_media_height_mobile": "160",
+          "card_width_mobile_min": "164",
+          "card_width_mobile_max": "230",
+          "card_height_mobile_min": "",
+          "card_height_mobile_max": "",
+          "filter_title_main": "Filtros",
+          "filter_title_sort": "Ordenacao",
+          "filter_title_color_label": "Cor",
+          "filter_title_price": "Preco",
+          "filter_title_other": "Outros",
+          "filter_title_color": "#1a1c1c",
+          "filter_title_size_mobile": 12,
+          "filter_title_size_desktop": 18,
+          "mobile_filter_toolbar_bg": "#ffffff",
+          "mobile_filter_toolbar_border": "#ffffff",
+          "mobile_filter_button_bg": "#0058bb",
+          "mobile_filter_button_text_color": "#ffffff",
+          "mobile_filter_button_border_color": "#0058bb",
+          "mobile_filter_button_icon_color": "#ffffff",
+          "mobile_filter_overlay_color": "#1a1c1c59",
+          "filter_panel_bg": "#fcfcfc",
+          "filter_panel_text_color": "#1a1c1c",
+          "filter_panel_border_color": "#e5e7eb",
+          "filter_help_color": "#6b7280",
+          "filter_input_bg": "#ffffff",
+          "filter_input_text_color": "#1a1c1c",
+          "filter_input_border_color": "#d1d5db",
+          "filter_chip_bg": "#ffffff",
+          "filter_chip_text_color": "#1a1c1c",
+          "filter_chip_border_color": "#d1d5db",
+          "filter_badge_bg": "#0058bb",
+          "filter_badge_text_color": "#ffffff"
+        }
+      },
+      "cart-page-custom": {
+        "type": "cart-page-custom",
+        "settings": {
+          "title": "Seu carrinho",
+          "subtitle": "Confira os itens antes de finalizar sua compra",
+          "summary_title": "Resumo do pedido",
+          "quantity_label": "Qtd",
+          "remove_label": "Remover",
+          "subtotal_label": "Subtotal",
+          "shipping_label": "Frete",
+          "shipping_value": "Calculado no checkout",
+          "total_label": "Total",
+          "checkout_label": "Finalizar compra",
+          "keep_shopping_label": "Continuar comprando",
+          "empty_title": "Seu carrinho está vazio",
+          "empty_text": "Adicione produtos e volte para finalizar seu pedido",
+          "empty_helper_text": "Nao encontramos nenhum item no seu carrinho no momento.",
+          "container_width": 1240,
+          "background_color": "#f7f8fa",
+          "checkout_btn_bg": "#0058bb",
+          "checkout_btn_bg_hover": "#004a9d",
+          "checkout_btn_text": "#ffffff",
+          "checkout_btn_radius": 10,
+          "checkout_btn_text_size": 14,
+          "keep_shopping_btn_text": "#1a1c1c",
+          "keep_shopping_btn_border": "#e5e7eb",
+          "keep_shopping_btn_radius": 10
+        }
+      },
+      "list-collections-custom": {
+        "type": "list-collections-custom",
+        "settings": {
+          "title": "Todas as coleções",
+          "subtitle": "Navegue por todas as categorias disponíveis da loja.",
+          "collections_limit": 60,
+          "section_bg_color": "#ffffff",
+          "section_text_color": "#1a1c1c",
+          "section_border_color": "#d4d4d8",
+          "category_bg_color": "#eeeeee",
+          "category_title_color": "#1a1c1c",
+          "category_hover_border_color": "#0058bb",
+          "category_hover_title_color": "#0058bb",
+          "title_align": "center",
+          "item_width_desktop": 128,
+          "item_height_desktop": 128,
+          "item_width_mobile": 128,
+          "item_height_mobile": 128,
+          "item_gap": 24,
+          "title_size": 15,
+          "title_box_height": 24,
+          "image_fit": "cover",
+          "image_position": "center center",
+          "image_repeat": "no-repeat",
+          "image_hover_scale": 1.1,
+          "category_shape": "rounded_square",
+          "corner_radius": 24
+        }
+      }
+    },
+    "content_for_index": [],
+    "blocks": {
+      "316487575649303945": {
+        "type": "shopify://apps/easify-options/blocks/app-embed-block/d2288b18-c1ba-42f5-b3b3-26c75c8820bf",
+        "disabled": false,
+        "settings": {
+          "theme_app_version": "none"
+        }
+      }
+    }
+  }
+}

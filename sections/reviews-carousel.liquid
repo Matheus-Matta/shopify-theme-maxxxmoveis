@@ -1,0 +1,417 @@
+{% liquid
+  assign section_bg = section.settings.section_bg_color
+  assign section_text = section.settings.section_text_color
+  assign review_card_bg = section.settings.review_card_bg_color
+  assign review_card_border = section.settings.review_card_border_color
+  assign review_card_border_width = section.settings.review_card_border_width | default: 1
+  assign review_card_text = section.settings.review_card_text_color
+  assign review_card_muted = section.settings.review_card_muted_color
+  assign reviews_arrow_bg = settings.global_arrow_bg_color | default: section.settings.arrow_bg_color | default: '#ffffff'
+  assign reviews_arrow_border = settings.global_arrow_border_color | default: section.settings.arrow_border_color | default: '#D1D5DB'
+  assign reviews_arrow_icon = settings.global_arrow_icon_color | default: section.settings.arrow_color | default: '#1a1c1c'
+  assign reviews_arrow_bg_hover = settings.global_arrow_bg_hover_color | default: section.settings.arrow_bg_hover_color | default: '#F3F4F6'
+  assign reviews_arrow_border_hover = settings.global_arrow_border_hover_color | default: section.settings.arrow_border_hover_color | default: '#0058BB'
+  assign reviews_arrow_icon_hover = settings.global_arrow_icon_hover_color | default: section.settings.arrow_color_hover | default: '#0058BB'
+%}
+
+<section class="w-full section-layout-py overflow-hidden" style="--section-bg: {{ section_bg }}; --section-text: {{ section_text }}; --review-card-bg: {{ review_card_bg }}; --review-card-border: {{ review_card_border }}; --review-card-border-width: {{ review_card_border_width }}px; --review-card-text: {{ review_card_text }}; --review-card-muted: {{ review_card_muted }}; --review-card-height-mobile: {{ section.settings.card_height_mobile | default: 280 }}px; --review-card-height-desktop: {{ section.settings.card_height_desktop | default: 300 }}px; --gc-track-gap-mobile: 16px; --gc-track-gap-desktop: 24px; --gc-track-padding-mobile: 0.25rem 0.1rem 0.6rem 0.1rem; --gc-track-padding-desktop: 0.3rem 0.2rem 0.75rem 0.2rem; background-color: var(--section-bg);">
+  <div class="max-w-[1440px] mx-auto section-layout-px">
+    <div class="relative flex items-center mb-4 md:mb-6">
+      <div class="flex-grow border-t" style="border-color: color-mix(in srgb, {{ section.settings.title_color }} 15%, transparent);"></div>
+      <h2 class="reviews-carousel__title flex-shrink mx-4 font-headline uppercase tracking-tight" style="--title-size-mobile: {{ section.settings.title_size_mobile }}px; --title-size-desktop: {{ section.settings.title_size_desktop }}px; color: {{ section.settings.title_color }}; font-weight: bold;">{{ section.settings.title }}</h2>
+      <div class="flex-grow border-t" style="border-color: color-mix(in srgb, {{ section.settings.title_color }} 15%, transparent);"></div>
+    </div>
+
+    <div class="relative group">
+      <button id="prev-btn-{{ section.id }}" class="reviews-arrow absolute left-[-20px] md:left-[-20px] top-1/2 -translate-y-1/2 z-10 rounded-full shadow-md border hidden md:flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" style="width: {{ section.settings.arrow_size }}px; height: {{ section.settings.arrow_size }}px; background-color: {{ reviews_arrow_bg }}; border-color: {{ reviews_arrow_border }}; color: {{ reviews_arrow_icon }};" type="button" aria-label="Anterior">
+        <span class="material-symbols-outlined" style="font-size: {{ section.settings.arrow_icon_size }}px;">chevron_left</span>
+      </button>
+      <button id="next-btn-{{ section.id }}" class="reviews-arrow absolute right-[-20px] md:right-[-20px] top-1/2 -translate-y-1/2 z-10 rounded-full shadow-md border hidden md:flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" style="width: {{ section.settings.arrow_size }}px; height: {{ section.settings.arrow_size }}px; background-color: {{ reviews_arrow_bg }}; border-color: {{ reviews_arrow_border }}; color: {{ reviews_arrow_icon }};" type="button" aria-label="Próximo">
+        <span class="material-symbols-outlined" style="font-size: {{ section.settings.arrow_icon_size }}px;">chevron_right</span>
+      </button>
+
+      <div id="carousel-{{ section.id }}" class="flex gc-unified-track overflow-x-auto no-scrollbar snap-x scroll-smooth">
+        {% for block in section.blocks %}
+          <div {{ block.shopify_attributes }}>
+            {% render 'review-card', 
+              review_link: block.settings.review_link,
+              name: block.settings.name, 
+              name_color: block.settings.name_color,
+              name_size_mobile: block.settings.name_size_mobile,
+              name_size_desktop: block.settings.name_size_desktop,
+              meta: block.settings.meta, 
+              meta_color: block.settings.meta_color,
+              meta_size_mobile: block.settings.meta_size_mobile,
+              meta_size_desktop: block.settings.meta_size_desktop,
+              text: block.settings.text, 
+              text_color: block.settings.text_color,
+              stars: block.settings.stars,
+              star_color: block.settings.star_color,
+              avatar: block.settings.avatar,
+              avatar_bg: block.settings.avatar_bg
+            %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .reviews-carousel__title {
+    font-size: var(--title-size-mobile, 20px);
+  }
+
+  #shopify-section-{{ section.id }} .review-card {
+    height: var(--review-card-height-mobile, 280px);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .review-card .review-card__text {
+    max-height: calc(var(--review-card-height-mobile, 280px) - 140px);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .review-card .review-card__name {
+
+  #shopify-section-{{ section.id }} .review-card .review-card__meta {
+    font-size: var(--review-meta-size-mobile, 11px);
+  }
+
+  #shopify-section-{{ section.id }} .reviews-arrow {
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .reviews-arrow:hover {
+    background-color: {{ reviews_arrow_bg_hover }} !important;
+    border-color: {{ reviews_arrow_border_hover }} !important;
+    color: {{ reviews_arrow_icon_hover }} !important;
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .review-card {
+      height: var(--review-card-height-desktop, 300px);
+    }
+
+    #shopify-section-{{ section.id }} .review-card .review-card__text {
+      max-height: calc(var(--review-card-height-desktop, 300px) - 140px);
+    }
+
+    #shopify-section-{{ section.id }} .reviews-carousel__title {
+      font-size: var(--title-size-desktop, 24px);
+    }
+
+    #shopify-section-{{ section.id }} .review-card .review-card__name {
+      font-size: var(--review-name-size-desktop, 16px);
+    }
+
+    #shopify-section-{{ section.id }} .review-card .review-card__meta {
+      font-size: var(--review-meta-size-desktop, 12px);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const track   = document.getElementById('carousel-{{ section.id }}');
+    const prevBtn = document.getElementById('prev-btn-{{ section.id }}');
+    const nextBtn = document.getElementById('next-btn-{{ section.id }}');
+
+    if (!track || !prevBtn || !nextBtn) return;
+
+    const autoplayEnabled    = {{ section.settings.autoplay_enabled | json }};
+    const autoplayIntervalMs = {{ section.settings.autoplay_interval | default: 4 | times: 1000 }};
+
+    const carousel = new window.CarouselController(track, {
+      prev:          prevBtn,
+      next:          nextBtn,
+      slideSelector: '.review-card'
+    });
+    carousel.bind();
+
+    if (autoplayEnabled) {
+      const autoplay = new window.CarouselAutoplay(track, {
+        intervalMs: autoplayIntervalMs,
+        getStep:    function () { return carousel.getStep(); }
+      });
+      autoplay.bind();
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Reviews carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "AVALIAÇÕES DE NOSSOS CLIENTES!"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Fundo da Seção",
+      "default": "#f8fafc"
+    },
+    {
+      "type": "color",
+      "id": "section_text_color",
+      "label": "Texto da Seção",
+      "default": "#18181b"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Cor do Título",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 12,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamanho do Título (Mobile)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 12,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamanho do Título (Desktop)",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "review_card_bg_color",
+      "label": "Fundo do Card",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "review_card_border_color",
+      "label": "Cor da Borda do Card",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "color",
+      "id": "review_card_text_color",
+      "label": "Cor do Texto do Card",
+      "default": "#18181b"
+    },
+    {
+      "type": "color",
+      "id": "review_card_muted_color",
+      "label": "Cor do Meta do Card",
+      "default": "#9ca3af"
+    },
+    {
+      "type": "range",
+      "id": "card_height_mobile",
+      "min": 180,
+      "max": 520,
+      "step": 4,
+      "unit": "px",
+      "label": "Altura do Card (Mobile)",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "card_height_desktop",
+      "min": 180,
+      "max": 520,
+      "step": 4,
+      "unit": "px",
+      "label": "Altura do Card (Desktop)",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "review_card_border_width",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Espessura da Borda do Card",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Cor da Seta",
+      "default": "#9ca3af"
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Fundo da Seta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamanho do Botão da Seta",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "arrow_icon_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamanho do Ícone da Seta",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_enabled",
+      "label": "Autoplay do carrossel",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Intervalo do autoplay",
+      "default": 4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Avaliação",
+      "settings": [
+        {
+          "type": "url",
+          "id": "review_link",
+          "label": "Link do Card"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nome",
+          "default": "Priscila Araujo"
+        },
+        {
+          "type": "color",
+          "id": "name_color",
+          "label": "Cor do Nome (Vazio = Automático)"
+        },
+        {
+          "type": "range",
+          "id": "name_size_mobile",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamanho do Nome (Mobile)",
+          "default": 15
+        },
+        {
+          "type": "range",
+          "id": "name_size_desktop",
+          "min": 10,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamanho do Nome (Desktop)",
+          "default": 16
+        },
+        {
+          "type": "text",
+          "id": "meta",
+          "label": "Meta",
+          "default": "5 meses atrás"
+        },
+        {
+          "type": "color",
+          "id": "meta_color",
+          "label": "Cor do Meta (Vazio = Automático)"
+        },
+        {
+          "type": "range",
+          "id": "meta_size_mobile",
+          "min": 10,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamanho do Meta (Mobile)",
+          "default": 11
+        },
+        {
+          "type": "range",
+          "id": "meta_size_desktop",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamanho do Meta (Desktop)",
+          "default": 12
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto",
+          "default": "Muito bom o atendimento !"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Cor do Texto (Vazio = Automático)"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Estrelas Ativas",
+          "default": 5
+        },
+        {
+          "type": "color",
+          "id": "star_color",
+          "label": "Cor das Estrelas",
+          "default": "#f4b400"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Avatar (Foto)"
+        },
+        {
+          "type": "color",
+          "id": "avatar_bg",
+          "label": "Fundo do Avatar (Fallback)",
+          "default": "#22c55e"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews carousel",
+      "blocks": [
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "page-favoritos-custom",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

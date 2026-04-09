@@ -1,0 +1,2067 @@
+{% liquid
+  assign section_bg = settings.global_surface_base_color | default: '#F7F7F7'
+  assign section_text = settings.global_text_primary_color | default: '#1a1c1c'
+  assign section_muted = settings.global_text_muted_color | default: '#6B7280'
+  assign plp_filter_panel_bg = section.settings.filter_panel_bg | default: '#ffffff'
+  assign plp_filter_panel_text = section.settings.filter_panel_text_color | default: section_text
+  assign plp_filter_title_color = section.settings.filter_title_color | default: plp_filter_panel_text
+  assign plp_filter_title_size_mobile = section.settings.filter_title_size_mobile | default: 16
+  assign plp_filter_title_size_desktop = section.settings.filter_title_size_desktop | default: 18
+  assign plp_filter_title_main = section.settings.filter_title_main | default: 'Filtros'
+  assign plp_filter_title_sort = section.settings.filter_title_sort | default: 'Ordenacao'
+  assign plp_filter_title_color_label = section.settings.filter_title_color_label | default: 'Cor'
+  assign plp_filter_title_price = section.settings.filter_title_price | default: 'Preço'
+  assign plp_filter_title_other = section.settings.filter_title_other | default: 'Outros'
+  assign plp_filter_panel_border = section.settings.filter_panel_border_color | default: settings.global_border_color | default: '#E5E7EB'
+  assign plp_filter_help_color = section.settings.filter_help_color | default: section_muted
+  assign global_installments_count = settings.global_installments_count | default: 10 | plus: 0
+  assign product_min_inventory = settings.global_product_card_min_inventory | default: 0 | plus: 0
+  assign plp_filter_input_bg = section.settings.filter_input_bg | default: '#ffffff'
+  assign plp_filter_input_text = section.settings.filter_input_text_color | default: section_text
+  assign plp_filter_input_border = section.settings.filter_input_border_color | default: plp_filter_panel_border
+  assign plp_filter_chip_bg = section.settings.filter_chip_bg | default: '#ffffff'
+  assign plp_filter_chip_text = section.settings.filter_chip_text_color | default: section_text
+  assign plp_filter_chip_border = section.settings.filter_chip_border_color | default: plp_filter_input_border
+  assign plp_mobile_toolbar_bg = section.settings.mobile_filter_toolbar_bg | default: section_bg
+  assign plp_mobile_toolbar_border = section.settings.mobile_filter_toolbar_border | default: plp_filter_panel_border
+  assign plp_mobile_filter_btn_bg = section.settings.mobile_filter_button_bg | default: settings.global_primary_color | default: '#0058BB'
+  assign plp_mobile_filter_btn_text = section.settings.mobile_filter_button_text_color | default: settings.global_button_primary_text_color | default: '#ffffff'
+  assign plp_mobile_filter_btn_border = section.settings.mobile_filter_button_border_color | default: plp_mobile_filter_btn_bg
+  assign plp_mobile_filter_btn_icon = section.settings.mobile_filter_button_icon_color | default: plp_mobile_filter_btn_text
+  assign plp_mobile_overlay_bg = section.settings.mobile_filter_overlay_color | default: '#1a1c1c59'
+  assign plp_filter_badge_bg = section.settings.filter_badge_bg | default: settings.global_primary_color | default: '#0058BB'
+  assign plp_filter_badge_text = section.settings.filter_badge_text_color | default: settings.global_button_primary_text_color | default: '#ffffff'
+  assign products_per_page = section.settings.products_per_page | default: 12
+  assign cards_per_row = section.settings.cards_per_row | default: 4
+  assign collection_title_size_mobile = section.settings.collection_title_size_mobile | default: 30
+  assign collection_title_size_desktop = section.settings.collection_title_size_desktop | default: 44
+  assign card_width_mobile_min = 150
+  assign card_width_mobile_max = 230
+  assign card_height_mobile_min = 320
+  assign card_height_mobile_max = 430
+  assign plp_is_search = false
+  assign plp_base_url = collection.url
+  assign plp_title = collection.title
+  assign plp_description = collection.description | strip_html | downcase
+  assign plp_results_count = collection.products_count
+  assign plp_collection_filtered_total = 0
+  assign plp_filters = collection.filters
+  assign plp_search_terms = search.terms | default: ''
+  assign plp_search_products = blank
+  assign plp_valid_types_acc = ''
+  assign plp_valid_vendors_acc = ''
+  assign plp_valid_tags_acc = ''
+  assign current_sort = collection.sort_by | default: 'manual'
+
+  if request.page_type == 'search'
+    assign plp_is_search = true
+    assign plp_base_url = routes.search_url
+    assign plp_title = section.settings.search_title | default: 'Resultados da busca'
+    assign plp_description = blank
+    assign plp_search_products = search.results | where: 'object_type', 'product'
+    assign plp_results_count = 0
+    assign plp_filters = search.filters
+    assign current_sort = search.sort_by | default: 'relevance'
+  endif
+
+  if global_installments_count < 1
+    assign global_installments_count = 1
+  endif
+
+  if product_min_inventory < 0
+    assign product_min_inventory = 0
+  endif
+
+  if plp_is_search
+    assign plp_results_count = 0
+    for search_product in plp_search_products
+      assign meets_min_inventory = true
+      assign search_product_variant = search_product.selected_or_first_available_variant
+
+      if search_product_variant.inventory_management == 'shopify'
+        assign search_inventory_quantity = search_product_variant.inventory_quantity | default: 0 | plus: 0
+        if search_inventory_quantity < product_min_inventory
+          assign meets_min_inventory = false
+        endif
+      elsif search_product.available == false
+        assign meets_min_inventory = false
+      endif
+
+      if meets_min_inventory
+        assign plp_results_count = plp_results_count | plus: 1
+        if search_product.type != blank
+          assign plp_valid_types_acc = plp_valid_types_acc | append: '||' | append: search_product.type
+        endif
+        if search_product.vendor != blank
+          assign plp_valid_vendors_acc = plp_valid_vendors_acc | append: '||' | append: search_product.vendor
+        endif
+        for plp_tag_item in search_product.tags
+          assign plp_valid_tags_acc = plp_valid_tags_acc | append: '||' | append: plp_tag_item
+        endfor
+      endif
+    endfor
+  else
+    assign plp_collection_filtered_total = 0
+    for collection_product in collection.products
+      assign meets_min_inventory = true
+      assign collection_product_variant = collection_product.selected_or_first_available_variant
+
+      if collection_product_variant.inventory_management == 'shopify'
+        assign collection_inventory_quantity = collection_product_variant.inventory_quantity | default: 0 | plus: 0
+        if collection_inventory_quantity < product_min_inventory
+          assign meets_min_inventory = false
+        endif
+      elsif collection_product.available == false
+        assign meets_min_inventory = false
+      endif
+
+      if meets_min_inventory
+        assign plp_collection_filtered_total = plp_collection_filtered_total | plus: 1
+        if collection_product.type != blank
+          assign plp_valid_types_acc = plp_valid_types_acc | append: '||' | append: collection_product.type
+        endif
+        if collection_product.vendor != blank
+          assign plp_valid_vendors_acc = plp_valid_vendors_acc | append: '||' | append: collection_product.vendor
+        endif
+        for plp_tag_item in collection_product.tags
+          assign plp_valid_tags_acc = plp_valid_tags_acc | append: '||' | append: plp_tag_item
+        endfor
+      endif
+    endfor
+    assign plp_results_count = plp_collection_filtered_total
+  endif
+
+  assign card_width_mobile_min_raw = section.settings.card_width_mobile_min | strip
+  assign card_width_mobile_max_raw = section.settings.card_width_mobile_max | strip
+  assign card_height_mobile_min_raw = section.settings.card_height_mobile_min | strip
+  assign card_height_mobile_max_raw = section.settings.card_height_mobile_max | strip
+  assign priority_card_width_mobile_raw = section.settings.priority_card_width_mobile | strip
+  assign priority_card_height_mobile_raw = section.settings.priority_card_height_mobile | strip
+  assign priority_media_height_mobile_raw = section.settings.priority_media_height_mobile | strip
+
+  if card_width_mobile_min_raw != blank
+    assign parsed_width_min = card_width_mobile_min_raw | plus: 0
+    if parsed_width_min > 0
+      assign card_width_mobile_min = parsed_width_min
+    endif
+  endif
+
+  if card_width_mobile_max_raw != blank
+    assign parsed_width_max = card_width_mobile_max_raw | plus: 0
+    if parsed_width_max > 0
+      assign card_width_mobile_max = parsed_width_max
+    endif
+  endif
+
+  if card_height_mobile_min_raw != blank
+    assign parsed_height_min = card_height_mobile_min_raw | plus: 0
+    if parsed_height_min > 0
+      assign card_height_mobile_min = parsed_height_min
+    endif
+  endif
+
+  if card_height_mobile_max_raw != blank
+    assign parsed_height_max = card_height_mobile_max_raw | plus: 0
+    if parsed_height_max > 0
+      assign card_height_mobile_max = parsed_height_max
+    endif
+  endif
+
+  assign plp_card_bg = settings.global_product_card_bg_color | default: settings.global_surface_card_color
+  assign plp_card_border = settings.global_product_card_border_color | default: settings.global_border_color
+  assign plp_card_border_hover = settings.global_product_card_border_hover_color | default: settings.global_primary_color
+  assign plp_card_border_width = settings.global_product_card_border_width | default: 1
+  assign plp_card_radius = settings.global_product_card_radius | default: 16
+  assign plp_card_padding = settings.global_product_card_padding | default: 16
+  assign plp_card_width_mobile = settings.global_product_card_width_mobile | default: 230
+  assign plp_card_width_desktop = settings.global_product_card_width_desktop | default: 270
+  assign plp_card_height_mobile = settings.global_product_card_height_mobile | default: 430
+  assign plp_card_height_desktop = settings.global_product_card_height_desktop | default: 500
+  assign plp_media_height_mobile = settings.global_product_card_media_height_mobile | default: 230
+  assign plp_media_height_desktop = settings.global_product_card_media_height_desktop | default: 270
+
+  if priority_card_width_mobile_raw != blank
+    assign priority_card_width_mobile = priority_card_width_mobile_raw | plus: 0
+    if priority_card_width_mobile > 0
+      assign card_width_mobile_min = priority_card_width_mobile
+      assign card_width_mobile_max = priority_card_width_mobile
+      assign plp_card_width_mobile = priority_card_width_mobile
+    endif
+  endif
+
+  if priority_card_height_mobile_raw != blank
+    assign priority_card_height_mobile = priority_card_height_mobile_raw | plus: 0
+    if priority_card_height_mobile > 0
+      assign card_height_mobile_min = priority_card_height_mobile
+      assign card_height_mobile_max = priority_card_height_mobile
+      assign plp_card_height_mobile = priority_card_height_mobile
+    endif
+  endif
+
+  if priority_media_height_mobile_raw != blank
+    assign priority_media_height_mobile = priority_media_height_mobile_raw | plus: 0
+    if priority_media_height_mobile > 0
+      assign plp_media_height_mobile = priority_media_height_mobile
+    endif
+  endif
+
+  if card_width_mobile_min > card_width_mobile_max
+    assign card_width_mobile_min = card_width_mobile_max
+  endif
+
+  if card_height_mobile_min > card_height_mobile_max
+    assign card_height_mobile_min = card_height_mobile_max
+  endif
+  assign plp_title_color = settings.global_product_card_title_color | default: settings.global_text_primary_color
+  assign plp_title_hover = settings.global_product_card_title_hover_color | default: settings.global_primary_color
+  assign plp_meta_color = settings.global_product_card_meta_color | default: settings.global_text_muted_color
+  assign plp_price_color = settings.global_product_card_price_color | default: settings.global_text_primary_color
+  assign plp_discount_bg = settings.global_product_card_discount_badge_bg | default: settings.global_primary_color
+  assign plp_discount_text = settings.global_product_card_discount_badge_text | default: settings.global_button_primary_text_color
+  assign plp_buy_bg = settings.global_button_primary_bg_color | default: settings.global_primary_color
+  assign plp_buy_bg_hover = settings.global_button_primary_bg_hover_color | default: '#004A9D'
+  assign plp_buy_text = settings.global_button_primary_text_color
+  assign plp_buy_radius = settings.global_button_primary_radius | default: 12
+  assign plp_buy_text_size = settings.global_button_primary_text_size | default: 14
+  assign plp_title_size_mobile = settings.global_product_title_size_mobile | default: 14
+  assign plp_title_size_desktop = settings.global_product_title_size_desktop | default: 16
+  assign plp_price_size_mobile = settings.global_product_price_size_mobile | default: 24
+  assign plp_price_size_desktop = settings.global_product_price_size_desktop | default: 28
+  assign plp_meta_size_mobile = settings.global_product_card_meta_size_mobile | default: 12
+  assign plp_meta_size_desktop = settings.global_product_card_meta_size_desktop | default: 12
+  assign plp_show_ratings = settings.global_product_card_show_ratings
+  assign plp_show_buy_button = settings.global_product_card_show_buy_button
+  assign plp_show_discount_badge = settings.global_product_card_show_discount_badge
+  assign plp_buy_label = settings.global_product_card_buy_label | default: 'COMPRAR'
+  assign plp_media_bg = settings.global_recommended_media_bg_color | default: settings.global_product_card_media_bg_color | default: '#F7F7F7'
+  assign plp_image_fit = settings.global_product_card_image_fit | default: 'cover'
+  assign plp_image_position = settings.global_product_card_image_position | default: 'center center'
+  assign plp_rating_color = settings.global_recommended_rating_color | default: settings.global_product_card_rating_color | default: '#facc15'
+
+  assign plp_sidebar_width = 290
+  assign plp_layout_gap = 32
+  assign plp_gap_mobile = 4
+  assign plp_gap_desktop = 20
+  assign cards_total_width = plp_card_width_desktop | times: cards_per_row
+  assign cards_gaps_count = cards_per_row | minus: 1
+  assign cards_total_gap_width = plp_gap_desktop | times: cards_gaps_count
+  assign products_column_width = cards_total_width | plus: cards_total_gap_width
+  assign section_width_cap = section.settings.section_max_width_cap | default: settings.global_layout_max_width | default: 1310
+  assign section_max_width = section_width_cap
+
+  assign has_native_color_filter = false
+  assign has_native_price_filter = false
+  assign fallback_color_tokens = '|'
+  assign fallback_color_values = ''
+
+  for filter in plp_filters
+    assign filter_label_downcase = filter.label | downcase
+    if filter.type == 'list'
+      if filter_label_downcase contains 'cor' or filter_label_downcase contains 'color'
+        assign has_native_color_filter = true
+      endif
+    endif
+    if filter.type == 'price_range'
+      assign has_native_price_filter = true
+    endif
+  endfor
+
+  if plp_is_search
+    for fallback_product in plp_search_products
+      assign fp_meets_min = false
+      for fp_variant in fallback_product.variants
+        if fp_meets_min == false
+          if fp_variant.inventory_management == 'shopify'
+            assign fp_inv_qty = fp_variant.inventory_quantity | default: 0 | plus: 0
+            if fp_inv_qty >= product_min_inventory
+              assign fp_meets_min = true
+            endif
+          elsif fp_variant.available
+            assign fp_meets_min = true
+          endif
+        endif
+      endfor
+      unless fp_meets_min
+        continue
+      endunless
+      for option in fallback_product.options_with_values
+        assign option_name_downcase = option.name | downcase
+        if option_name_downcase contains 'cor' or option_name_downcase contains 'color'
+          for option_value in option.values
+            assign normalized_color = option_value | strip | downcase
+            assign color_token = '|' | append: normalized_color | append: '|'
+            unless fallback_color_tokens contains color_token
+              assign fallback_color_tokens = fallback_color_tokens | append: normalized_color | append: '|'
+              assign fallback_color_values = fallback_color_values | append: option_value | append: '||'
+            endunless
+          endfor
+        endif
+      endfor
+    endfor
+  else
+    for fallback_product in collection.products
+      assign fp_meets_min = false
+      for fp_variant in fallback_product.variants
+        if fp_meets_min == false
+          if fp_variant.inventory_management == 'shopify'
+            assign fp_inv_qty = fp_variant.inventory_quantity | default: 0 | plus: 0
+            if fp_inv_qty >= product_min_inventory
+              assign fp_meets_min = true
+            endif
+          elsif fp_variant.available
+            assign fp_meets_min = true
+          endif
+        endif
+      endfor
+      unless fp_meets_min
+        continue
+      endunless
+      for option in fallback_product.options_with_values
+        assign option_name_downcase = option.name | downcase
+        if option_name_downcase contains 'cor' or option_name_downcase contains 'color'
+          for option_value in option.values
+            assign normalized_color = option_value | strip | downcase
+            assign color_token = '|' | append: normalized_color | append: '|'
+            unless fallback_color_tokens contains color_token
+              assign fallback_color_tokens = fallback_color_tokens | append: normalized_color | append: '|'
+              assign fallback_color_values = fallback_color_values | append: option_value | append: '||'
+            endunless
+          endfor
+        endif
+      endfor
+    endfor
+  endif
+%}
+
+<style>
+  #shopify-section-{{ section.id }} .plp-shell {
+    background-color: {{ section_bg }};
+    color: {{ section_text }};
+  }
+
+  #shopify-section-{{ section.id }} .plp-title {
+    font-size: {{ collection_title_size_mobile }}px;
+    line-height: 1.1;
+  }
+
+  #shopify-section-{{ section.id }} .plp-subtitle {
+    color: color-mix(in srgb, {{ section_text }} 70%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .plp-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  #shopify-section-{{ section.id }} .plp-mobile-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    overflow-x: auto;
+    padding: 0.75rem 0 0.8rem;
+    margin-bottom: 0.4rem;
+    background: color-mix(in srgb, {{ plp_mobile_toolbar_bg }} 86%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid color-mix(in srgb, {{ plp_mobile_toolbar_border }} 60%, transparent);
+    scrollbar-width: none;
+  }
+
+  #shopify-section-{{ section.id }} .plp-mobile-toolbar::-webkit-scrollbar { display: none; }
+
+  #shopify-section-{{ section.id }} .plp-mobile-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid color-mix(in srgb, {{ plp_filter_input_border }} 65%, transparent);
+    border-radius: 999px;
+    background: {{ plp_filter_input_bg }};
+    color: {{ plp_filter_input_text }};
+    font-size: 0.78rem;
+    font-weight: 400;
+    line-height: 1;
+    padding: 0.55rem 0.85rem;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .plp-mobile-filter-btn {
+    border-color: color-mix(in srgb, {{ plp_mobile_filter_btn_border }} 70%, transparent);
+    background: {{ plp_mobile_filter_btn_bg }};
+    color: {{ plp_mobile_filter_btn_text }};
+    font-weight: 400;
+    box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.28);
+  }
+
+  #shopify-section-{{ section.id }} .plp-mobile-filter-btn .material-symbols-outlined {
+    color: {{ plp_mobile_filter_btn_icon }};
+  }
+
+  #shopify-section-{{ section.id }} .plp-mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: {{ plp_mobile_overlay_bg }};
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 180ms ease;
+    z-index: 9998;
+  }
+
+  #shopify-section-{{ section.id }} .plp-mobile-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  #shopify-section-{{ section.id }} .plp-products-column {
+    width: 100%;
+    min-width: 0;
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .plp-sidebar {
+    border: 1px solid color-mix(in srgb, {{ plp_filter_panel_border }} 70%, transparent);
+    border-radius: 16px;
+    background: {{ plp_filter_panel_bg }};
+    color: {{ plp_filter_panel_text }};
+  }
+
+  #shopify-section-{{ section.id }} .plp-sidebar-toggle-close {
+    border: 1px solid color-mix(in srgb, {{ plp_filter_input_border }} 70%, transparent);
+    border-radius: 999px;
+    width: 1.9rem;
+    height: 1.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: {{ plp_filter_input_bg }};
+    color: {{ plp_filter_input_text }};
+  }
+
+  #shopify-section-{{ section.id }} .plp-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-bottom: 0.9rem;
+    margin-bottom: 0.65rem;
+    border-bottom: 1px solid color-mix(in srgb, {{ plp_filter_panel_border }} 65%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .plp-clear-filters {
+    border: 1px solid color-mix(in srgb, {{ plp_filter_input_border }} 70%, transparent);
+    border-radius: 10px;
+    background: {{ plp_filter_input_bg }};
+    color: {{ plp_filter_input_text }};
+    font-size: 0.8rem;
+    font-weight: 400;
+    padding: 0.45rem 0.75rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .plp-filter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: {{ plp_filter_badge_bg }};
+    color: {{ plp_filter_badge_text }};
+    font-size: 0.7rem;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .plp-filter-group {
+    padding-bottom: 0.7rem;
+  }
+
+  #shopify-section-{{ section.id }} .plp-filter-group + .plp-filter-group {
+    border-top: 1px solid color-mix(in srgb, {{ plp_filter_panel_border }} 55%, transparent);
+    margin-top: 0.35rem;
+    padding-top: 0.95rem;
+  }
+
+  #shopify-section-{{ section.id }} .plp-filter-label {
+    color: {{ plp_filter_panel_text }};
+    margin-bottom: 0.55rem;
+    line-height: 1.25;
+  }
+
+  #shopify-section-{{ section.id }} .plp-filter-title {
+    color: {{ plp_filter_title_color }};
+    font-size: {{ plp_filter_title_size_mobile }}px;
+    line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .plp-filter-help {
+    color: {{ plp_filter_help_color }};
+  }
+
+  #shopify-section-{{ section.id }} .plp-active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.25rem 0 0.5rem;
+    max-height: 130px;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, {{ section_text }} 32%, transparent) transparent;
+  }
+
+  #shopify-section-{{ section.id }} .plp-active-filters::-webkit-scrollbar {
+    width: 1px;
+  }
+
+  #shopify-section-{{ section.id }} .plp-active-filters::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .plp-active-filters::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, {{ section_text }} 32%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .plp-active-chip {
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, {{ plp_filter_chip_border }} 70%, transparent);
+    background: {{ plp_filter_chip_bg }};
+    color: {{ plp_filter_chip_text }};
+    font-size: 0.72rem;
+    font-weight: 400;
+    padding: 0.3rem 0.6rem;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .plp-color-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, {{ section_text }} 32%, transparent) transparent;
+  }
+
+  #shopify-section-{{ section.id }} .plp-color-grid::-webkit-scrollbar {
+    width: 1px;
+  }
+
+  #shopify-section-{{ section.id }} .plp-color-grid::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .plp-color-grid::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, {{ section_text }} 32%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .plp-list-filter-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 96px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, {{ section_text }} 32%, transparent) transparent;
+  }
+
+  #shopify-section-{{ section.id }} .plp-list-filter-grid::-webkit-scrollbar {
+    width: 1px;
+  }
+
+  #shopify-section-{{ section.id }} .plp-list-filter-grid::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .plp-list-filter-grid::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, {{ section_text }} 32%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .plp-color-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0.28rem 0;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .plp-color-dot {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    flex: 0 0 auto;
+    background: #d6d3d1;
+  }
+
+  #shopify-section-{{ section.id }} .plp-price-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.6rem;
+  }
+
+  #shopify-section-{{ section.id }} .plp-price-preset {
+    border: 1px solid color-mix(in srgb, {{ plp_filter_input_border }} 70%, transparent);
+    border-radius: 999px;
+    background: {{ plp_filter_input_bg }};
+    color: {{ plp_filter_input_text }};
+    font-size: 0.74rem;
+    font-weight: 400;
+    padding: 0.3rem 0.65rem;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .plp-fallback-note {
+    margin-top: 0.6rem;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    color: {{ plp_filter_help_color }};
+  }
+
+  #shopify-section-{{ section.id }} .plp-color-select,
+  #shopify-section-{{ section.id }} .plp-sort-select,
+  #shopify-section-{{ section.id }} .plp-price-input {
+    width: 100%;
+    border: 1px solid color-mix(in srgb, {{ plp_filter_input_border }} 72%, transparent);
+    border-radius: 10px;
+    background: {{ plp_filter_input_bg }};
+    color: {{ plp_filter_input_text }};
+    font-size: 0.9rem;
+    padding: 0.55rem 0.75rem;
+  }
+
+  #shopify-section-{{ section.id }} .plp-sort-select {
+    min-height: 38px;
+    padding: 0.5rem 0.7rem 0.5rem 2.1rem;
+    font-size: 0.86rem;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .plp-sort-field {
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .plp-sort-field-icon {
+    position: absolute;
+    left: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: {{ plp_filter_help_color }};
+    pointer-events: none;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .plp-listing-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: {{ plp_gap_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .plp-product-item {
+    width: min(100%, clamp({{ card_width_mobile_min }}px, calc((100% - {{ plp_gap_mobile }}px) / 2), {{ card_width_mobile_max }}px));
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .plp-card {
+    background-color: var(--gc-card-bg);
+    border: var(--gc-card-border-width) solid var(--gc-card-border);
+    border-radius: var(--gc-card-radius);
+    padding: 0;
+    min-height: clamp({{ card_height_mobile_min }}px, 58vw, {{ card_height_mobile_max }}px);
+    max-height: clamp({{ card_height_mobile_min }}px, 58vw, {{ card_height_mobile_max }}px);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-media {
+    margin-bottom: 0;
+    border-radius: var(--gc-card-radius) var(--gc-card-radius) 0 0;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-content {
+    padding: var(--gc-card-padding);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1 1 auto;
+  }
+
+  #shopify-section-{{ section.id }} .plp-card:hover {
+    border-color: var(--gc-card-border-hover);
+    box-shadow: 0 10px 24px -18px rgba(0, 0, 0, 0.18);
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-title {
+    color: {{ plp_title_color }};
+    font-size: {{ plp_title_size_mobile }}px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .plp-card:hover .plp-card-title {
+    color: {{ plp_title_hover }};
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-meta {
+    color: var(--gc-meta-color);
+    font-size: var(--gc-meta-size-mobile);
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-price {
+    color: var(--gc-price-color);
+    font-size: var(--gc-price-size-mobile);
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-rating {
+    color: {{ plp_rating_color }};
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-price-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-discount {
+    background-color: {{ plp_discount_bg }};
+    color: {{ plp_discount_text }};
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-buy {
+    background-color: var(--gc-buy-bg);
+    color: var(--gc-buy-text);
+    font-size: var(--gc-buy-text-size);
+    border-radius: var(--gc-buy-radius);
+  }
+
+  #shopify-section-{{ section.id }} .plp-card-buy:hover {
+    background-color: var(--gc-buy-bg-hover);
+  }
+
+  #shopify-section-{{ section.id }} .plp-pagination-link {
+    min-width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, {{ section_text }} 15%, transparent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: {{ section_text }};
+    background: #ffffff;
+    font-weight: 400;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0 6px;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .plp-pagination-link.is-active {
+    background: {{ settings.global_primary_color | default: '#0058BB' }};
+    color: {{ settings.global_button_primary_text_color | default: '#ffffff' }};
+    border-color: {{ settings.global_primary_color | default: '#0058BB' }};
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .plp-mobile-toolbar,
+    #shopify-section-{{ section.id }} .plp-mobile-overlay,
+    #shopify-section-{{ section.id }} .plp-sidebar-toggle-close {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .plp-layout {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 2rem;
+    }
+
+    #shopify-section-{{ section.id }} .plp-sidebar {
+      width: min(100%, 290px);
+      flex: 0 0 290px;
+    }
+
+    #shopify-section-{{ section.id }} .plp-products-column {
+      flex: 1 1 auto;
+      max-width: var(--plp-products-column-width, 100%);
+      width: 100%;
+      min-width: 0;
+    }
+
+    #shopify-section-{{ section.id }} .plp-listing-grid {
+      gap: {{ plp_gap_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .plp-product-item {
+      width: calc((100% - ({{ cards_per_row | minus: 1 }} * {{ plp_gap_desktop }}px)) / {{ cards_per_row }});
+    }
+
+    #shopify-section-{{ section.id }} .plp-card {
+      min-height: var(--gc-card-height-desktop);
+      max-height: var(--gc-card-height-desktop);
+    }
+
+    #shopify-section-{{ section.id }} .plp-card-title {
+      font-size: {{ plp_title_size_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .plp-card-meta {
+      font-size: var(--gc-meta-size-desktop);
+    }
+
+    #shopify-section-{{ section.id }} .plp-card-price {
+      font-size: var(--gc-price-size-desktop);
+    }
+
+    #shopify-section-{{ section.id }} .plp-title {
+      font-size: {{ collection_title_size_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .plp-filter-title {
+      font-size: {{ plp_filter_title_size_desktop }}px;
+    }
+
+  }
+
+  @media (min-width: 1200px) {
+  }
+
+  @media (max-width: 767px) {
+    #shopify-section-{{ section.id }} .plp-listing-grid {
+      gap: 4px !important;
+      margin-inline: auto;
+    }
+
+    #shopify-section-{{ section.id }} .plp-sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: min(92vw, 340px);
+      height: 100dvh;
+      max-height: 100dvh;
+      border-radius: 0;
+      border-left: 0;
+      border-top: 0;
+      border-bottom: 0;
+      z-index: 9999;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      transform: translateX(-102%);
+      transition: transform 220ms ease;
+      padding-bottom: 1.25rem;
+      box-shadow: 20px 0 35px rgba(0, 0, 0, 0.14);
+    }
+
+    #shopify-section-{{ section.id }} .plp-sidebar form {
+      min-height: calc(100dvh - 1.25rem);
+    }
+
+    #shopify-section-{{ section.id }} .plp-sidebar.is-open {
+      transform: translateX(0);
+    }
+  }
+</style>
+
+<section class="plp-shell section-layout-py" data-cards-per-row="{{ cards_per_row }}" data-card-width-desktop="{{ plp_card_width_desktop }}" data-grid-gap-desktop="{{ plp_gap_desktop }}" style="--gc-card-bg: {{ plp_card_bg }}; --gc-card-border: {{ plp_card_border }}; --gc-card-border-hover: {{ plp_card_border_hover }}; --gc-card-border-width: {{ plp_card_border_width }}px; --gc-card-radius: {{ plp_card_radius }}px; --gc-card-padding: {{ plp_card_padding }}px; --gc-card-height-mobile: {{ plp_card_height_mobile }}px; --gc-card-height-desktop: {{ plp_card_height_desktop }}px; --gc-media-height-mobile: {{ plp_media_height_mobile }}px; --gc-media-height-desktop: {{ plp_media_height_desktop }}px; --gc-image-fit: {{ plp_image_fit }}; --gc-image-position: {{ plp_image_position }}; --gc-meta-color: {{ plp_meta_color }}; --gc-price-color: {{ plp_price_color }}; --gc-meta-size-mobile: {{ plp_meta_size_mobile }}px; --gc-meta-size-desktop: {{ plp_meta_size_desktop }}px; --gc-price-size-mobile: {{ plp_price_size_mobile }}px; --gc-price-size-desktop: {{ plp_price_size_desktop }}px; --gc-buy-bg: {{ plp_buy_bg }}; --gc-buy-bg-hover: {{ plp_buy_bg_hover }}; --gc-buy-text: {{ plp_buy_text }}; --gc-buy-text-size: {{ plp_buy_text_size }}px; --gc-buy-radius: {{ plp_buy_radius }}px;">
+  <div class="plp-mobile-overlay" data-mobile-filter-overlay></div>
+  <div class="max-w-none mx-auto section-layout-px" style="max-width: {{ section_max_width }}px;">
+    <div class="plp-layout">
+      <aside class="plp-sidebar p-4 md:p-5 h-max md:sticky md:top-28" data-mobile-filter-drawer>
+        <form method="get" action="{{ plp_base_url }}" data-plp-filter-form>
+          {% if plp_is_search and plp_search_terms != blank %}
+            <input type="hidden" name="q" value="{{ plp_search_terms | escape }}">
+          {% endif %}
+          {% assign active_filters_count = 0 %}
+          {% assign has_active_filters = false %}
+          {% for filter in plp_filters %}
+            {% if filter.type == 'list' %}
+              {% assign active_filters_count = active_filters_count | plus: filter.active_values.size %}
+              {% if filter.active_values.size > 0 %}
+                {% assign has_active_filters = true %}
+              {% endif %}
+            {% elsif filter.type == 'price_range' %}
+              {% if filter.min_value.value %}
+                {% assign active_filters_count = active_filters_count | plus: 1 %}
+                {% assign has_active_filters = true %}
+              {% endif %}
+              {% if filter.max_value.value %}
+                {% assign active_filters_count = active_filters_count | plus: 1 %}
+                {% assign has_active_filters = true %}
+              {% endif %}
+            {% elsif filter.type == 'boolean' %}
+              {% if filter.true_value.active %}
+                {% assign active_filters_count = active_filters_count | plus: 1 %}
+                {% assign has_active_filters = true %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          <div class="plp-sidebar-header">
+            <p class="plp-filter-label plp-filter-title font-headline font-black">{{ plp_filter_title_main }}</p>
+            <div class="flex items-center gap-2">
+              {% if active_filters_count > 0 %}
+                <span class="plp-filter-badge">{{ active_filters_count }}</span>
+              {% endif %}
+              <button class="plp-sidebar-toggle-close md:hidden" type="button" data-mobile-filter-close aria-label="Fechar filtros">
+                <span class="material-symbols-outlined text-base">close</span>
+              </button>
+              <a href="{{ plp_base_url }}{% if plp_is_search and plp_search_terms != blank %}?q={{ plp_search_terms | url_encode }}{% endif %}{% if current_sort != blank %}{% if plp_is_search and plp_search_terms != blank %}&{% else %}?{% endif %}sort_by={{ current_sort | url_encode }}{% endif %}" class="plp-clear-filters">Limpar</a>
+            </div>
+          </div>
+
+          <div class="plp-filter-group pt-4 first:pt-0">
+            <h3 class="plp-filter-label plp-filter-title font-headline font-bold mb-3">{{ plp_filter_title_sort }}</h3>
+            <div class="plp-sort-field">
+              <span class="material-symbols-outlined plp-sort-field-icon" aria-hidden="true">swap_vert</span>
+              <select class="plp-sort-select" name="sort_by" data-auto-submit aria-label="Ordenar produtos">
+                {% if plp_is_search %}
+                  <option value="relevance" {% if current_sort == 'relevance' or current_sort == blank %}selected{% endif %}>Relevancia</option>
+                  <option value="price-ascending" {% if current_sort == 'price-ascending' %}selected{% endif %}>Menor preco</option>
+                  <option value="price-descending" {% if current_sort == 'price-descending' %}selected{% endif %}>Maior preço</option>
+                  <option value="date-descending" {% if current_sort == 'date-descending' %}selected{% endif %}>Mais recentes</option>
+                {% else %}
+                  <option value="manual" {% if current_sort == 'manual' or current_sort == blank %}selected{% endif %}>Relevancia</option>
+                  <option value="price-ascending" {% if current_sort == 'price-ascending' %}selected{% endif %}>Menor preco</option>
+                  <option value="title-ascending" {% if current_sort == 'title-ascending' %}selected{% endif %}>Nome A-Z</option>
+                  <option value="best-selling" {% if current_sort == 'best-selling' %}selected{% endif %}>Mais vendidos</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+
+          {% if has_active_filters %}
+            <div class="plp-active-filters" aria-label="Filtros ativos">
+              {% for filter in plp_filters %}
+                {% if filter.type == 'list' %}
+                  {% for value in filter.active_values %}
+                    <span class="plp-active-chip">{{ value.label }}</span>
+                  {% endfor %}
+                {% elsif filter.type == 'price_range' %}
+                  {% if filter.min_value.value %}
+                    <span class="plp-active-chip">Min {{ filter.min_value.value | money }}</span>
+                  {% endif %}
+                  {% if filter.max_value.value %}
+                    <span class="plp-active-chip">Max {{ filter.max_value.value | money }}</span>
+                  {% endif %}
+                {% elsif filter.type == 'boolean' and filter.true_value.active %}
+                  <span class="plp-active-chip">{{ filter.true_value.label }}</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% for filter in plp_filters %}
+            <div class="plp-filter-group pt-4 first:pt-0">
+              <h3 class="plp-filter-label plp-filter-title font-headline font-bold mb-3">{{ filter.label }}</h3>
+
+              {% assign filter_label_downcase = filter.label | downcase %}
+              {% if filter.type == 'list' and filter_label_downcase contains 'cor' %}
+                <div class="plp-color-grid">
+                  {% for value in filter.values %}
+                    {% liquid
+                      assign plp_display_count = value.count
+                      if product_min_inventory > 0
+                        assign plp_custom_count = 0
+                        if filter.param_name contains 'product_type'
+                          assign plp_acc_items = plp_valid_types_acc | split: '||'
+                          for plp_acc_item in plp_acc_items
+                            if plp_acc_item == value.value
+                              assign plp_custom_count = plp_custom_count | plus: 1
+                            endif
+                          endfor
+                          assign plp_display_count = plp_custom_count
+                        elsif filter.param_name contains 'vendor'
+                          assign plp_acc_items = plp_valid_vendors_acc | split: '||'
+                          for plp_acc_item in plp_acc_items
+                            if plp_acc_item == value.value
+                              assign plp_custom_count = plp_custom_count | plus: 1
+                            endif
+                          endfor
+                          assign plp_display_count = plp_custom_count
+                        elsif filter.param_name contains '.tag'
+                          assign plp_acc_items = plp_valid_tags_acc | split: '||'
+                          for plp_acc_item in plp_acc_items
+                            if plp_acc_item == value.value
+                              assign plp_custom_count = plp_custom_count | plus: 1
+                            endif
+                          endfor
+                          assign plp_display_count = plp_custom_count
+                        endif
+                      endif
+                    %}
+                    {% if plp_display_count > 0 or value.active %}
+                      {% assign color_label = value.label | downcase %}
+                      <label class="plp-color-option">
+                        <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}" {% if value.active %}checked{% endif %} data-auto-submit>
+                        <span class="text-xs plp-filter-help">{{ value.label }}{% if plp_display_count > 0 %} ({{ plp_display_count }}){% endif %}</span>
+                      </label>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% elsif filter.type == 'list' %}
+                <div class="plp-list-filter-grid">
+                  {% for value in filter.values %}
+                    {% liquid
+                      assign plp_display_count = value.count
+                      if product_min_inventory > 0
+                        assign plp_custom_count = 0
+                        if filter.param_name contains 'product_type'
+                          assign plp_acc_items = plp_valid_types_acc | split: '||'
+                          for plp_acc_item in plp_acc_items
+                            if plp_acc_item == value.value
+                              assign plp_custom_count = plp_custom_count | plus: 1
+                            endif
+                          endfor
+                          assign plp_display_count = plp_custom_count
+                        elsif filter.param_name contains 'vendor'
+                          assign plp_acc_items = plp_valid_vendors_acc | split: '||'
+                          for plp_acc_item in plp_acc_items
+                            if plp_acc_item == value.value
+                              assign plp_custom_count = plp_custom_count | plus: 1
+                            endif
+                          endfor
+                          assign plp_display_count = plp_custom_count
+                        elsif filter.param_name contains '.tag'
+                          assign plp_acc_items = plp_valid_tags_acc | split: '||'
+                          for plp_acc_item in plp_acc_items
+                            if plp_acc_item == value.value
+                              assign plp_custom_count = plp_custom_count | plus: 1
+                            endif
+                          endfor
+                          assign plp_display_count = plp_custom_count
+                        endif
+                      endif
+                    %}
+                    {% if plp_display_count > 0 or value.active %}
+                      <label class="flex items-center gap-3 text-sm plp-filter-help">
+                        <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}" {% if value.active %}checked{% endif %} data-auto-submit>
+                        <span>{{ value.label }} ({{ plp_display_count }})</span>
+                      </label>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% elsif filter.type == 'price_range' %}
+                <div class="grid grid-cols-2 gap-2">
+                  <input class="plp-price-input" name="{{ filter.min_value.param_name }}" type="number" min="0" placeholder="Min" {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %} data-auto-submit-number>
+                  <input class="plp-price-input" name="{{ filter.max_value.param_name }}" type="number" min="0" placeholder="Max" {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"{% endif %} data-auto-submit-number>
+                </div>
+                <div class="plp-price-presets">
+                  <button class="plp-price-preset" type="button" data-price-max="500">Até R$ 500</button>
+                  <button class="plp-price-preset" type="button" data-price-max="1000">Até R$ 1.000</button>
+                  <button class="plp-price-preset" type="button" data-price-max="2000">Até R$ 2.000</button>
+                  <button class="plp-price-preset" type="button" data-price-max="3000">Até R$ 3.000</button>
+                </div>
+                <p class="plp-filter-help text-xs mt-2">Até {{ filter.range_max | money }}</p>
+              {% elsif filter.type == 'boolean' %}
+                <label class="flex items-center gap-3 text-sm plp-filter-help">
+                  <input type="checkbox" name="{{ filter.param_name }}" value="1" {% if filter.true_value.active %}checked{% endif %} data-auto-submit>
+                  <span>{{ filter.true_value.label }}</span>
+                </label>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          {% unless has_native_color_filter %}
+            {% assign fallback_colors_array = fallback_color_values | split: '||' %}
+            {% assign fallback_colors_count = 0 %}
+            {% for fallback_color in fallback_colors_array %}
+              {% if fallback_color != blank %}
+                {% assign fallback_colors_count = fallback_colors_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+
+            {% if fallback_colors_count > 0 %}
+              <div class="plp-filter-group pt-4">
+                <h3 class="plp-filter-label plp-filter-title font-headline font-bold mb-3">{{ plp_filter_title_color_label }}</h3>
+                <div class="plp-color-grid">
+                  {% for fallback_color in fallback_colors_array %}
+                    {% if fallback_color != blank %}
+                      {% assign fallback_color_normalized = fallback_color | downcase | strip %}
+                      <label class="plp-color-option">
+                        <input type="checkbox" data-client-color value="{{ fallback_color_normalized | escape }}">
+                        <span class="text-xs plp-filter-help">{{ fallback_color }}</span>
+                      </label>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <p class="plp-fallback-note">Filtro local de cor baseado nos produtos encontrados.</p>
+              </div>
+            {% endif %}
+          {% endunless %}
+
+          {% unless has_native_price_filter %}
+            <div class="plp-filter-group pt-4">
+              <h3 class="plp-filter-label plp-filter-title font-headline font-bold mb-3">{{ plp_filter_title_price }}</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <input class="plp-price-input" type="number" min="0" placeholder="Min" data-client-price-min>
+                <input class="plp-price-input" type="number" min="0" placeholder="Max" data-client-price-max>
+              </div>
+              <p class="plp-fallback-note">Filtro local por faixa de valor.</p>
+            </div>
+          {% endunless %}
+
+          <div class="plp-filter-group pt-4">
+            <h3 class="plp-filter-label plp-filter-title font-headline font-bold mb-3">{{ plp_filter_title_other }}</h3>
+            <label class="flex items-center gap-3 text-sm plp-filter-help">
+              <input type="checkbox" data-client-in-stock>
+              <span>Somente em estoque</span>
+            </label>
+          </div>
+
+        </form>
+      </aside>
+
+      <section class="plp-products-column">
+        <div class="plp-mobile-toolbar md:hidden">
+          <button class="plp-mobile-pill plp-mobile-filter-btn" type="button" data-mobile-filter-open>
+            <span class="material-symbols-outlined text-base">tune</span>
+            <span>Filtrar</span>
+            {% if active_filters_count > 0 %}
+              <span class="plp-filter-badge">{{ active_filters_count }}</span>
+            {% endif %}
+          </button>
+
+        </div>
+
+        <div class="mb-2">
+          <nav class="text-xs plp-filter-help">
+            <a href="{{ routes.root_url }}">Home</a>
+            {% if plp_is_search %}
+              / <span class="font-semibold">Busca</span>
+            {% else %}
+              / <a href="{{ routes.collections_url }}">Móveis</a> / <span class="font-semibold">{{ collection.title }}</span>
+            {% endif %}
+          </nav>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4 md:mb-8">
+          <div class="md:grow">
+            <h1 class="plp-title font-headline font-black uppercase tracking-tight">{{ plp_title }}</h1>
+            <p class="plp-subtitle text-sm mt-2">
+              {{ plp_results_count }} produtos encontrados
+              {% if plp_is_search and plp_search_terms != blank %}
+                para "{{ plp_search_terms }}"
+              {% elsif plp_description != blank %}
+                em {{ plp_description }}
+              {% endif %}.
+            </p>
+          </div>
+
+        </div>
+
+        {% if plp_is_search %}
+          {% paginate search.results by 1 %}
+            {% assign search_current_page = paginate.current_page %}
+          {% endpaginate %}
+
+          {% liquid
+            if search_current_page == blank or search_current_page < 1
+              assign search_current_page = 1
+            endif
+
+            assign search_start_index = products_per_page | times: search_current_page | minus: products_per_page
+            assign search_end_index = search_start_index | plus: products_per_page
+            assign search_filtered_total = 0
+            assign plp_rendered_products = 0
+
+            assign search_query_base = ''
+            assign current_query_string = request.query_string | default: ''
+            if current_query_string != blank
+              assign current_query_parts = current_query_string | split: '&'
+              for query_part in current_query_parts
+                assign query_part_clean = query_part | strip
+                if query_part_clean != blank
+                  assign query_part_key = query_part_clean | split: '=' | first
+                  unless query_part_key == 'page'
+                    if search_query_base == blank
+                      assign search_query_base = '?' | append: query_part_clean
+                    else
+                      assign search_query_base = search_query_base | append: '&' | append: query_part_clean
+                    endif
+                  endunless
+                endif
+              endfor
+            endif
+
+            if search_query_base == blank and plp_search_terms != blank
+              assign search_query_base = '?q=' | append: plp_search_terms | url_encode
+            endif
+          %}
+
+          <div class="plp-listing-grid">
+            {% for product in plp_search_products %}
+              {% liquid
+                assign meets_min_inventory = true
+                assign product_variant = product.selected_or_first_available_variant
+
+                if product_variant.inventory_management == 'shopify'
+                  assign product_inventory_quantity = product_variant.inventory_quantity | default: 0 | plus: 0
+                  if product_inventory_quantity < product_min_inventory
+                    assign meets_min_inventory = false
+                  endif
+                elsif product.available == false
+                  assign meets_min_inventory = false
+                endif
+              %}
+              {% unless meets_min_inventory %}
+                {% continue %}
+              {% endunless %}
+
+              {% assign search_filtered_total = search_filtered_total | plus: 1 %}
+              {% if search_filtered_total <= search_start_index %}
+                {% continue %}
+              {% endif %}
+              {% if search_filtered_total > search_end_index %}
+                {% continue %}
+              {% endif %}
+
+              {% assign plp_rendered_products = plp_rendered_products | plus: 1 %}
+              {%- liquid
+                assign plp_display_price = 0
+                assign plp_display_compare = 0
+                for v in product.variants
+                  if v.available
+                    if plp_display_price == 0 or v.price < plp_display_price
+                      assign plp_display_price = v.price
+                      assign plp_display_compare = v.compare_at_price | default: 0
+                    endif
+                  endif
+                endfor
+                if plp_display_price == 0
+                  assign plp_fallback_var = product.selected_or_first_available_variant
+                  assign plp_display_price = plp_fallback_var.price | default: product.price
+                  assign plp_display_compare = plp_fallback_var.compare_at_price | default: 0
+                endif
+              -%}
+                  <div class="plp-product-item"
+                    data-product-price="{{ plp_display_price }}"
+                    data-product-available="{% if product.available %}1{% else %}0{% endif %}"
+                    {% liquid
+                      assign plp_card_color_values = ''
+                      assign plp_search_categories = ''
+                      assign plp_search_tags_values = ''
+
+                      if product.type != blank
+                        assign plp_search_categories = product.type
+                      endif
+
+                      for product_collection in product.collections limit: 8
+                        if plp_search_categories == blank
+                          assign plp_search_categories = product_collection.title
+                        else
+                          assign plp_search_categories = plp_search_categories | append: '|' | append: product_collection.title
+                        endif
+                      endfor
+
+                      for product_tag in product.tags
+                        if plp_search_tags_values == blank
+                          assign plp_search_tags_values = product_tag
+                        else
+                          assign plp_search_tags_values = plp_search_tags_values | append: '|' | append: product_tag
+                        endif
+                      endfor
+
+                      for option in product.options_with_values
+                        assign option_name_downcase = option.name | downcase
+                        if option_name_downcase contains 'cor' or option_name_downcase contains 'color'
+                          for option_value in option.values
+                            assign normalized_option_color = option_value | strip | downcase
+                            if plp_card_color_values == blank
+                              assign plp_card_color_values = normalized_option_color
+                            else
+                              assign plp_card_color_values = plp_card_color_values | append: '|' | append: normalized_option_color
+                            endif
+                          endfor
+                        endif
+                      endfor
+                    %}
+                    data-product-colors="{{ plp_card_color_values | escape }}"
+                    data-search-title="{{ product.title | downcase | escape }}"
+                    data-search-categories="{{ plp_search_categories | downcase | escape }}"
+                    data-search-tags="{{ plp_search_tags_values | downcase | escape }}">
+                    {% liquid
+                      assign plp_rating_value = product.metafields.custom.rating_value | default: 5
+                      assign plp_review_count = product.metafields.custom.review_count | default: 0
+                      assign plp_primary_category = blank
+                      assign plp_price_block_class = ''
+                      assign plp_has_discount = false
+                      assign plp_discount_percent = 0
+                      assign plp_collection = product.collections | first
+                      if plp_collection != blank
+                        assign plp_primary_category = plp_collection.title
+                      elsif product.type != blank
+                        assign plp_primary_category = product.type
+                      endif
+                      if plp_display_compare > plp_display_price and plp_display_compare > 0
+                        assign plp_has_discount = true
+                        assign plp_discount_percent = plp_display_compare | minus: plp_display_price | times: 100.0 | divided_by: plp_display_compare | round
+                      endif
+                      if plp_show_buy_button
+                        assign plp_price_block_class = plp_price_block_class | append: ' mt-auto'
+                      endif
+                    %}
+
+                    <article class="plp-card gc-product-card group" data-card-url="{{ product.url }}" role="link" tabindex="0" aria-label="Abrir produto {{ product.title | escape }}">
+                      <div class="plp-card-media gc-product-media-frame relative" style="background-color: {{ plp_media_bg }};">
+                        {% if product.featured_image %}
+                          <div class="gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ product.featured_image | image_url: width: 900 }}');" aria-label="{{ product.title | escape }}"></div>
+                        {% endif %}
+                        <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-id="{{ product.id }}" data-product-gid="gid://shopify/Product/{{ product.id }}" data-product-handle="{{ product.handle }}">
+                          <span class="material-symbols-outlined text-xl">favorite</span>
+                        </button>
+                      </div>
+
+                      <div class="plp-card-content gc-product-card-content">
+                        <h3 class="plp-card-title font-medium">{{ product.title }}</h3>
+                        {% if plp_primary_category != blank %}
+                          <p class="plp-card-meta">{{ plp_primary_category }}</p>
+                        {% endif %}
+
+                        {% if plp_show_ratings %}
+                          <div class="flex items-center gap-1">
+                            <div class="flex plp-card-rating">
+                              {% for i in (1..5) %}
+                                {% if i <= plp_rating_value %}
+                                  <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                                {% else %}
+                                  <span class="material-symbols-outlined text-sm">star</span>
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% if plp_review_count > 0 %}
+                              <span class="plp-card-meta">({{ plp_review_count }})</span>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+
+                        <div class="{{ plp_price_block_class }}">
+                          {% if plp_display_compare > plp_display_price %}
+                            <span class="plp-card-meta line-through" style="color: var(--color-promo-old-price)">{{ plp_display_compare | money }}</span>
+                          {% endif %}
+                          <div class="plp-card-price-row">
+                            <div class="flex items-baseline gap-1">
+                              <span class="plp-card-meta font-bold italic"{% if plp_has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>R$</span>
+                              <span class="plp-card-price font-black"{% if plp_has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>{{ plp_display_price | money_without_currency }}</span>
+                            </div>
+                            {% if plp_show_discount_badge and plp_has_discount %}
+                              <span class="plp-card-discount">-{{ plp_discount_percent }}%</span>
+                            {% endif %}
+                          </div>
+                          <span class="plp-card-meta">{{ global_installments_count }}x de {{ plp_display_price | divided_by: global_installments_count | money }} sem juros</span>
+                        </div>
+
+                        {% if plp_show_buy_button %}
+                          <a class="plp-card-buy py-3 mt-3 font-bold text-center" href="{{ product.url }}">{{ plp_buy_label }}</a>
+                        {% endif %}
+                      </div>
+                    </article>
+                  </div>
+            {% endfor %}
+
+            {% if plp_rendered_products == 0 %}
+              <p class="plp-filter-help">Nenhum produto encontrado com os filtros atuais.</p>
+            {% endif %}
+          </div>
+
+          <p class="plp-filter-help mt-6 hidden" data-client-empty-state>Nenhum produto encontrado com os filtros locais selecionados.</p>
+
+          {% liquid
+            assign search_total_pages = search_filtered_total | divided_by: products_per_page
+            assign search_total_remainder = search_filtered_total | modulo: products_per_page
+            if search_total_remainder > 0
+              assign search_total_pages = search_total_pages | plus: 1
+            endif
+          %}
+
+          {% if search_current_page > search_total_pages and search_total_pages > 0 %}
+            <script>
+              (function() {
+                const url = new URL(window.location.href);
+                if ({{ search_total_pages }} > 1) {
+                  url.searchParams.set('page', '{{ search_total_pages }}');
+                } else {
+                  url.searchParams.delete('page');
+                }
+                window.location.replace(url.toString());
+              })();
+            </script>
+          {% endif %}
+
+          <div data-plp-pagination-wrap>
+            {% if search_total_pages > 1 %}
+              <nav class="mt-10 md:mt-12 flex items-center justify-center gap-2" aria-label="Paginacao da busca">
+                {% if search_current_page > 1 %}
+                  {% assign search_prev_page = search_current_page | minus: 1 %}
+                  <button class="plp-pagination-link" type="button" aria-label="Pagina anterior" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ search_query_base }}{% if search_prev_page > 1 %}{% if search_query_base == blank %}?{% else %}&{% endif %}page={{ search_prev_page }}{% endif %}">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                  </button>
+                {% endif %}
+
+                {% for search_page in (1..search_total_pages) %}
+                  {% if search_page == search_current_page %}
+                    <span class="plp-pagination-link is-active">{{ search_page }}</span>
+                  {% else %}
+                    <button class="plp-pagination-link" type="button" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ search_query_base }}{% if search_page > 1 %}{% if search_query_base == blank %}?{% else %}&{% endif %}page={{ search_page }}{% endif %}">{{ search_page }}</button>
+                  {% endif %}
+                {% endfor %}
+
+                {% if search_current_page < search_total_pages %}
+                  {% assign search_next_page = search_current_page | plus: 1 %}
+                  <button class="plp-pagination-link" type="button" aria-label="Proxima pagina" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ search_query_base }}{% if search_query_base == blank %}?{% else %}&{% endif %}page={{ search_next_page }}">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                {% endif %}
+              </nav>
+            {% endif %}
+          </div>
+        {% else %}
+          {% paginate collection.products by 1 %}
+            {% assign collection_current_page = paginate.current_page %}
+          {% endpaginate %}
+
+          {% liquid
+            if collection_current_page == blank or collection_current_page < 1
+              assign collection_current_page = 1
+            endif
+
+            assign collection_total_pages_filtered = plp_collection_filtered_total | divided_by: products_per_page
+            assign collection_total_remainder_filtered = plp_collection_filtered_total | modulo: products_per_page
+            if collection_total_remainder_filtered > 0
+              assign collection_total_pages_filtered = collection_total_pages_filtered | plus: 1
+            endif
+
+            assign collection_start_index = products_per_page | times: collection_current_page | minus: products_per_page
+            assign collection_end_index = collection_start_index | plus: products_per_page
+
+            assign collection_query_base = ''
+            assign collection_query_string = request.query_string | default: ''
+            if collection_query_string != blank
+              assign collection_query_parts = collection_query_string | split: '&'
+              for collection_query_part in collection_query_parts
+                assign collection_query_part_clean = collection_query_part | strip
+                if collection_query_part_clean != blank
+                  assign collection_query_part_key = collection_query_part_clean | split: '=' | first | downcase
+                  unless collection_query_part_key == 'page'
+                    if collection_query_base == blank
+                      assign collection_query_base = '?' | append: collection_query_part_clean
+                    else
+                      assign collection_query_base = collection_query_base | append: '&' | append: collection_query_part_clean
+                    endif
+                  endunless
+                endif
+              endfor
+            endif
+          %}
+
+          <div class="plp-listing-grid">
+            {% assign collection_rendered_products = 0 %}
+            {% assign collection_filtered_index = 0 %}
+            {% for product in collection.products %}
+              {% liquid
+                assign meets_min_inventory = true
+                assign product_variant = product.selected_or_first_available_variant
+
+                if product_variant.inventory_management == 'shopify'
+                  assign product_inventory_quantity = product_variant.inventory_quantity | default: 0 | plus: 0
+                  if product_inventory_quantity < product_min_inventory
+                    assign meets_min_inventory = false
+                  endif
+                elsif product.available == false
+                  assign meets_min_inventory = false
+                endif
+              %}
+              {% unless meets_min_inventory %}
+                {% continue %}
+              {% endunless %}
+
+              {% assign collection_filtered_index = collection_filtered_index | plus: 1 %}
+              {% if collection_filtered_index <= collection_start_index %}
+                {% continue %}
+              {% endif %}
+              {% if collection_filtered_index > collection_end_index %}
+                {% break %}
+              {% endif %}
+
+              {% assign collection_rendered_products = collection_rendered_products | plus: 1 %}
+              {%- liquid
+                assign plp_display_price = 0
+                assign plp_display_compare = 0
+                for v in product.variants
+                  if v.available
+                    if plp_display_price == 0 or v.price < plp_display_price
+                      assign plp_display_price = v.price
+                      assign plp_display_compare = v.compare_at_price | default: 0
+                    endif
+                  endif
+                endfor
+                if plp_display_price == 0
+                  assign plp_fallback_var = product.selected_or_first_available_variant
+                  assign plp_display_price = plp_fallback_var.price | default: product.price
+                  assign plp_display_compare = plp_fallback_var.compare_at_price | default: 0
+                endif
+              -%}
+              <div class="plp-product-item"
+                data-product-price="{{ plp_display_price }}"
+                data-product-available="{% if product.available %}1{% else %}0{% endif %}"
+                {% liquid
+                  assign plp_card_color_values = ''
+                  for option in product.options_with_values
+                    assign option_name_downcase = option.name | downcase
+                    if option_name_downcase contains 'cor' or option_name_downcase contains 'color'
+                      for option_value in option.values
+                        assign normalized_option_color = option_value | strip | downcase
+                        if plp_card_color_values == blank
+                          assign plp_card_color_values = normalized_option_color
+                        else
+                          assign plp_card_color_values = plp_card_color_values | append: '|' | append: normalized_option_color
+                        endif
+                      endfor
+                    endif
+                  endfor
+                %}
+                data-product-colors="{{ plp_card_color_values | escape }}">
+                {% liquid
+                  assign plp_rating_value = product.metafields.custom.rating_value | default: 5
+                  assign plp_review_count = product.metafields.custom.review_count | default: 0
+                  assign plp_primary_category = blank
+                  assign plp_price_block_class = ''
+                  assign plp_has_discount = false
+                  assign plp_discount_percent = 0
+                  assign plp_collection = product.collections | first
+                  if plp_collection != blank
+                    assign plp_primary_category = plp_collection.title
+                  elsif product.type != blank
+                    assign plp_primary_category = product.type
+                  endif
+                  if plp_display_compare > plp_display_price and plp_display_compare > 0
+                    assign plp_has_discount = true
+                    assign plp_discount_percent = plp_display_compare | minus: plp_display_price | times: 100.0 | divided_by: plp_display_compare | round
+                  endif
+                  if plp_show_buy_button
+                    assign plp_price_block_class = plp_price_block_class | append: ' mt-auto'
+                  endif
+                %}
+
+                <article class="plp-card gc-product-card group" data-card-url="{{ product.url }}" role="link" tabindex="0" aria-label="Abrir produto {{ product.title | escape }}">
+                  <div class="plp-card-media gc-product-media-frame relative" style="background-color: {{ plp_media_bg }};">
+                    {% if product.featured_image %}
+                      <div class="gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ product.featured_image | image_url: width: 900 }}');" aria-label="{{ product.title | escape }}"></div>
+                    {% endif %}
+                    <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-id="{{ product.id }}" data-product-gid="gid://shopify/Product/{{ product.id }}" data-product-handle="{{ product.handle }}">
+                      <span class="material-symbols-outlined text-xl">favorite</span>
+                    </button>
+                  </div>
+
+                  <div class="plp-card-content gc-product-card-content">
+                    <h3 class="plp-card-title font-medium">{{ product.title }}</h3>
+                    {% if plp_primary_category != blank %}
+                      <p class="plp-card-meta">{{ plp_primary_category }}</p>
+                    {% endif %}
+
+                    {% if plp_show_ratings %}
+                      <div class="flex items-center gap-1">
+                        <div class="flex plp-card-rating">
+                          {% for i in (1..5) %}
+                            {% if i <= plp_rating_value %}
+                              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            {% else %}
+                              <span class="material-symbols-outlined text-sm">star</span>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                        {% if plp_review_count > 0 %}
+                          <span class="plp-card-meta">({{ plp_review_count }})</span>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+
+                    <div class="{{ plp_price_block_class }}">
+                      {% if plp_display_compare > plp_display_price %}
+                        <span class="plp-card-meta line-through" style="color: var(--color-promo-old-price)">{{ plp_display_compare | money }}</span>
+                      {% endif %}
+                      <div class="plp-card-price-row">
+                        <div class="flex items-baseline gap-1">
+                          <span class="plp-card-meta font-bold italic"{% if plp_has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>R$</span>
+                          <span class="plp-card-price font-black"{% if plp_has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>{{ plp_display_price | money_without_currency }}</span>
+                        </div>
+                        {% if plp_show_discount_badge and plp_has_discount %}
+                          <span class="plp-card-discount">-{{ plp_discount_percent }}%</span>
+                        {% endif %}
+                      </div>
+                      <span class="plp-card-meta">{{ global_installments_count }}x de {{ plp_display_price | divided_by: global_installments_count | money }} sem juros</span>
+                    </div>
+
+                    {% if plp_show_buy_button %}
+                      <a class="plp-card-buy py-3 mt-3 font-bold text-center" href="{{ product.url }}">{{ plp_buy_label }}</a>
+                    {% endif %}
+                  </div>
+                </article>
+              </div>
+            {% else %}
+              <p class="plp-filter-help">Nenhum produto encontrado com os filtros atuais.</p>
+            {% endfor %}
+
+            {% if collection_rendered_products == 0 %}
+              <p class="plp-filter-help">Nenhum produto encontrado com os filtros atuais.</p>
+            {% endif %}
+          </div>
+
+          <p class="plp-filter-help mt-6 hidden" data-client-empty-state>Nenhum produto encontrado com os filtros locais selecionados.</p>
+
+          <div data-plp-pagination-wrap>
+            {% if collection_total_pages_filtered > 1 %}
+              <nav class="mt-10 md:mt-12 flex items-center justify-center gap-2" aria-label="Paginacao da colecao">
+                {% if collection_current_page > 1 %}
+                  {% assign collection_prev_page = collection_current_page | minus: 1 %}
+                  <button class="plp-pagination-link" type="button" aria-label="Pagina anterior" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ collection_query_base }}{% if collection_prev_page > 1 %}{% if collection_query_base == blank %}?{% else %}&{% endif %}page={{ collection_prev_page }}{% endif %}">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                  </button>
+                {% endif %}
+
+                {% for collection_page in (1..collection_total_pages_filtered) %}
+                  {% if collection_page == collection_current_page %}
+                    <span class="plp-pagination-link is-active">{{ collection_page }}</span>
+                  {% else %}
+                    <button class="plp-pagination-link" type="button" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ collection_query_base }}{% if collection_page > 1 %}{% if collection_query_base == blank %}?{% else %}&{% endif %}page={{ collection_page }}{% endif %}">{{ collection_page }}</button>
+                  {% endif %}
+                {% endfor %}
+
+                {% if collection_current_page < collection_total_pages_filtered %}
+                  {% assign collection_next_page = collection_current_page | plus: 1 %}
+                  <button class="plp-pagination-link" type="button" aria-label="Proxima pagina" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ collection_query_base }}{% if collection_query_base == blank %}?{% else %}&{% endif %}page={{ collection_next_page }}">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                {% endif %}
+              </nav>
+            {% endif %}
+          </div>
+        {% endif %}
+      </section>
+
+          {% liquid
+            assign collection_total_pages_filtered = plp_collection_filtered_total | divided_by: products_per_page
+            assign collection_total_remainder_filtered = plp_collection_filtered_total | modulo: products_per_page
+            if collection_total_remainder_filtered > 0
+              assign collection_total_pages_filtered = collection_total_pages_filtered | plus: 1
+            endif
+          %}
+
+          {% if collection_current_page > collection_total_pages_filtered and collection_total_pages_filtered > 0 %}
+            <script>
+              (function() {
+                const url = new URL(window.location.href);
+                if ({{ collection_total_pages_filtered }} > 1) {
+                  url.searchParams.set('page', '{{ collection_total_pages_filtered }}');
+                } else {
+                  url.searchParams.delete('page');
+                }
+                window.location.replace(url.toString());
+              })();
+            </script>
+          {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .plp-ajax-loading-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    background: color-mix(in srgb, {{ section_bg }} 85%, transparent);
+    backdrop-filter: blur(2px);
+    border-radius: 12px;
+    padding: 0;
+    pointer-events: all;
+    align-items: stretch;
+    min-height: 200px;
+  }
+
+  #shopify-section-{{ section.id }} .plp-ajax-loading-overlay.is-visible {
+    display: flex;
+  }
+
+  #shopify-section-{{ section.id }} .plp-skeleton-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ plp_gap_mobile }}px;
+    padding: 0;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .plp-skeleton-grid {
+      gap: {{ plp_gap_desktop }}px;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .plp-skeleton-card {
+    flex: 0 0 auto;
+    width: min(100%, clamp({{ card_width_mobile_min }}px, calc((100% - {{ plp_gap_mobile }}px) / 2), {{ card_width_mobile_max }}px));
+    min-height: clamp({{ card_height_mobile_min }}px, 58vw, {{ card_height_mobile_max }}px);
+    border-radius: {{ plp_card_radius }}px;
+    background: linear-gradient(90deg, color-mix(in srgb, {{ section_text }} 8%, transparent) 25%, color-mix(in srgb, {{ section_text }} 14%, transparent) 50%, color-mix(in srgb, {{ section_text }} 8%, transparent) 75%);
+    background-size: 200% 100%;
+    animation: plp-shimmer 1.4s infinite linear;
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .plp-skeleton-card {
+      width: calc((100% - ({{ cards_per_row | minus: 1 }} * {{ plp_gap_desktop }}px)) / {{ cards_per_row }});
+      min-height: var(--gc-card-height-desktop);
+      max-height: var(--gc-card-height-desktop);
+    }
+  }
+
+  @keyframes plp-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+
+<script>
+  window.PLPConfig = {
+    sectionId:    '{{ section.id }}',
+    skeletonCount: {{ section.settings.products_per_page | default: 12 }},
+    isSearchPage:  {{ plp_is_search | json }},
+    searchTerm:    {{ plp_search_terms | json }}
+  };
+</script>
+<script src="{{ 'plp.js' | asset_url }}" defer></script>
+
+
+
+{% schema %}
+{
+  "name": "PLP Colecao Reutilizavel",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Produtos por pagina",
+      "min": 6,
+      "max": 36,
+      "step": 3,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "cards_per_row",
+      "label": "Cards por linha (desktop)",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "collection_title_size_mobile",
+      "label": "Titulo da coleção - tamanho mobile",
+      "min": 20,
+      "max": 48,
+      "step": 1,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "collection_title_size_desktop",
+      "label": "Titulo da coleção - tamanho desktop",
+      "min": 24,
+      "max": 72,
+      "step": 1,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_max_width_cap",
+      "label": "Largura maxima da secao (igual ao header por padrao)",
+      "min": 960,
+      "max": 1920,
+      "step": 20,
+      "default": 1440,
+      "unit": "px"
+    },
+    {
+      "type": "text",
+      "id": "search_title",
+      "label": "Titulo da busca",
+      "default": "Resultados da busca"
+    },
+    {
+      "type": "paragraph",
+      "content": "Mobile adaptativo (texto): preencha apenas numeros em px. Se deixar vazio, usa os padroes 150/230 largura e 320/430 altura."
+    },
+    {
+      "type": "paragraph",
+      "content": "Prioridade mobile (texto): se preencher, sobrescreve os valores globais e min/max."
+    },
+    {
+      "type": "text",
+      "id": "priority_card_width_mobile",
+      "label": "Prioridade - largura do card mobile",
+      "default": "0",
+      "info": "Ex.: 190"
+    },
+    {
+      "type": "text",
+      "id": "priority_card_height_mobile",
+      "label": "Prioridade - altura do card mobile",
+      "default": "0",
+      "info": "Ex.: 348"
+    },
+    {
+      "type": "text",
+      "id": "priority_media_height_mobile",
+      "label": "Prioridade - altura da imagem mobile",
+      "default": "0",
+      "info": "Ex.: 150"
+    },
+    {
+      "type": "text",
+      "id": "card_width_mobile_min",
+      "label": "Card mobile - largura minima",
+      "default": "150",
+      "info": "Ex.: 190"
+    },
+    {
+      "type": "text",
+      "id": "card_width_mobile_max",
+      "label": "Card mobile - largura maxima",
+      "default": "230",
+      "info": "Ex.: 230"
+    },
+    {
+      "type": "text",
+      "id": "card_height_mobile_min",
+      "label": "Card mobile - altura minima",
+      "default": "320",
+      "info": "Ex.: 300"
+    },
+    {
+      "type": "text",
+      "id": "card_height_mobile_max",
+      "label": "Card mobile - altura maxima",
+      "default": "430",
+      "info": "Ex.: 430"
+    },
+    {
+      "type": "header",
+      "content": "Estilo - filtros"
+    },
+    {
+      "type": "text",
+      "id": "filter_title_main",
+      "label": "Titulo principal do painel",
+      "default": "Filtros"
+    },
+    {
+      "type": "text",
+      "id": "filter_title_sort",
+      "label": "Titulo de ordenacao",
+      "default": "Ordenacao"
+    },
+    {
+      "type": "text",
+      "id": "filter_title_color_label",
+      "label": "Titulo de cor",
+      "default": "Cor"
+    },
+    {
+      "type": "text",
+      "id": "filter_title_price",
+      "label": "Titulo de preço",
+      "default": "Preço"
+    },
+    {
+      "type": "text",
+      "id": "filter_title_other",
+      "label": "Titulo de outros",
+      "default": "Outros"
+    },
+    {
+      "type": "color",
+      "id": "filter_title_color",
+      "label": "Titulos dos filtros: cor do texto",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "range",
+      "id": "filter_title_size_mobile",
+      "label": "Titulos dos filtros: tamanho mobile",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "filter_title_size_desktop",
+      "label": "Titulos dos filtros: tamanho desktop",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "mobile_filter_toolbar_bg",
+      "label": "Mobile: fundo da barra de filtros",
+      "default": "#F7F7F7"
+    },
+    {
+      "type": "color",
+      "id": "mobile_filter_toolbar_border",
+      "label": "Mobile: borda da barra de filtros",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "color",
+      "id": "mobile_filter_button_bg",
+      "label": "Mobile: botao filtro fundo",
+      "default": "#0058BB"
+    },
+    {
+      "type": "color",
+      "id": "mobile_filter_button_text_color",
+      "label": "Mobile: botao filtro texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "mobile_filter_button_border_color",
+      "label": "Mobile: botao filtro borda",
+      "default": "#0058BB"
+    },
+    {
+      "type": "color",
+      "id": "mobile_filter_button_icon_color",
+      "label": "Mobile: botao filtro icone",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "mobile_filter_overlay_color",
+      "label": "Mobile: overlay do filtro",
+      "default": "#1a1c1c59"
+    },
+    {
+      "type": "color",
+      "id": "filter_panel_bg",
+      "label": "Painel filtro: fundo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "filter_panel_text_color",
+      "label": "Painel filtro: texto",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "color",
+      "id": "filter_panel_border_color",
+      "label": "Painel filtro: borda",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "color",
+      "id": "filter_help_color",
+      "label": "Painel filtro: texto auxiliar",
+      "default": "#6B7280"
+    },
+    {
+      "type": "color",
+      "id": "filter_input_bg",
+      "label": "Painel filtro: campo fundo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "filter_input_text_color",
+      "label": "Painel filtro: campo texto",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "color",
+      "id": "filter_input_border_color",
+      "label": "Painel filtro: campo borda",
+      "default": "#D1D5DB"
+    },
+    {
+      "type": "color",
+      "id": "filter_chip_bg",
+      "label": "Painel filtro: chip fundo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "filter_chip_text_color",
+      "label": "Painel filtro: chip texto",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "color",
+      "id": "filter_chip_border_color",
+      "label": "Painel filtro: chip borda",
+      "default": "#D1D5DB"
+    },
+    {
+      "type": "color",
+      "id": "filter_badge_bg",
+      "label": "Painel filtro: badge fundo",
+      "default": "#0058BB"
+    },
+    {
+      "type": "color",
+      "id": "filter_badge_text_color",
+      "label": "Painel filtro: badge texto",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "PLP Colecao Reutilizavel"
+    }
+  ]
+}
+{% endschema %}

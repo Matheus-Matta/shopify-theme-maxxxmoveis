@@ -1,0 +1,122 @@
+{% liquid
+  assign bp          = section.settings.balloon_position | default: 'bottom-right'
+  assign balloon_fit = section.settings.balloon_image_fit | default: 'cover'
+%}
+
+{% capture bp_css %}{% case bp %}{% when 'top-left' %}top: {{ section.settings.balloon_offset_y }}px; left: {{ section.settings.balloon_offset_x }}px;{% when 'top-right' %}top: {{ section.settings.balloon_offset_y }}px; right: {{ section.settings.balloon_offset_x }}px;{% when 'bottom-left' %}bottom: {{ section.settings.balloon_offset_y }}px; left: {{ section.settings.balloon_offset_x }}px;{% when 'bottom-right' %}bottom: {{ section.settings.balloon_offset_y }}px; right: {{ section.settings.balloon_offset_x }}px;{% endcase %}{% endcapture %}
+
+{% if section.settings.balloon_enabled %}
+  {% if section.settings.balloon_link != blank %}
+    <a
+      href="{{ section.settings.balloon_link }}"
+      id="ibf-balloon-{{ section.id }}"
+      class="image-banner-float__balloon"
+      style="position: fixed; {{ bp_css }} width: {{ section.settings.balloon_width | default: 80 }}px; height: {{ section.settings.balloon_height | default: 80 }}px; border-radius: {{ section.settings.balloon_radius | default: 50 }}px; overflow: hidden; z-index: {{ section.settings.balloon_z_index | default: 999 }}; display: block; text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.20); cursor: pointer;{% if section.settings.balloon_image != blank %} background-image: url('{{ section.settings.balloon_image | image_url: width: 400 }}'); background-size: {{ balloon_fit }}; background-position: center center; background-repeat: no-repeat;{% endif %}"
+    ></a>
+  {% else %}
+    <div
+      id="ibf-balloon-{{ section.id }}"
+      class="image-banner-float__balloon"
+      style="position: fixed; {{ bp_css }} width: {{ section.settings.balloon_width | default: 80 }}px; height: {{ section.settings.balloon_height | default: 80 }}px; border-radius: {{ section.settings.balloon_radius | default: 50 }}px; overflow: hidden; z-index: {{ section.settings.balloon_z_index | default: 999 }}; display: block; box-shadow: 0 4px 16px rgba(0,0,0,0.20);{% if section.settings.balloon_image != blank %} background-image: url('{{ section.settings.balloon_image | image_url: width: 400 }}'); background-size: {{ balloon_fit }}; background-position: center center; background-repeat: no-repeat;{% endif %}"
+    ></div>
+  {% endif %}
+{% endif %}
+
+
+{% schema %}
+{
+  "name": "Banner com Balão Fixo",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Balão Flutuante"
+    },
+    {
+      "type": "checkbox",
+      "id": "balloon_enabled",
+      "label": "Ativar balão flutuante",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "balloon_image",
+      "label": "Imagem do balão"
+    },
+    {
+      "type": "select",
+      "id": "balloon_image_fit",
+      "label": "Ajuste da imagem",
+      "options": [
+        { "value": "cover",   "label": "Preencher (cover)"  },
+        { "value": "contain", "label": "Conter (contain)" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "url",
+      "id": "balloon_link",
+      "label": "Link ao clicar no balão"
+    },
+    {
+      "type": "select",
+      "id": "balloon_position",
+      "label": "Posição na tela",
+      "options": [
+        { "value": "top-left",     "label": "Topo — esquerda"  },
+        { "value": "top-right",    "label": "Topo — direita"   },
+        { "value": "bottom-left",  "label": "Base — esquerda"  },
+        { "value": "bottom-right", "label": "Base — direita"   }
+      ],
+      "default": "bottom-right"
+    },
+    {
+      "type": "range",
+      "id": "balloon_offset_x",
+      "min": 0, "max": 120, "step": 2, "unit": "px",
+      "label": "Distância da borda horizontal",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "balloon_offset_y",
+      "min": 0, "max": 200, "step": 2, "unit": "px",
+      "label": "Distância da borda vertical",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "balloon_width",
+      "min": 40, "max": 400, "step": 4, "unit": "px",
+      "label": "Largura do balão",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "balloon_height",
+      "min": 40, "max": 400, "step": 4, "unit": "px",
+      "label": "Altura do balão",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "balloon_radius",
+      "min": 0, "max": 200, "step": 2, "unit": "px",
+      "label": "Arredondamento (border-radius)",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "balloon_z_index",
+      "min": 0, "max": 9900, "step": 100,
+      "label": "Z-index (camada)",
+      "default": 1000
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner com Balão Fixo",
+      "category": "Imagem"
+    }
+  ]
+}
+{% endschema %}

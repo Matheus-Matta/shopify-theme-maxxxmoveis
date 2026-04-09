@@ -1,0 +1,43 @@
+{% if review_link != blank %}
+<a href="{{ review_link }}" class="review-card gc-unified-card block min-w-[340px] p-6 flex flex-col transition-all duration-300 cursor-pointer" style="--review-name-size-mobile: {{ name_size_mobile | default: 15 }}px; --review-name-size-desktop: {{ name_size_desktop | default: 16 }}px; --review-meta-size-mobile: {{ meta_size_mobile | default: 11 }}px; --review-meta-size-desktop: {{ meta_size_desktop | default: 12 }}px; --gc-card-bg-local: var(--review-card-bg, #ffffff); --gc-card-border-local: var(--review-card-border, #f3f4f6); --gc-card-border-width-local: var(--review-card-border-width, 1px); --gc-card-radius-local: var(--review-card-radius, 16px); --gc-card-border-hover-local: var(--review-card-border-hover, var(--review-card-border, #f3f4f6)); --gc-card-lift-hover: -2px; background-color: var(--review-card-bg, #ffffff); border-color: var(--review-card-border, #f3f4f6); border-width: var(--review-card-border-width, 1px); border-style: solid;">
+{% else %}
+<div class="review-card gc-unified-card min-w-[340px] p-6 flex flex-col transition-all duration-300" style="--review-name-size-mobile: {{ name_size_mobile | default: 15 }}px; --review-name-size-desktop: {{ name_size_desktop | default: 16 }}px; --review-meta-size-mobile: {{ meta_size_mobile | default: 11 }}px; --review-meta-size-desktop: {{ meta_size_desktop | default: 12 }}px; --gc-card-bg-local: var(--review-card-bg, #ffffff); --gc-card-border-local: var(--review-card-border, #f3f4f6); --gc-card-border-width-local: var(--review-card-border-width, 1px); --gc-card-radius-local: var(--review-card-radius, 16px); --gc-card-border-hover-local: var(--review-card-border-hover, var(--review-card-border, #f3f4f6)); background-color: var(--review-card-bg, #ffffff); border-color: var(--review-card-border, #f3f4f6); border-width: var(--review-card-border-width, 1px); border-style: solid;">
+{% endif %}
+
+  <div class="flex justify-between items-start mb-4">
+    <div class="flex gap-4 items-center">
+      {% if avatar != blank %}
+        {{ avatar | image_url: width: 100 | image_tag: loading: 'lazy', alt: name, class: 'w-12 h-12 rounded-full object-cover' }}
+      {% else %}
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl" style="background-color: {{ avatar_bg | default: '#22c55e' }};">{{ name | slice: 0, 1 }}</div>
+      {% endif %}
+      <div>
+        <h4 class="review-card__name font-bold flex items-center gap-1" style="color: {% if name_color != blank %}{{ name_color }}{% else %}var(--review-card-text, #18181b){% endif %};">
+          {{ name }}
+          <span class="material-symbols-outlined text-blue-500 text-lg ml-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+        </h4>
+        <p class="review-card__meta" style="color: {% if meta_color != blank %}{{ meta_color }}{% else %}var(--review-card-muted, #9ca3af){% endif %};">{{ meta }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-1 mb-3">
+    <div class="flex">
+      {% assign total_stars = stars | default: 5 | plus: 0 %}
+      {% for i in (1..5) %}
+        {% if i <= total_stars %}
+          <span class="material-symbols-outlined text-xl" style="color: {{ star_color | default: '#f4b400' }}; font-variation-settings: 'FILL' 1;">star</span>
+        {% else %}
+          <span class="material-symbols-outlined text-xl" style="color: #e5e7eb; font-variation-settings: 'FILL' 0;">star</span>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <p class="review-card__text font-medium" style="color: {% if text_color != blank %}{{ text_color }}{% else %}var(--review-card-text, #18181b){% endif %}; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4;">{{ text }}</p>
+
+{% if review_link != blank %}
+</a>
+{% else %}
+</div>
+{% endif %}

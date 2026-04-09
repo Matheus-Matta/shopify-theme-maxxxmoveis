@@ -1,0 +1,8 @@
+<a class="group shrink-0 w-36 text-center" href="{{ link }}">
+  <div class="aspect-square rounded-full p-1 mb-3 border-2 border-transparent group-hover:border-primary transition-all overflow-hidden" style="background-color: var(--category-chip-bg, #f3f4f6);">
+    {% if image != blank %}
+      {{ image | image_url: width: 500 | image_tag: loading: 'lazy', alt: title, class: 'w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform' }}
+    {% endif %}
+  </div>
+  <span class="text-sm font-bold group-hover:text-primary" style="color: var(--category-title-color, #374151);">{{ title }}</span>
+</a>

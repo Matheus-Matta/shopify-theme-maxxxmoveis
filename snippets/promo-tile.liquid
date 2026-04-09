@@ -1,0 +1,61 @@
+{% liquid
+  assign button_class = 'hover:opacity-90'
+  assign image_fit_value = image_fit | default: 'cover'
+  assign image_position_value = image_position | default: 'center center'
+  assign image_scale_value = image_scale | default: 100
+  assign image_border_width_value = image_border_width | default: 0
+  assign image_border_color_value = image_border_color | default: '#d4d4d8'
+  assign image_radius_value = image_radius | default: 0
+
+  if button_style == 'accent'
+    assign button_class = 'hover:opacity-90'
+  endif
+
+  assign media_frame_style = 'border-style: solid; border-width: ' | append: image_border_width_value | append: 'px; border-color: ' | append: image_border_color_value | append: ';'
+
+  assign media_bg_style = 'background-repeat: no-repeat;'
+  if image != blank
+    assign img_url = image | image_url: width: 1600
+    assign media_bg_style = media_bg_style | append: ' background-image: url(' | append: img_url | append: ');'
+  endif
+
+  if image_fit_value == 'contain'
+    assign media_bg_style = media_bg_style | append: ' background-size: contain;'
+  elsif image_fit_value == 'custom'
+    assign media_bg_style = media_bg_style | append: ' background-size: ' | append: image_scale_value | append: '%;'
+  else
+    assign media_bg_style = media_bg_style | append: ' background-size: cover;'
+  endif
+
+  assign media_bg_style = media_bg_style | append: ' background-position: ' | append: image_position_value | append: ';'
+%}
+
+<style>
+  .media-frame-{{ block_id }} {
+    border-radius: {{ image_radius_value }}px {{ image_radius_value }}px 0 0 !important;
+  }
+  @media (min-width: 768px) {
+    .media-frame-{{ block_id }} {
+      border-radius: {{ image_radius_value }}px 0 0 {{ image_radius_value }}px !important;
+    }
+  }
+</style>
+
+<div class="promo-banner__tile gc-unified-card flex flex-col md:flex-row h-full transition-all group overflow-hidden" style="--gc-card-bg-local: var(--promo-tile-bg); --gc-card-border-local: var(--promo-tile-border, transparent); --gc-card-border-width-local: var(--promo-tile-border-width, 0px); --gc-card-radius-local: var(--promo-tile-radius, 16px); --gc-card-border-hover-local: var(--promo-tile-border-hover, var(--promo-tile-border, transparent)); --gc-card-lift-hover: -2px; background-color: var(--promo-tile-bg); color: var(--promo-text);">
+  <div class="promo-banner__media media-frame-{{ block_id }} w-full md:w-1/2 relative overflow-hidden shrink-0" style="{{ media_frame_style }}">
+    <div class="promo-banner__media-bg absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700" style="{{ media_bg_style }}"></div>
+  </div>
+  <div class="promo-banner__content w-full md:w-1/2 flex flex-col justify-center flex-grow" style="background-color: var(--promo-content-bg);">
+    <span class="promo-banner__eyebrow font-bold uppercase tracking-widest mb-1" style="color: var(--promo-eyebrow);">{{ eyebrow }}</span>
+    <h3 class="promo-banner__title font-headline font-black mb-4 leading-tight italic" style="color: var(--promo-title);">{{ title }}</h3>
+    {% if button_label != blank %}
+      {% assign current_btn_radius = button_radius | default: 12 %}
+      {% assign btn_radius_style = 'border-radius: ' | append: current_btn_radius | append: 'px !important;' %}
+      {% if button_style == 'accent' %}
+        <a class="promo-banner__button {{ button_class }} px-6 py-3 font-bold w-fit transition-all hover:shadow-lg" style="background-color: var(--promo-button-accent-bg); color: var(--promo-button-accent-text); {{ btn_radius_style }}" href="{{ button_link }}">{{ button_label }}</a>
+      {% else %}
+        <a class="promo-banner__button {{ button_class }} px-6 py-3 font-bold w-fit transition-all hover:shadow-lg" style="background-color: var(--promo-button-dark-bg); color: var(--promo-button-dark-text); {{ btn_radius_style }}" href="{{ button_link }}">{{ button_label }}</a>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

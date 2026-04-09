@@ -1,0 +1,463 @@
+﻿{% liquid
+  assign panel_bg = settings.global_surface_card_color
+  assign section_bg = panel_bg
+  assign section_text = settings.global_text_muted_color
+  assign panel_text = settings.global_text_primary_color
+  assign footer_title_size_mobile = section.settings.footer_title_size_mobile | default: 16
+  assign footer_title_size_desktop = section.settings.footer_title_size_desktop | default: 18
+  assign footer_link_size_mobile = section.settings.footer_link_size_mobile | default: 13
+  assign footer_link_size_desktop = section.settings.footer_link_size_desktop | default: 14
+  assign footer_link_color = section.settings.footer_link_color | default: section_text
+  assign footer_link_hover_color = section.settings.footer_link_hover_color | default: settings.global_primary_color
+  assign footer_padding_mobile = section.settings.footer_padding_mobile | default: 40
+  assign footer_grid_gap_mobile = section.settings.footer_grid_gap_mobile | default: 32
+  assign footer_grid_gap_desktop = section.settings.footer_grid_gap_desktop | default: 48
+
+  assign support_phone_digits = section.settings.support_phone_number | default: '' | remove: ' ' | remove: '(' | remove: ')' | remove: '-' | remove: '+' | remove: '.' | remove: '/'
+  assign company_whatsapp_digits = section.settings.company_whatsapp | default: '' | remove: ' ' | remove: '(' | remove: ')' | remove: '-' | remove: '+' | remove: '.' | remove: '/'
+  assign support_phone_href = blank
+  assign company_whatsapp_href = blank
+  assign company_email_href = blank
+
+  if support_phone_digits != blank
+    assign support_phone_href = 'tel:' | append: support_phone_digits
+  endif
+
+  if company_whatsapp_digits != blank
+    assign company_whatsapp_href = 'https://wa.me/' | append: company_whatsapp_digits
+  endif
+
+  if section.settings.company_email != blank
+    assign company_email_href = 'mailto:' | append: section.settings.company_email
+  endif
+
+%}
+
+<style>
+  #shopify-section-{{ section.id }} .footer-title {
+    font-size: {{ footer_title_size_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .footer-links {
+    font-size: {{ footer_link_size_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .footer-link {
+    color: {{ footer_link_color }};
+    transition: color 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .footer-link:hover,
+  #shopify-section-{{ section.id }} .footer-link:focus-visible {
+    color: {{ footer_link_hover_color }};
+  }
+
+  #shopify-section-{{ section.id }} .footer-top {
+    gap: {{ footer_grid_gap_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .footer-menus {
+    gap: {{ footer_grid_gap_mobile }}px;
+  }
+
+  @media (max-width: 767px) {
+    #shopify-section-{{ section.id }} .footer-menus {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .footer-menu-column {
+      width: 100%;
+      min-width: 0;
+      flex: 0 0 auto;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-panel {
+    background-color: {{ panel_bg }};
+    color: {{ panel_text }};
+    border-radius: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-title {
+    color: {{ section_text }};
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-body {
+    padding: 0;
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-name {
+    color: color-mix(in srgb, {{ panel_text }} 92%, #111827);
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-item {
+    padding: 0.5rem 0;
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+    margin-bottom: 0.2rem;
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-value {
+    font-size: {{ footer_link_size_mobile }}px;
+    line-height: 1.45;
+    color: color-mix(in srgb, {{ panel_text }} 94%, #0f172a);
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-phone {
+    font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: color-mix(in srgb, {{ panel_text }} 96%, #0f172a);
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .footer-company-link:hover,
+  #shopify-section-{{ section.id }} .footer-company-link:focus-visible {
+    color: {{ footer_link_hover_color }};
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .footer-title {
+      font-size: {{ footer_title_size_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .footer-links {
+      font-size: {{ footer_link_size_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .footer-top {
+      gap: {{ footer_grid_gap_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .footer-menus {
+      gap: {{ footer_grid_gap_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .footer-company-body {
+      padding: 0;
+    }
+
+    #shopify-section-{{ section.id }} .footer-company-value {
+      font-size: {{ footer_link_size_desktop }}px;
+    }
+
+  }
+</style>
+
+<footer class="footer-shell" style="background-color: {{ section_bg }}; color: {{ section_text }};">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-6 py-2 md:py-8">
+    {% if section.settings.top_note != blank %}
+      <div class="text-center mb-2 text-sm" style="color: color-mix(in srgb, {{ section_text }} 70%, transparent);">{{ section.settings.top_note }}</div>
+    {% endif %}
+
+    <div class="footer-top flex flex-col lg:flex-row items-start">
+      <div class="footer-menus flex-1 flex flex-col md:flex-row md:flex-wrap">
+        {% assign menu_blocks = section.blocks | where: 'type', 'menu_column' %}
+        {% if menu_blocks.size > 0 %}
+          {% for block in menu_blocks %}
+            <div class="footer-menu-column min-w-0 w-full md:min-w-[180px] md:flex-1" {{ block.shopify_attributes }}>
+              <h4 class="footer-title font-headline font-bold mb-3" style="color: {{ section_text }};">{{ block.settings.title }}</h4>
+              <ul class="footer-links space-y-2">
+                {% if block.settings.menu != blank %}
+                  {% for link in linklists[block.settings.menu].links %}
+                    <li><a class="footer-link" href="{{ link.url }}">{{ link.title }}</a></li>
+                  {% endfor %}
+                {% endif %}
+              </ul>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <aside class="footer-company-panel w-full lg:w-[320px] lg:flex-shrink-0">
+        <div class="footer-company-body">
+        <h4 class="footer-title footer-company-title font-headline font-bold mb-3">{{ section.settings.company_panel_title }}</h4>
+
+        {% if section.settings.company_name != blank %}
+          <p class="footer-links footer-company-name font-bold mb-2">{{ section.settings.company_name }}</p>
+        {% endif %}
+
+        {% if section.settings.support_phone_number != blank %}
+          <div class="footer-company-item mb-1">
+            <p class="footer-company-label">{{ section.settings.support_phone_title }}</p>
+            <p class="footer-company-phone">
+              {% if support_phone_href != blank %}
+                <a class="footer-company-link" href="{{ support_phone_href }}">{{ section.settings.support_phone_number }}</a>
+              {% else %}
+                {{ section.settings.support_phone_number }}
+              {% endif %}
+            </p>
+          </div>
+        {% endif %}
+
+        {% if section.settings.company_whatsapp != blank %}
+          <div class="footer-company-item">
+            <p class="footer-company-label">WhatsApp</p>
+            <p class="footer-company-value">
+              {% if company_whatsapp_href != blank %}
+                <a class="footer-company-link" href="{{ company_whatsapp_href }}" target="_blank" rel="noopener noreferrer">{{ section.settings.company_whatsapp }}</a>
+              {% else %}
+                {{ section.settings.company_whatsapp }}
+              {% endif %}
+            </p>
+          </div>
+        {% endif %}
+
+        {% if section.settings.company_email != blank %}
+          <div class="footer-company-item">
+            <p class="footer-company-label">E-mail</p>
+            <p class="footer-company-value">
+              {% if company_email_href != blank %}
+                <a class="footer-company-link" href="{{ company_email_href }}">{{ section.settings.company_email }}</a>
+              {% else %}
+                {{ section.settings.company_email }}
+              {% endif %}
+            </p>
+          </div>
+        {% endif %}
+
+        {% if section.settings.company_cnpj != blank %}
+          <div class="footer-company-item">
+            <p class="footer-company-label">CNPJ</p>
+            <p class="footer-company-value">{{ section.settings.company_cnpj }}</p>
+          </div>
+        {% endif %}
+
+        {% if section.settings.company_address != blank %}
+          <div class="footer-company-item">
+            <p class="footer-company-label">Endereço</p>
+            <p class="footer-company-value">{{ section.settings.company_address | newline_to_br }}</p>
+          </div>
+        {% endif %}
+
+        {% if section.settings.support_phone_schedule != blank %}
+          <div class="footer-company-item">
+            <p class="footer-company-label">Horário de atendimento</p>
+            <p class="footer-company-value">{{ section.settings.support_phone_schedule | newline_to_br }}</p>
+          </div>
+        {% endif %}
+
+        {% if section.settings.support_menu != blank %}
+            <div class="footer-links space-y-2 mt-2 pt-2">
+            {% for link in linklists[section.settings.support_menu].links %}
+              <a class="footer-link flex items-center gap-2" href="{{ link.url }}">
+                <span class="material-symbols-outlined text-base">chevron_right</span> {{ link.title }}
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+        </div>
+      </aside>
+    </div>
+
+    <div class="pt-4 text-center text-xs" style="color: color-mix(in srgb, {{ section_text }} 72%, transparent);">
+      &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. Todos os direitos reservados.
+    </div>
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "top_note",
+      "label": "Aviso superior",
+      "default": "*Consulte ofertas participantes e adquira mais informações sobre os fretes na página termos Madeira Madeira"
+    },
+    {
+      "type": "header",
+      "content": "Painel fixo da empresa"
+    },
+    {
+      "type": "text",
+      "id": "company_panel_title",
+      "label": "Título do painel",
+      "default": "Dados da empresa"
+    },
+    {
+      "type": "text",
+      "id": "company_name",
+      "label": "Nome da empresa",
+      "default": "Maxxx Móveis"
+    },
+    {
+      "type": "text",
+      "id": "support_phone_title",
+      "label": "Título do telefone",
+      "default": "Televendas"
+    },
+    {
+      "type": "text",
+      "id": "support_phone_number",
+      "label": "Número de telefone",
+      "default": "0800 080 0099"
+    },
+    {
+      "type": "text",
+      "id": "company_whatsapp",
+      "label": "WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "company_email",
+      "label": "E-mail"
+    },
+    {
+      "type": "text",
+      "id": "company_cnpj",
+      "label": "CNPJ"
+    },
+    {
+      "type": "textarea",
+      "id": "company_address",
+      "label": "Endereço"
+    },
+    {
+      "type": "textarea",
+      "id": "support_phone_schedule",
+      "label": "Horário de atendimento",
+      "default": "De Segunda a sábado, das 08h às 20h.\nExceto feriados."
+    },
+    {
+      "type": "link_list",
+      "id": "support_menu",
+      "label": "Menu de atendimento"
+    },
+    {
+      "type": "header",
+      "content": "Estilo de links e títulos"
+    },
+    {
+      "type": "range",
+      "id": "footer_title_size_mobile",
+      "label": "Tamanho dos títulos (mobile)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "footer_title_size_desktop",
+      "label": "Tamanho dos títulos (desktop)",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "footer_link_size_mobile",
+      "label": "Tamanho dos links (mobile)",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "footer_link_size_desktop",
+      "label": "Tamanho dos links (desktop)",
+      "min": 11,
+      "max": 24,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "footer_link_color",
+      "label": "Cor dos links",
+      "default": "#6B7280"
+    },
+    {
+      "type": "color",
+      "id": "footer_link_hover_color",
+      "label": "Cor hover dos links",
+      "default": "#0058BB"
+    },
+    {
+      "type": "header",
+      "content": "Layout responsivo"
+    },
+    {
+      "type": "range",
+      "id": "footer_padding_mobile",
+      "label": "Padding vertical (mobile)",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "footer_grid_gap_mobile",
+      "label": "Espaçamento entre colunas (mobile)",
+      "min": 16,
+      "max": 64,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "footer_grid_gap_desktop",
+      "label": "Espaçamento entre colunas (desktop)",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu_column",
+      "name": "Coluna de menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título da coluna",
+          "default": "Institucional"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu com subitens"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        { "type": "menu_column" },
+        { "type": "menu_column" },
+        { "type": "menu_column" }
+      ]
+    }
+  ]
+}
+{% endschema %}

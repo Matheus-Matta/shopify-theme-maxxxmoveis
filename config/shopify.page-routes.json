@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "routes": [
+    {
+      "id": "account-favorites",
+      "title": "Meus favoritos",
+      "url": "/pages/favoritos",
+      "templateSuffix": "favoritos",
+      "sectionType": "page-favoritos-custom",
+      "published": true
+    },
+    {
+      "id": "agendamento",
+      "title": "Agendamento",
+      "url": "/pages/agendamento",
+      "templateSuffix": "agendamento",
+      "sectionType": "page-agendamento",
+      "published": true
+    },
+    {
+      "id": "addresses",
+      "title": "Nossas Lojas",
+      "url": "/pages/lojas",
+      "templateSuffix": "addresses",
+      "sectionType": "page-addresses-custom",
+      "published": true
+    }
+  ]
+}

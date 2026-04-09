@@ -1,0 +1,713 @@
+{% liquid
+  assign section_bg = section.settings.bg_color | default: settings.global_primary_color
+  assign section_text = section.settings.title_color | default: settings.global_button_primary_text_color
+  assign section_paragraph = section.settings.text_color | default: settings.global_button_primary_text_color
+  assign section_discount = section.settings.discount_color | default: settings.global_button_primary_text_color
+  assign section_surface = section.settings.counter_bg_color | default: settings.global_text_primary_color
+  assign section_counter_text = section.settings.counter_text_color | default: settings.global_button_primary_text_color
+  assign section_timer_label = section.settings.timer_label_color | default: settings.global_button_primary_text_color
+  assign section_button_bg = section.settings.button_bg_color | default: settings.global_text_primary_color
+  assign section_button_bg_hover = section.settings.button_bg_hover_color | default: settings.global_primary_hover_color | default: '#004A9D'
+  assign section_button_text = section.settings.button_text_color | default: settings.global_primary_color
+  assign card_border_color = section.settings.card_border_color | default: settings.global_border_color
+  assign card_border_width = section.settings.card_border_width | default: 0
+  assign card_radius_mobile = section.settings.card_radius_mobile | default: 24
+  assign card_radius_desktop = section.settings.card_radius_desktop | default: 24
+  assign card_shadow_opacity = section.settings.card_shadow_opacity | default: 25
+  assign counter_radius = section.settings.counter_radius | default: 16
+  assign button_radius = section.settings.button_radius | default: 16
+  assign section_accent_contrast = settings.global_button_primary_text_color
+  assign section_bg_image = section.settings.bg_image
+  assign section_bg_image_mobile = section.settings.bg_image_mobile
+  assign section_bg_image_url = ''
+  assign section_bg_image_mobile_url = ''
+
+  if section_bg_image != blank
+    assign section_bg_image_url = section_bg_image | image_url: width: 2200
+  endif
+
+  if section_bg_image_mobile != blank
+    assign section_bg_image_mobile_url = section_bg_image_mobile | image_url: width: 1200
+  endif
+
+%}
+
+<style>
+  #shopify-section-{{ section.id }} .flash-offers__card {
+    min-height: {{ section.settings.min_height_mobile }}px;
+    background-color: {{ section_bg }};
+    border: {{ card_border_width }}px solid {{ card_border_color }};
+    border-radius: {{ card_radius_mobile }}px;
+    box-shadow: 0 24px 48px -20px rgba(0, 0, 0, {{ card_shadow_opacity | times: 0.01 }});
+    {% if section_bg_image_url != blank %}
+      background-image: linear-gradient(0deg, {{ section.settings.overlay_color }}, {{ section.settings.overlay_color }}), url('{{ section_bg_image_url }}');
+      background-size: {{ section.settings.bg_image_fit }};
+      background-position: {{ section.settings.bg_image_position }};
+      background-repeat: no-repeat;
+    {% endif %}
+  }
+
+  #shopify-section-{{ section.id }} .flash-offers__title {
+    font-size: {{ section.settings.title_size_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .flash-offers__text {
+    font-size: {{ section.settings.text_size_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .flash-offers__count-number {
+    font-size: {{ section.settings.counter_size_mobile }}px;
+    border-radius: {{ counter_radius }}px;
+    width: 100%;
+    min-width: 0;
+    padding: clamp(8px, 2.8vw, 14px) clamp(6px, 2.2vw, 12px);
+  }
+
+  #shopify-section-{{ section.id }} .flash-offers__cta {
+    border-radius: {{ button_radius }}px;
+    transition: transform 200ms ease, background-color 200ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .flash-offers__cta:hover {
+    background-color: {{ section_button_bg_hover }};
+  }
+
+  #shopify-section-{{ section.id }} .flash-offers__count-row {
+    width: 100%;
+    justify-content: center;
+    gap: clamp(6px, 2.2vw, 14px);
+  }
+
+  #shopify-section-{{ section.id }} .flash-offers__count-col {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: clamp(56px, 24vw, 88px);
+  }
+
+  #shopify-section-{{ section.id }} .flash-offers__count-separator {
+    font-size: clamp(20px, 5.2vw, 32px);
+    line-height: 1;
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .flash-offers__card {
+      min-height: {{ section.settings.min_height_desktop }}px;
+      border-radius: {{ card_radius_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .flash-offers__title {
+      font-size: {{ section.settings.title_size_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .flash-offers__text {
+      font-size: {{ section.settings.text_size_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .flash-offers__count-number {
+      font-size: {{ section.settings.counter_size_desktop }}px;
+      width: auto;
+      min-width: 80px;
+      padding: 1rem 1.25rem;
+    }
+
+    #shopify-section-{{ section.id }} .flash-offers__count-row {
+      width: auto;
+      gap: 1rem;
+    }
+
+    #shopify-section-{{ section.id }} .flash-offers__count-col {
+      flex: 0 0 auto;
+      max-width: none;
+      min-width: 0;
+    }
+
+    #shopify-section-{{ section.id }} .flash-offers__count-separator {
+      font-size: 2.25rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    {% if section_bg_image_mobile_url != blank %}
+      #shopify-section-{{ section.id }} .flash-offers__card {
+        background-image: linear-gradient(0deg, {{ section.settings.overlay_color }}, {{ section.settings.overlay_color }}), url('{{ section_bg_image_mobile_url }}');
+      }
+    {% endif %}
+  }
+</style>
+
+<section class="section-layout-py">
+  <div class="max-w-[1440px] mx-auto section-layout-px">
+  <div class="flash-offers__card gc-unified-card p-4 md:p-6 lg:p-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 lg:gap-8 relative overflow-hidden group" style="--section-bg: {{ section_bg }}; --section-text: {{ section_text }}; --section-paragraph: {{ section_paragraph }}; --section-discount: {{ section_discount }}; --section-surface: {{ section_surface }}; --section-counter-text: {{ section_counter_text }}; --section-timer-label: {{ section_timer_label }}; --section-button-bg: {{ section_button_bg }}; --section-button-text: {{ section_button_text }}; --section-accent-contrast: {{ section_accent_contrast }}; --gc-card-bg-local: {{ section_bg }}; --gc-card-border-local: {{ card_border_color }}; --gc-card-border-width-local: {{ card_border_width }}px; --gc-card-radius-local: {{ card_radius_mobile }}px; --gc-card-border-hover-local: {{ card_border_color }}; --gc-card-shadow-rest: var(--card-shadow-rest); --gc-card-shadow-hover: var(--card-shadow-hover); --gc-card-lift-hover: 0px;">
+    <div class="absolute -top-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
+      <span class="material-symbols-outlined text-[300px]" style="color: var(--section-accent-contrast);">timer</span>
+    </div>
+
+    <div class="relative z-10 text-center md:text-left max-w-lg">
+      <h2 class="flash-offers__title font-headline font-black italic tracking-tighter mb-4 md:mb-6 leading-tight" style="color: var(--section-text);">{{ section.settings.title }}</h2>
+      <p class="flash-offers__text font-medium" style="color: var(--section-paragraph);">{{ section.settings.text }} <span class="font-black" style="color: var(--section-discount);">{{ section.settings.discount }}</span></p>
+    </div>
+
+    <div class="relative z-10 flex flex-col items-center" data-flash-countdown data-end-at="{{ section.settings.countdown_end_at | escape }}" data-expired-label="{{ section.settings.countdown_expired_label | escape }}" data-mode="{{ section.settings.countdown_mode }}" data-duration-minutes="{{ section.settings.countdown_duration_minutes }}" data-persistence-key="{{ section.settings.countdown_persistence_key | escape }}">
+      <span class="text-sm font-bold uppercase tracking-[0.2em] mb-3" style="color: var(--section-timer-label);" data-countdown-label>{{ section.settings.timer_label }}</span>
+      <div class="flash-offers__count-row flex items-center">
+        <div class="flash-offers__count-col flex flex-col items-center">
+          <div class="flash-offers__count-number font-black text-center shadow-xl" style="background-color: var(--section-surface); color: var(--section-counter-text);" data-countdown-hours>{{ section.settings.hours }}</div>
+          <span class="text-xs font-bold mt-2 uppercase" style="color: var(--section-counter-text);">{{ section.settings.hours_label }}</span>
+        </div>
+        <div class="flash-offers__count-separator font-black" style="color: var(--section-counter-text);">:</div>
+        <div class="flash-offers__count-col flex flex-col items-center">
+          <div class="flash-offers__count-number font-black text-center shadow-xl" style="background-color: var(--section-surface); color: var(--section-counter-text);" data-countdown-minutes>{{ section.settings.minutes }}</div>
+          <span class="text-xs font-bold mt-2 uppercase" style="color: var(--section-counter-text);">{{ section.settings.minutes_label }}</span>
+        </div>
+        <div class="flash-offers__count-separator font-black" style="color: var(--section-counter-text);">:</div>
+        <div class="flash-offers__count-col flex flex-col items-center">
+          <div class="flash-offers__count-number font-black text-center shadow-xl" style="background-color: var(--section-surface); color: var(--section-counter-text);" data-countdown-seconds>{{ section.settings.seconds }}</div>
+          <span class="text-xs font-bold mt-2 uppercase" style="color: var(--section-counter-text);">{{ section.settings.seconds_label }}</span>
+        </div>
+      </div>
+    </div>
+
+    {% if section.settings.button_label != blank %}
+      <a class="flash-offers__cta relative z-10 px-10 py-4 font-black text-lg hover:scale-105 shadow-2xl" style="background-color: var(--section-button-bg); color: var(--section-button-text);" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+    {% endif %}
+  </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const sectionElement = document.getElementById('shopify-section-{{ section.id }}');
+    if (!sectionElement) return;
+
+    const countdownRoot = sectionElement.querySelector('[data-flash-countdown]');
+    if (!countdownRoot) return;
+
+    const hoursElement = countdownRoot.querySelector('[data-countdown-hours]');
+    const minutesElement = countdownRoot.querySelector('[data-countdown-minutes]');
+    const secondsElement = countdownRoot.querySelector('[data-countdown-seconds]');
+    const labelElement = countdownRoot.querySelector('[data-countdown-label]');
+    if (!hoursElement || !minutesElement || !secondsElement) return;
+
+    const sectionId = '{{ section.id }}';
+    const settingsSnapshot = {{ section.settings | json }};
+    const mode = (countdownRoot.getAttribute('data-mode') || 'end_at').trim().toLowerCase();
+    const durationMinutes = Number.parseInt(countdownRoot.getAttribute('data-duration-minutes') || '15', 10);
+    const persistenceKey = (countdownRoot.getAttribute('data-persistence-key') || 'default').trim() || 'default';
+    const storagePrefix = 'flash-offers:' + sectionId + ':' + persistenceKey + ':';
+    const endAtRaw = (countdownRoot.getAttribute('data-end-at') || '').trim();
+
+    const normalizeDateInput = (value) => {
+      const cleaned = value.replace(' ', 'T');
+      const hasTimezone = /Z|[+-]\d{2}:?\d{2}$/.test(cleaned);
+      return hasTimezone ? cleaned : cleaned + '-03:00';
+    };
+
+    const safeDurationMinutes = Math.max(1, Number.isNaN(durationMinutes) ? 15 : durationMinutes);
+    const initialLabelText = labelElement ? labelElement.textContent : '';
+    const defaultEndAtValue = '2026-12-31 23:59';
+    const effectiveMode = (mode === 'fixed_duration' || endAtRaw === defaultEndAtValue) ? 'fixed_duration' : 'end_at';
+
+    const hashString = (input) => {
+      let hash = 5381;
+      for (let i = 0; i < input.length; i += 1) {
+        hash = ((hash << 5) + hash) ^ input.charCodeAt(i);
+      }
+      return Math.abs(hash).toString(36);
+    };
+
+    const settingsToken = hashString(JSON.stringify(settingsSnapshot || {}));
+    const storageKey = storagePrefix + settingsToken;
+
+    const buildNextTargetDate = () => {
+      return new Date(Date.now() + safeDurationMinutes * 60 * 1000);
+    };
+
+    const cleanupOldPersistentKeys = () => {
+      if (!window.localStorage) return;
+      for (let index = window.localStorage.length - 1; index >= 0; index -= 1) {
+        const keyName = window.localStorage.key(index);
+        if (!keyName) continue;
+        if (keyName.startsWith(storagePrefix) && keyName !== storageKey) {
+          window.localStorage.removeItem(keyName);
+        }
+      }
+    };
+
+    const writePersistentState = (dateValue) => {
+      if (!window.localStorage) return;
+      const payload = {
+        endsAt: dateValue.toISOString(),
+        durationMinutes: safeDurationMinutes
+      };
+      window.localStorage.setItem(storageKey, JSON.stringify(payload));
+    };
+
+    const readPersistentState = () => {
+      if (!window.localStorage) return null;
+
+      const storedRaw = window.localStorage.getItem(storageKey);
+      if (!storedRaw) return null;
+
+      try {
+        if (storedRaw.startsWith('{')) {
+          const parsed = JSON.parse(storedRaw);
+          const parsedDate = new Date(parsed.endsAt || '');
+          if (Number.isNaN(parsedDate.getTime())) return null;
+          return {
+            targetDate: parsedDate,
+            storedDuration: Number.parseInt(parsed.durationMinutes, 10)
+          };
+        }
+
+        const legacyDate = new Date(storedRaw);
+        if (Number.isNaN(legacyDate.getTime())) return null;
+        return {
+          targetDate: legacyDate,
+          storedDuration: safeDurationMinutes
+        };
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const getPersistentTargetDate = (forceReset) => {
+      const stored = forceReset ? null : readPersistentState();
+      const now = Date.now();
+
+      if (stored) {
+        const isExpired = stored.targetDate.getTime() <= now;
+        const durationChanged = stored.storedDuration !== safeDurationMinutes;
+        if (!isExpired && !durationChanged) {
+          return stored.targetDate;
+        }
+      }
+
+      const nextDate = buildNextTargetDate();
+      writePersistentState(nextDate);
+      return nextDate;
+    };
+
+    let targetDate = null;
+    if (effectiveMode === 'fixed_duration') {
+      cleanupOldPersistentKeys();
+      targetDate = getPersistentTargetDate();
+    } else if (endAtRaw) {
+      targetDate = new Date(normalizeDateInput(endAtRaw));
+      if (Number.isNaN(targetDate.getTime())) {
+        targetDate = null;
+      }
+    }
+
+    if (!targetDate) return;
+
+    const expiredLabel = countdownRoot.getAttribute('data-expired-label') || 'ENCERRADA';
+    const pad2 = (value) => String(value).padStart(2, '0');
+
+    const render = (totalMs) => {
+      const totalSeconds = Math.max(0, Math.floor(totalMs / 1000));
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      hoursElement.textContent = pad2(hours);
+      minutesElement.textContent = pad2(minutes);
+      secondsElement.textContent = pad2(seconds);
+    };
+
+    const tick = () => {
+      const remaining = targetDate.getTime() - Date.now();
+      render(remaining);
+
+      if (remaining <= 0) {
+        if (effectiveMode === 'fixed_duration') {
+          targetDate = getPersistentTargetDate(true);
+          if (labelElement && initialLabelText) {
+            labelElement.textContent = initialLabelText;
+          }
+          return;
+        }
+
+        clearInterval(intervalId);
+        if (labelElement) {
+          labelElement.textContent = expiredLabel;
+        }
+      }
+    };
+
+    tick();
+    const intervalId = window.setInterval(tick, 1000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Flash offers",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "OFERTAS RELÂMPAGO!"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Texto",
+      "default": "Aproveite descontos de até"
+    },
+    {
+      "type": "text",
+      "id": "discount",
+      "label": "Destaque de desconto",
+      "default": "60% OFF"
+    },
+    {
+      "type": "text",
+      "id": "timer_label",
+      "label": "Rótulo do timer",
+      "default": "CORRE QUE ACABA EM:"
+    },
+    {
+      "type": "select",
+      "id": "countdown_mode",
+      "label": "Modo do contador",
+      "default": "end_at",
+      "options": [
+        { "value": "end_at", "label": "Data final fixa" },
+        { "value": "fixed_duration", "label": "Duração fixa persistente" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "countdown_end_at",
+      "label": "Data final do contador",
+      "info": "Formato: YYYY-MM-DD HH:MM (ex.: 2026-12-31 23:59)",
+      "default": "2026-12-31 23:59"
+    },
+    {
+      "type": "range",
+      "id": "countdown_duration_minutes",
+      "label": "Duração fixa (minutos)",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "text",
+      "id": "countdown_persistence_key",
+      "label": "Chave de persistência",
+      "info": "Troque este valor para reiniciar o contador persistente para todos os visitantes.",
+      "default": "oferta-1"
+    },
+    {
+      "type": "text",
+      "id": "countdown_expired_label",
+      "label": "Texto quando encerrar",
+      "default": "ENCERRADA"
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Horas",
+      "default": "04"
+    },
+    {
+      "type": "text",
+      "id": "minutes",
+      "label": "Minutos",
+      "default": "22"
+    },
+    {
+      "type": "text",
+      "id": "seconds",
+      "label": "Segundos",
+      "default": "15"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Label horas",
+      "default": "Horas"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Label minutos",
+      "default": "Minutos"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Label segundos",
+      "default": "Segundos"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto do botão",
+      "default": "VER TODAS AS OFERTAS"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link do botão"
+    },
+    {
+      "type": "header",
+      "content": "Estilo visual"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fundo base",
+      "default": "#0058BB"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Banner de fundo (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_mobile",
+      "label": "Banner de fundo (mobile)"
+    },
+    {
+      "type": "select",
+      "id": "bg_image_fit",
+      "label": "Ajuste do banner",
+      "default": "cover",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" },
+        { "value": "100% 100%", "label": "Stretch" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "bg_image_position",
+      "label": "Posição do banner",
+      "default": "center center",
+      "options": [
+        { "value": "center center", "label": "Centro" },
+        { "value": "top center", "label": "Topo" },
+        { "value": "bottom center", "label": "Base" },
+        { "value": "center left", "label": "Esquerda" },
+        { "value": "center right", "label": "Direita" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Cor de sobreposição no banner",
+      "default": "rgba(0,0,0,0.15)"
+    },
+    {
+      "type": "range",
+      "id": "min_height_desktop",
+      "label": "Altura mínima desktop",
+      "min": 260,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "min_height_mobile",
+      "label": "Altura mínima mobile",
+      "min": 220,
+      "max": 560,
+      "step": 10,
+      "unit": "px",
+      "default": 320
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Cor do título",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Cor do texto",
+      "default": "#fff4ea"
+    },
+    {
+      "type": "color",
+      "id": "discount_color",
+      "label": "Cor do destaque de desconto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "timer_label_color",
+      "label": "Cor do rótulo do timer",
+      "default": "#ffe6d3"
+    },
+    {
+      "type": "color",
+      "id": "counter_bg_color",
+      "label": "Fundo dos blocos do timer",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "color",
+      "id": "counter_text_color",
+      "label": "Cor dos números do timer",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Fundo do botão",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto do botão",
+      "default": "#0058BB"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover_color",
+      "label": "Fundo do botão (hover)",
+      "default": "#F7F7F7"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Cor da borda do card",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Espessura da borda do card",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_radius_mobile",
+      "label": "Arredondamento do card (mobile)",
+      "min": 0,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_radius_desktop",
+      "label": "Arredondamento do card (desktop)",
+      "min": 0,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Intensidade da sombra do card",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "counter_radius",
+      "label": "Arredondamento dos blocos do timer",
+      "min": 0,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Arredondamento do botão",
+      "min": 0,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Título desktop",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Título mobile",
+      "min": 20,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Texto desktop",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Texto mobile",
+      "min": 13,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "counter_size_desktop",
+      "label": "Números do timer desktop",
+      "min": 28,
+      "max": 68,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "counter_size_mobile",
+      "label": "Números do timer mobile",
+      "min": 22,
+      "max": 52,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flash offers"
+    }
+  ]
+}
+{% endschema %}

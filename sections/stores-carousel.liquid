@@ -1,0 +1,627 @@
+{% liquid
+  assign section_bg      = section.settings.section_bg_color
+  assign section_text    = section.settings.section_text_color
+  assign title_color     = section.settings.title_color
+  assign subtitle_color  = section.settings.subtitle_color
+
+  assign sc_bg            = section.settings.card_bg_color
+  assign sc_border        = section.settings.card_border_color
+  assign sc_border_w      = section.settings.card_border_width | default: 1
+  assign sc_border_hover  = section.settings.card_border_hover_color
+  assign sc_radius        = section.settings.card_radius | default: 16
+  assign sc_title_color   = section.settings.card_title_color
+  assign sc_title_hover   = section.settings.card_title_hover_color
+  assign sc_muted_color   = section.settings.card_muted_color
+  assign sc_badge_bg      = section.settings.card_badge_bg_color
+  assign sc_badge_text    = section.settings.card_badge_text_color
+  assign sc_icon_color    = section.settings.card_icon_color
+  assign sc_media_bg      = section.settings.card_media_bg_color
+  assign sc_image_fit     = section.settings.card_image_fit
+  assign arrow_bg          = settings.global_arrow_bg_color          | default: section.settings.arrow_bg_color          | default: '#ffffff'
+  assign arrow_border      = settings.global_arrow_border_color      | default: section.settings.arrow_border_color      | default: '#D1D5DB'
+  assign arrow_icon        = settings.global_arrow_icon_color        | default: section.settings.arrow_icon_color        | default: '#1a1c1c'
+  assign arrow_bg_hover    = settings.global_arrow_bg_hover_color    | default: section.settings.arrow_bg_hover_color    | default: '#F3F4F6'
+  assign arrow_border_hover= settings.global_arrow_border_hover_color| default: section.settings.arrow_border_hover_color| default: '#0058BB'
+  assign arrow_icon_hover  = settings.global_arrow_icon_hover_color  | default: section.settings.arrow_icon_hover_color  | default: '#0058BB'
+
+  assign card_width_mobile  = section.settings.card_width_mobile  | default: 260
+  assign card_width_desktop = section.settings.card_width_desktop | default: 300
+  assign card_media_height  = section.settings.card_media_height  | default: 180
+%}
+
+<section
+  id="shopify-section-{{ section.id }}"
+  class="w-full section-layout-py overflow-hidden stores-carousel-section"
+  style="
+    background-color: {{ section_bg }};
+    color: {{ section_text }};
+    --sc-card-width-mobile: {{ card_width_mobile }}px;
+    --sc-card-width-desktop: {{ card_width_desktop }}px;
+    --sc-media-height: {{ card_media_height }}px;
+    --sc-title-size-mobile: {{ section.settings.card_title_size_mobile }}px;
+    --sc-title-size-desktop: {{ section.settings.card_title_size_desktop }}px;
+    --sc-meta-size-mobile: {{ section.settings.card_meta_size_mobile }}px;
+    --sc-meta-size-desktop: {{ section.settings.card_meta_size_desktop }}px;
+    --gc-track-gap-mobile: 12px;
+    --gc-track-gap-desktop: 20px;
+    --gc-track-padding-mobile: 0.25rem 0.1rem 0.6rem 0.1rem;
+    --gc-track-padding-desktop: 0.3rem 0.2rem 0.75rem 0.2rem;
+    --arrow-bg: {{ arrow_bg }};
+    --arrow-border: {{ arrow_border }};
+    --arrow-icon: {{ arrow_icon }};
+    --arrow-bg-hover: {{ arrow_bg_hover }};
+    --arrow-border-hover: {{ arrow_border_hover }};
+    --arrow-icon-hover: {{ arrow_icon_hover }};
+  "
+>
+  <div class="max-w-[1440px] mx-auto section-layout-px">
+
+    {%- comment -%}── Cabeçalho ─────────────────────────────────────────{%- endcomment -%}
+    {% if section.settings.title != blank or section.settings.subtitle != blank %}
+      <div class="stores-carousel__header mb-6 md:mb-8">
+        {% if section.settings.show_title_dividers %}
+          <div class="relative flex items-center mb-{% if section.settings.subtitle != blank %}2{% else %}0{% endif %}">
+            <div class="flex-grow border-t" style="border-color: color-mix(in srgb, {{ title_color }} 15%, transparent);"></div>
+            <h2 class="stores-carousel__title flex-shrink mx-4 font-headline uppercase tracking-tight" style="font-size: var(--sc-section-title-mobile, {{ section.settings.title_size_mobile }}px);">
+              {{ section.settings.title }}
+            </h2>
+            <div class="flex-grow border-t" style="border-color: color-mix(in srgb, {{ title_color }} 15%, transparent);"></div>
+          </div>
+        {% else %}
+          {% if section.settings.title != blank %}
+            <h2 class="stores-carousel__title font-headline uppercase tracking-tight" style="font-size: var(--sc-section-title-mobile, {{ section.settings.title_size_mobile }}px); color: {{ title_color }}; font-weight: bold;">
+              {{ section.settings.title }}
+            </h2>
+          {% endif %}
+        {% endif %}
+
+        {% if section.settings.subtitle != blank %}
+          <p class="stores-carousel__subtitle mt-1" style="font-size: {{ section.settings.subtitle_size_mobile }}px; color: {{ subtitle_color }};">
+            {{ section.settings.subtitle }}
+          </p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {%- comment -%}── Carrossel ─────────────────────────────────────────{%- endcomment -%}
+    <div class="relative group">
+      <button
+        id="sc-prev-{{ section.id }}"
+        class="sc-arrow absolute left-[-18px] md:left-[-22px] top-1/2 -translate-y-1/2 z-10 rounded-full shadow-md border hidden md:flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+        style="width: {{ section.settings.arrow_size }}px; height: {{ section.settings.arrow_size }}px;"
+        type="button"
+        aria-label="Loja anterior"
+      >
+        <span class="material-symbols-outlined" style="font-size: {{ section.settings.arrow_icon_size }}px;">chevron_left</span>
+      </button>
+      <button
+        id="sc-next-{{ section.id }}"
+        class="sc-arrow absolute right-[-18px] md:right-[-22px] top-1/2 -translate-y-1/2 z-10 rounded-full shadow-md border hidden md:flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+        style="width: {{ section.settings.arrow_size }}px; height: {{ section.settings.arrow_size }}px;"
+        type="button"
+        aria-label="Próxima loja"
+      >
+        <span class="material-symbols-outlined" style="font-size: {{ section.settings.arrow_icon_size }}px;">chevron_right</span>
+      </button>
+
+      <div
+        id="sc-track-{{ section.id }}"
+        class="flex gc-unified-track overflow-x-auto no-scrollbar snap-x scroll-smooth"
+      >
+        {% for block in section.blocks %}
+          <div {{ block.shopify_attributes }} class="snap-start shrink-0" style="width: var(--sc-card-width-mobile);">
+            {% render 'store-card',
+              store_name:         block.settings.store_name,
+              store_image:        block.settings.store_image,
+              store_badge:        block.settings.store_badge,
+              store_address:      block.settings.store_address,
+              store_hours:        block.settings.store_hours,
+              store_phone:        block.settings.store_phone,
+              store_cta_url:      block.settings.cta_url,
+              store_card_bg:             sc_bg,
+              store_card_border:         sc_border,
+              store_card_border_width:   sc_border_w,
+              store_card_border_hover:   sc_border_hover,
+              store_card_radius:         sc_radius,
+              store_card_title_color:    sc_title_color,
+              store_card_title_hover:    sc_title_hover,
+              store_card_muted_color:    sc_muted_color,
+              store_card_badge_bg:       sc_badge_bg,
+              store_card_badge_text:     sc_badge_text,
+              store_card_icon_color:     sc_icon_color,
+              store_card_media_bg:       sc_media_bg,
+              store_card_image_fit:      sc_image_fit,
+              store_card_btn_radius:     0
+            %}
+          </div>
+        {% else %}
+          {%- comment -%} Estado vazio no editor ─────────────────────── {%- endcomment -%}
+          <div class="w-full py-12 text-center" style="color: {{ sc_muted_color }};">
+            <span class="material-symbols-outlined block mx-auto mb-2" style="font-size: 40px; opacity: 0.3;">store</span>
+            <p class="text-sm">Adicione blocos de loja para exibir o carrossel.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .stores-carousel__title {
+    font-size: var(--sc-section-title-mobile, {{ section.settings.title_size_mobile }}px);
+    color: {{ title_color }};
+    font-weight: bold;
+  }
+  #shopify-section-{{ section.id }} .stores-carousel__subtitle {
+    font-size: {{ section.settings.subtitle_size_mobile }}px;
+  }
+  #shopify-section-{{ section.id }} .store-card {
+    height: 100%;
+  }
+  #shopify-section-{{ section.id }} .store-card__media {
+    width: 100%;
+    height: var(--sc-media-height, 180px);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  #shopify-section-{{ section.id }} .store-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: {{ sc_image_fit }};
+    display: block;
+    transition: transform 300ms ease;
+  }
+  #shopify-section-{{ section.id }} .store-card:hover .store-card__img {
+    transform: scale(1.04);
+  }
+  #shopify-section-{{ section.id }} .store-card__title {
+    font-size: var(--sc-title-size-mobile, 15px);
+  }
+  #shopify-section-{{ section.id }} .store-card__address,
+  #shopify-section-{{ section.id }} .store-card__hours,
+  #shopify-section-{{ section.id }} .store-card__phone {
+    font-size: var(--sc-meta-size-mobile, 13px);
+  }
+  #shopify-section-{{ section.id }} .sc-arrow {
+    border: 1px solid var(--arrow-border);
+    background-color: var(--arrow-bg);
+    color: var(--arrow-icon);
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+  }
+  #shopify-section-{{ section.id }} .sc-arrow:hover {
+    border-color: var(--arrow-border-hover);
+    background-color: var(--arrow-bg-hover);
+    color: var(--arrow-icon-hover);
+  }
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .gc-unified-track > * {
+      width: var(--sc-card-width-desktop) !important;
+    }
+    #shopify-section-{{ section.id }} .stores-carousel__title {
+      font-size: {{ section.settings.title_size_desktop }}px;
+    }
+    #shopify-section-{{ section.id }} .stores-carousel__subtitle {
+      font-size: {{ section.settings.subtitle_size_desktop }}px;
+    }
+    #shopify-section-{{ section.id }} .store-card__title {
+      font-size: var(--sc-title-size-desktop, 16px);
+    }
+    #shopify-section-{{ section.id }} .store-card__address,
+    #shopify-section-{{ section.id }} .store-card__hours,
+    #shopify-section-{{ section.id }} .store-card__phone {
+      font-size: var(--sc-meta-size-desktop, 13px);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var track   = document.getElementById('sc-track-{{ section.id }}');
+    var prevBtn = document.getElementById('sc-prev-{{ section.id }}');
+    var nextBtn = document.getElementById('sc-next-{{ section.id }}');
+
+    if (!track || !prevBtn || !nextBtn) return;
+
+    var autoplayEnabled    = {{ section.settings.autoplay_enabled | json }};
+    var autoplayIntervalMs = {{ section.settings.autoplay_interval | default: 5 | times: 1000 }};
+
+    var carousel = new window.CarouselController(track, {
+      prev:          prevBtn,
+      next:          nextBtn,
+      slideSelector: '.store-card'
+    });
+    carousel.bind();
+
+    if (autoplayEnabled) {
+      var autoplay = new window.CarouselAutoplay(track, {
+        intervalMs: autoplayIntervalMs,
+        getStep:    function () { return carousel.getStep(); }
+      });
+      autoplay.bind();
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Lojas: Carrossel",
+  "tag": "section",
+  "class": "stores-carousel-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Cabeçalho"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "NOSSAS LOJAS"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Encontre a loja mais próxima de você"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title_dividers",
+      "label": "Exibir divisores ao lado do título",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Cor do título",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 14, "max": 48, "step": 1, "unit": "px",
+      "label": "Tamanho do título (mobile)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 14, "max": 64, "step": 1, "unit": "px",
+      "label": "Tamanho do título (desktop)",
+      "default": 26
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Cor do subtítulo",
+      "default": "#6B7280"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "min": 11, "max": 24, "step": 1, "unit": "px",
+      "label": "Tamanho do subtítulo (mobile)",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "min": 11, "max": 28, "step": 1, "unit": "px",
+      "label": "Tamanho do subtítulo (desktop)",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Seção"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Fundo da seção",
+      "default": "#f8fafc"
+    },
+    {
+      "type": "color",
+      "id": "section_text_color",
+      "label": "Texto geral",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "header",
+      "content": "Cards de Loja"
+    },
+    {
+      "type": "range",
+      "id": "card_width_mobile",
+      "min": 200, "max": 400, "step": 10, "unit": "px",
+      "label": "Largura do card (mobile)",
+      "default": 260
+    },
+    {
+      "type": "range",
+      "id": "card_width_desktop",
+      "min": 220, "max": 480, "step": 10, "unit": "px",
+      "label": "Largura do card (desktop)",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "card_media_height",
+      "min": 100, "max": 400, "step": 10, "unit": "px",
+      "label": "Altura da imagem do card",
+      "default": 180
+    },
+    {
+      "type": "select",
+      "id": "card_image_fit",
+      "label": "Ajuste da imagem",
+      "options": [
+        { "value": "cover", "label": "Preencher (cover)" },
+        { "value": "contain", "label": "Conter (contain)" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Fundo do card",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_media_bg_color",
+      "label": "Fundo da área de imagem",
+      "default": "#F7F7F7"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Borda do card",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "min": 0, "max": 4, "step": 1, "unit": "px",
+      "label": "Espessura da borda",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "card_border_hover_color",
+      "label": "Borda do card (hover)",
+      "default": "#0058BB"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0, "max": 32, "step": 1, "unit": "px",
+      "label": "Arredondamento do card",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Cor do título do card",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "color",
+      "id": "card_title_hover_color",
+      "label": "Cor do título (hover)",
+      "default": "#0058BB"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_mobile",
+      "min": 11, "max": 28, "step": 1, "unit": "px",
+      "label": "Tamanho do título do card (mobile)",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_desktop",
+      "min": 11, "max": 32, "step": 1, "unit": "px",
+      "label": "Tamanho do título do card (desktop)",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "card_muted_color",
+      "label": "Cor do texto secundário",
+      "default": "#6B7280"
+    },
+    {
+      "type": "range",
+      "id": "card_meta_size_mobile",
+      "min": 10, "max": 18, "step": 1, "unit": "px",
+      "label": "Tamanho do texto info (mobile)",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "card_meta_size_desktop",
+      "min": 10, "max": 18, "step": 1, "unit": "px",
+      "label": "Tamanho do texto info (desktop)",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "card_icon_color",
+      "label": "Cor dos ícones do card",
+      "default": "#0058BB"
+    },
+    {
+      "type": "header",
+      "content": "Badge do Card"
+    },
+    {
+      "type": "color",
+      "id": "card_badge_bg_color",
+      "label": "Fundo do badge",
+      "default": "#0058BB"
+    },
+    {
+      "type": "color",
+      "id": "card_badge_text_color",
+      "label": "Texto do badge",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Setas do Carrossel"
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "min": 28, "max": 64, "step": 2, "unit": "px",
+      "label": "Tamanho da seta",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "arrow_icon_size",
+      "min": 14, "max": 36, "step": 1, "unit": "px",
+      "label": "Tamanho do ícone da seta",
+      "default": 22
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Fundo da seta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_border_color",
+      "label": "Borda da seta",
+      "default": "#D1D5DB"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Cor do ícone da seta",
+      "default": "#1a1c1c"
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_hover_color",
+      "label": "Fundo da seta (hover)",
+      "default": "#F3F4F6"
+    },
+    {
+      "type": "color",
+      "id": "arrow_border_hover_color",
+      "label": "Borda da seta (hover)",
+      "default": "#0058BB"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_hover_color",
+      "label": "Ícone da seta (hover)",
+      "default": "#0058BB"
+    },
+    {
+      "type": "header",
+      "content": "Autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_enabled",
+      "label": "Ativar autoplay",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "min": 2, "max": 12, "step": 1, "unit": "s",
+      "label": "Intervalo do autoplay",
+      "default": 5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "store",
+      "name": "Loja",
+      "settings": [
+        {
+          "type": "text",
+          "id": "store_name",
+          "label": "Nome da loja",
+          "default": "Loja Maxxx"
+        },
+        {
+          "type": "image_picker",
+          "id": "store_image",
+          "label": "Foto da loja"
+        },
+        {
+          "type": "text",
+          "id": "store_badge",
+          "label": "Badge (ex: Inauguração, Destaque)",
+          "info": "Deixe em branco para ocultar"
+        },
+        {
+          "type": "textarea",
+          "id": "store_address",
+          "label": "Endereço",
+          "default": "Rua Exemplo, 123 – Bairro, Cidade – UF"
+        },
+        {
+          "type": "text",
+          "id": "store_hours",
+          "label": "Horário de funcionamento",
+          "default": "Seg–Sex 09h–18h  |  Sáb 09h–14h"
+        },
+        {
+          "type": "text",
+          "id": "store_phone",
+          "label": "Telefone / WhatsApp",
+          "default": "(21) 9 9999-9999"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "Link da loja (ex: Google Maps, site)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lojas: Carrossel",
+      "category": "Lojas",
+      "blocks": [
+        {
+          "type": "store",
+          "settings": {
+            "store_name": "Loja Maxxx Centro",
+            "store_address": "Rua das Flores, 100 – Centro, Rio de Janeiro – RJ",
+            "store_hours": "Seg–Sex 09h–20h  |  Sáb 09h–18h",
+            "store_phone": "(21) 3333-1111",
+          }
+        },
+        {
+          "type": "store",
+          "settings": {
+            "store_name": "Loja Maxxx Barra",
+            "store_address": "Av. das Américas, 500 – Barra, Rio de Janeiro – RJ",
+            "store_hours": "Seg–Sex 09h–20h  |  Sáb 09h–18h",
+            "store_phone": "(21) 3333-2222",
+          }
+        },
+        {
+          "type": "store",
+          "settings": {
+            "store_name": "Loja Maxxx Norte Shopping",
+            "store_address": "Av. Dom Hélder Câmara, 5474 – Cachambi, Rio de Janeiro – RJ",
+            "store_hours": "Seg–Sat 10h–22h  |  Dom 12h–20h",
+            "store_phone": "(21) 3333-3333"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,8 @@
+{% liquid
+  assign badge_text = badge_text | default: blank
+  assign badge_class = badge_class | default: 'bg-primary text-white'
+%}
+
+{% if badge_text != blank %}
+  <div class="{{ badge_class }} text-[10px] font-bold px-2 py-1 rounded shadow-sm">{{ badge_text }}</div>
+{% endif %}

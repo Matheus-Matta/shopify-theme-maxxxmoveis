@@ -1,0 +1,17 @@
+<section class="customer addresses page-width" style="padding: 2rem 1rem;">
+	<h1>Meus enderecos</h1>
+	<p><a href="{{ routes.account_url }}">Voltar para minha conta</a></p>
+
+	{% if customer.addresses_count > 0 %}
+		<ul style="list-style:none; padding:0; margin:1rem 0; display:grid; gap:1rem;">
+			{% for address in customer.addresses %}
+				<li style="border:1px solid #e5e7eb; border-radius:8px; padding:1rem;">
+					{% if address == customer.default_address %}<strong>Padrao</strong><br>{% endif %}
+					{{ address | format_address }}
+				</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<p>Voce ainda nao possui enderecos cadastrados.</p>
+	{% endif %}
+</section>

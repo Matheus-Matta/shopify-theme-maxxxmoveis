@@ -1,0 +1,85 @@
+{% comment %}
+  =====================================
+  Configuração Centralizada de Tabs
+  =====================================
+  
+  Este snippet centraliza TODAS as configurações globais de componentes de abas/tabs
+  e produtos em carrossel.
+  
+  Reutilize em:
+  - collection-tabs-carousel.liquid
+  - featured-collection.liquid (mesmo padrão de tabs)
+  
+  Como usar:
+  {% include 'tabs-config' %}
+  
+  Variáveis disponíveis após inclusão:
+  - tabs_title, tabs_products_limit, tabs_show_discount_percent, etc.
+  - tab_* e section_* para cores e estilos
+  - track_gap_* para espacamento entre items
+  - arrow_* para cores de navegação
+{% endcomment %}
+
+{% liquid
+  assign tabs_title = settings.global_tabs_title | default: 'Ofertas exclusivas'
+  assign tabs_products_limit = settings.global_tabs_products_limit | default: 8
+  assign tabs_show_discount_percent = settings.global_tabs_show_discount_percent
+  assign tabs_show_view_all = settings.global_tabs_show_view_all
+  assign tabs_view_all_label = settings.global_tabs_view_all_label | default: 'VER TUDO'
+  
+  assign tabs_title_size_mobile = settings.global_tabs_title_size_mobile | default: 28
+  assign tabs_title_size_desktop = settings.global_tabs_title_size_desktop | default: 36
+  assign tabs_tab_text_size_mobile = settings.global_tabs_tab_text_size_mobile | default: 13
+  assign tabs_tab_text_size_desktop = settings.global_tabs_tab_text_size_desktop | default: 14
+  
+  assign tabs_hover_image_count = settings.global_tabs_hover_image_count | default: 4
+  assign tabs_hover_image_interval = settings.global_tabs_hover_image_interval | default: 900
+  
+  assign section_bg = settings.global_tabs_section_bg_color | default: settings.surface_color
+  assign section_text = settings.global_tabs_section_text_color | default: settings.global_text_primary_color | default: settings.text_color
+  assign section_title = settings.global_tabs_section_title_color | default: '#0058BB'
+  assign section_border = settings.global_tabs_section_border_color | default: settings.global_border_color | default: settings.border_color
+  
+  assign tab_bg = settings.global_tabs_tab_bg_color | default: settings.surface_card_color
+  assign tab_text = settings.global_tabs_tab_text_color | default: settings.global_text_primary_color | default: settings.text_color
+  assign tab_hover_text = settings.global_tabs_tab_hover_text_color | default: settings.global_primary_color | default: settings.accent_color
+  assign tab_active_bg = settings.global_tabs_tab_active_bg_color | default: settings.global_primary_color | default: settings.accent_color
+  assign tab_active_text = settings.global_tabs_tab_active_text_color | default: settings.accent_contrast
+  assign tab_border = settings.global_tabs_tab_border_color | default: settings.global_border_color | default: settings.border_color
+  
+  assign promo_badge_bg = settings.global_tabs_promo_badge_bg_color | default: settings.success_color
+  assign promo_badge_text = settings.global_tabs_promo_badge_text_color | default: settings.accent_contrast
+  assign promo_badge_size = settings.global_tabs_promo_badge_text_size | default: 10
+  assign promo_badge_weight = settings.global_tabs_promo_badge_text_weight | default: '700'
+  
+  assign promo_old_price_color = settings.global_tabs_promo_old_price_color | default: settings.global_text_muted_color | default: settings.muted_color
+  assign promo_final_price_color = settings.global_tabs_promo_final_price_color | default: settings.global_product_card_price_color | default: settings.text_color
+  
+  assign track_gap_mobile = settings.global_tabs_track_gap_mobile | default: 14
+  assign track_gap_desktop = settings.global_tabs_track_gap_desktop | default: 20
+  
+  assign arrow_bg = settings.global_arrow_bg_color | default: settings.global_tabs_arrow_bg_color | default: '#ffffff'
+  assign arrow_border = settings.global_arrow_border_color | default: settings.global_tabs_arrow_border_color | default: '#D1D5DB'
+  assign arrow_icon = settings.global_arrow_icon_color | default: settings.global_tabs_arrow_icon_color | default: '#1a1c1c'
+  assign arrow_bg_hover = settings.global_arrow_bg_hover_color | default: settings.global_tabs_arrow_bg_hover_color | default: '#F3F4F6'
+  assign arrow_border_hover = settings.global_arrow_border_hover_color | default: settings.global_tabs_arrow_border_hover_color | default: '#0058BB'
+  assign arrow_icon_hover = settings.global_arrow_icon_hover_color | default: settings.global_tabs_arrow_icon_hover_color | default: '#0058BB'
+  
+  assign ctc_bg = section_bg
+  assign ctc_text = section_text
+  assign ctc_title = section_title
+  assign ctc_border = section_border
+  assign ctc_tab_bg = tab_bg
+  assign ctc_tab_text = tab_text
+  assign ctc_tab_hover_text = tab_hover_text
+  assign ctc_tab_active_bg = tab_active_bg
+  assign ctc_tab_active_text = tab_active_text
+  assign ctc_tab_border = tab_border
+  assign ctc_promo_old_price_color = promo_old_price_color
+  assign ctc_promo_badge_bg = promo_badge_bg
+  assign ctc_promo_badge_text = promo_badge_text
+  assign ctc_promo_badge_size = promo_badge_size
+  assign ctc_promo_badge_weight = promo_badge_weight
+  assign ctc_track_gap_mobile = track_gap_mobile
+  assign ctc_track_gap_desktop = track_gap_desktop
+%}

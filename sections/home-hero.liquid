@@ -1,0 +1,446 @@
+{% liquid
+  assign banner_count = 0
+  assign image_fit_class = 'object-cover'
+  assign banner_image_class = 'hero-banner-image w-full block object-cover'
+  assign hero_border_radius = section.settings.border_radius
+  assign hero_arrow_bg_color = settings.global_arrow_bg_color | default: section.settings.arrow_bg_color | default: '#ffffff'
+  assign hero_arrow_icon_color = settings.global_arrow_icon_color | default: section.settings.arrow_icon_color | default: '#1a1c1c'
+
+  if section.settings.image_fit == 'contain'
+    assign image_fit_class = 'object-contain'
+  endif
+
+  assign banner_image_class = 'hero-banner-image w-full block ' | append: image_fit_class
+
+  if section.settings.layout_width == 'full'
+    assign hero_border_radius = 0
+  endif
+
+  for block in section.blocks
+    if block.type == 'banner'
+      if block.settings.image_desktop != blank or block.settings.image_mobile != blank
+        assign banner_count = banner_count | plus: 1
+      endif
+    endif
+  endfor
+%}
+
+{% if banner_count > 0 %}
+  <style>
+    #shopify-section-{{ section.id }} .hero-carousel-track {
+      transition: transform 360ms ease;
+    }
+
+    #shopify-section-{{ section.id }} .hero-carousel-slide {
+      min-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .hero-carousel-shell {
+      border-radius: var(--hero-radius);
+    }
+
+    #shopify-section-{{ section.id }} .hero-banner-image {
+      width: 100%;
+      height: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .hero-carousel-slide,
+    #shopify-section-{{ section.id }} .hero-carousel-slide > a,
+    #shopify-section-{{ section.id }} .hero-carousel-slide > a picture {
+      display: block;
+      height: var(--hero-mobile-height);
+    }
+
+    #shopify-section-{{ section.id }} .hero-dot {
+      background-color: var(--hero-dot-inactive);
+      transition: background-color 180ms ease;
+    }
+
+    #shopify-section-{{ section.id }} .hero-dot[data-active='true'] {
+      background-color: var(--hero-dot-active);
+    }
+
+    @media (min-width: 768px) {
+      #shopify-section-{{ section.id }} .hero-carousel-slide,
+      #shopify-section-{{ section.id }} .hero-carousel-slide > a,
+      #shopify-section-{{ section.id }} .hero-carousel-slide > a picture {
+        height: var(--hero-desktop-height);
+      }
+    }
+  </style>
+
+  <section id="hero-carousel-{{ section.id }}" class="hero-carousel-section{% if section.settings.layout_width != 'full' %} section-layout-py{% endif %}" style="--hero-mobile-height: {{ section.settings.mobile_height }}px; --hero-desktop-height: {{ section.settings.desktop_height }}px; --hero-radius: {{ hero_border_radius }}px; --hero-dot-inactive: {{ section.settings.dot_inactive_color }}; --hero-dot-active: {{ section.settings.dot_active_color }};">
+    <div class="{% if section.settings.layout_width == 'full' %}w-full{% else %}max-w-[1440px] mx-auto px-4 md:px-6{% endif %}">
+      <div class="hero-carousel-shell relative overflow-hidden"
+           data-hero-carousel
+           data-autoplay="{{ section.settings.autoplay }}"
+           data-autoplay-seconds="{{ section.settings.autoplay_seconds }}">
+
+        <div class="hero-carousel-track flex" data-hero-track>
+          {% for block in section.blocks %}
+            {% if block.type == 'banner' %}
+              {% if block.settings.image_desktop != blank or block.settings.image_mobile != blank %}
+                {% assign banner_url = block.settings.link | default: '#' %}
+                <article class="hero-carousel-slide" style="background-color: {{ section.settings.image_bg_color }};" {{ block.shopify_attributes }}>
+                  <a href="{{ banner_url }}" class="block w-full h-full" aria-label="{{ block.settings.alt_text | default: block.settings.title | escape }}">
+                    <picture>
+                      {% if block.settings.image_mobile != blank %}
+                        <source media="(max-width: 767px)" srcset="{{ block.settings.image_mobile | image_url: width: 1080 }}">
+                      {% elsif block.settings.image_desktop != blank %}
+                        <source media="(max-width: 767px)" srcset="{{ block.settings.image_desktop | image_url: width: 1080 }}">
+                      {% endif %}
+
+                      {% if block.settings.image_desktop != blank %}
+                        {{ block.settings.image_desktop | image_url: width: 2400 | image_tag: class: banner_image_class, loading: 'eager', alt: block.settings.alt_text | default: block.settings.title }}
+                      {% else %}
+                        {{ block.settings.image_mobile | image_url: width: 2400 | image_tag: class: banner_image_class, loading: 'eager', alt: block.settings.alt_text | default: block.settings.title }}
+                      {% endif %}
+                    </picture>
+                  </a>
+                </article>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if banner_count > 1 and section.settings.show_arrows %}
+          <button type="button" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg hidden md:flex items-center justify-center transition-transform duration-200 hover:scale-110" style="background-color: {{ hero_arrow_bg_color }}; color: {{ hero_arrow_icon_color }};" data-hero-prev aria-label="Banner anterior">
+            <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+          </button>
+          <button type="button" class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg hidden md:flex items-center justify-center transition-transform duration-200 hover:scale-110" style="background-color: {{ hero_arrow_bg_color }}; color: {{ hero_arrow_icon_color }};" data-hero-next aria-label="Próximo banner">
+            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+          </button>
+        {% endif %}
+
+        {% if banner_count > 1 and section.settings.show_dots %}
+          <div class="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3" data-hero-dots>
+            {% for block in section.blocks %}
+              {% if block.type == 'banner' %}
+                {% if block.settings.image_desktop != blank or block.settings.image_mobile != blank %}
+                  <button type="button" class="hero-dot w-2.5 h-2.5 rounded-full" data-hero-dot="{{ forloop.index0 }}" data-active="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="Ir para banner {{ forloop.index }}"></button>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const root = document.querySelector('#hero-carousel-{{ section.id }} [data-hero-carousel]');
+      if (!root || root.dataset.boundHeroCarousel === 'true') return;
+      root.dataset.boundHeroCarousel = 'true';
+
+      const track = root.querySelector('[data-hero-track]');
+      const slides = Array.from(root.querySelectorAll('.hero-carousel-slide'));
+      const prevButton = root.querySelector('[data-hero-prev]');
+      const nextButton = root.querySelector('[data-hero-next]');
+      const dots = Array.from(root.querySelectorAll('[data-hero-dot]'));
+      const autoplayEnabled = root.getAttribute('data-autoplay') === 'true';
+      const autoplaySeconds = Number(root.getAttribute('data-autoplay-seconds')) || 6;
+      const lastIndex = slides.length - 1;
+      const desktopQuery = window.matchMedia('(min-width: 768px)');
+
+      if (!track || slides.length <= 1) return;
+
+      let currentIndex = 0;
+      let autoplayTimer = null;
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      const render = () => {
+        track.style.transform = 'translateX(' + (currentIndex * -100) + '%)';
+        dots.forEach((dot, index) => {
+          dot.setAttribute('data-active', index === currentIndex ? 'true' : 'false');
+        });
+
+        if (prevButton) {
+          if (desktopQuery.matches) {
+            prevButton.style.display = currentIndex <= 0 ? 'none' : 'flex';
+          } else {
+            prevButton.style.display = 'none';
+          }
+        }
+        if (nextButton) {
+          if (desktopQuery.matches) {
+            nextButton.style.display = currentIndex >= lastIndex ? 'none' : 'flex';
+          } else {
+            nextButton.style.display = 'none';
+          }
+        }
+      };
+
+      const next = () => {
+        if (currentIndex >= lastIndex) {
+          stopAutoplay();
+          return;
+        }
+        currentIndex += 1;
+        render();
+      };
+
+      const autoplayNext = () => {
+        if (currentIndex >= lastIndex) {
+          currentIndex = 0;
+        } else {
+          currentIndex += 1;
+        }
+        render();
+      };
+
+      const prev = () => {
+        if (currentIndex <= 0) return;
+        currentIndex -= 1;
+        render();
+      };
+
+      const stopAutoplay = () => {
+        if (!autoplayTimer) return;
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      };
+
+      const startAutoplay = () => {
+        if (!autoplayEnabled) return;
+        stopAutoplay();
+        autoplayTimer = setInterval(autoplayNext, autoplaySeconds * 1000);
+      };
+
+      if (prevButton) prevButton.addEventListener('click', prev);
+      if (nextButton) nextButton.addEventListener('click', next);
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          currentIndex = index;
+          render();
+        });
+      });
+
+      root.addEventListener('mouseenter', stopAutoplay);
+      root.addEventListener('mouseleave', startAutoplay);
+
+      root.addEventListener('touchstart', (event) => {
+        touchStartX = event.changedTouches[0].clientX;
+      }, { passive: true });
+
+      root.addEventListener('touchend', (event) => {
+        touchEndX = event.changedTouches[0].clientX;
+        const delta = touchEndX - touchStartX;
+        if (Math.abs(delta) < 45) return;
+        if (delta < 0) {
+          next();
+        } else {
+          prev();
+        }
+      }, { passive: true });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          stopAutoplay();
+        } else {
+          startAutoplay();
+        }
+      });
+
+      window.addEventListener('resize', render);
+
+      render();
+      startAutoplay();
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Hero Carrossel",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_width",
+      "label": "Largura do hero",
+      "default": "container",
+      "options": [
+        { "value": "container", "label": "Container" },
+        { "value": "full", "label": "Full página" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espaço superior",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espaço inferior",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Borda arredondada",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Ajuste da imagem",
+      "default": "cover",
+      "options": [
+        { "value": "cover", "label": "Preencher (cover)" },
+        { "value": "contain", "label": "Conter (contain)" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "image_bg_color",
+      "label": "Fundo atrás da imagem",
+      "default": "#f3f4f6"
+    },
+    {
+      "type": "header",
+      "content": "Altura"
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "Altura desktop",
+      "min": 280,
+      "max": 760,
+      "step": 20,
+      "default": 480,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "Altura mobile",
+      "min": 160,
+      "max": 500,
+      "step": 10,
+      "default": 240,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Comportamento"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_seconds",
+      "label": "Intervalo do autoplay (segundos)",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Mostrar setas",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Fundo das setas",
+      "default": "rgba(255,255,255,0.9)"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Cor das setas",
+      "default": "#1f2937"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Mostrar indicadores",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "dot_inactive_color",
+      "label": "Cor do indicador inativo",
+      "default": "rgba(255,255,255,0.6)"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Cor do indicador ativo",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Nome interno",
+          "default": "Banner principal"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_desktop",
+          "label": "Imagem desktop"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Imagem mobile",
+          "info": "Recomendado: 1080x1080 px"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link do banner"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Texto alternativo",
+          "default": "Banner promocional"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Hero Carrossel",
+      "blocks": [
+        { "type": "banner" },
+        { "type": "banner", "settings": { "title": "Banner secundário" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

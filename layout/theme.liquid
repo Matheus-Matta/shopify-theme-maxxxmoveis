@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code | default: 'pt-BR' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="{{ settings.global_primary_color | default: settings.accent_color }}">
+    <title>
+      {% if page_title %}
+        {{ page_title }} - {{ shop.name }}
+      {% else %}
+        {{ shop.name }}
+      {% endif %}
+    </title>
+
+    {%- comment -%}=== SEO ==={%- endcomment -%}
+    {%- assign seo_title = page_title | default: shop.name -%}
+    {%- assign seo_description = page_description | default: shop.description | default: '' -%}
+    {%- assign seo_image_url = '' -%}
+    {%- if template.name == 'product' and product.featured_image -%}
+      {%- assign seo_image_url = product.featured_image | image_url: width: 1200 -%}
+    {%- elsif template.name == 'collection' and collection.image -%}
+      {%- assign seo_image_url = collection.image | image_url: width: 1200 -%}
+    {%- elsif template.name == 'article' and article.image -%}
+      {%- assign seo_image_url = article.image | image_url: width: 1200 -%}
+    {%- endif -%}
+
+    {%- if seo_description != blank -%}
+      <meta name="description" content="{{ seo_description | escape }}">
+    {%- endif -%}
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- comment -%} Open Graph {%- endcomment -%}
+    <meta property="og:site_name" content="{{ shop.name | escape }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:title" content="{{ seo_title | escape }}">
+    {%- if seo_description != blank -%}
+      <meta property="og:description" content="{{ seo_description | escape }}">
+    {%- endif -%}
+    {%- if seo_image_url != blank -%}
+      <meta property="og:image" content="https:{{ seo_image_url }}">
+      <meta property="og:image:width" content="1200">
+    {%- endif -%}
+    {%- if template.name == 'product' -%}
+      <meta property="og:type" content="product">
+      <meta property="product:price:amount" content="{{ product.price | divided_by: 100.0 }}">
+      <meta property="product:price:currency" content="{{ shop.currency }}">
+    {%- elsif template.name == 'article' -%}
+      <meta property="og:type" content="article">
+    {%- else -%}
+      <meta property="og:type" content="website">
+    {%- endif -%}
+
+    {%- comment -%} Twitter Card {%- endcomment -%}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo_title | escape }}">
+    {%- if seo_description != blank -%}
+      <meta name="twitter:description" content="{{ seo_description | escape }}">
+    {%- endif -%}
+    {%- if seo_image_url != blank -%}
+      <meta name="twitter:image" content="https:{{ seo_image_url }}">
+    {%- endif -%}
+
+    {%- comment -%} JSON-LD: Produto {%- endcomment -%}
+    {%- if template.name == 'product' -%}
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": {{ product.title | json }},
+        "url": {{ shop.url | append: product.url | json }},
+        {%- if product.featured_image -%}
+        "image": [
+          {{ product.featured_image | image_url: width: 1200 | prepend: 'https:' | json }}
+        ],
+        {%- endif -%}
+        "description": {{ product.description | strip_html | truncate: 500 | json }},
+        "sku": {{ product.selected_or_first_available_variant.sku | json }},
+        "brand": {
+          "@type": "Brand",
+          "name": {{ product.vendor | json }}
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": {{ shop.url | append: product.url | json }},
+          "priceCurrency": {{ shop.currency | json }},
+          "price": "{{ product.price | divided_by: 100.0 }}",
+          "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+          "seller": {
+            "@type": "Organization",
+            "name": {{ shop.name | json }}
+          }
+        }
+      }
+      </script>
+    {%- endif -%}
+
+    {%- comment -%} JSON-LD: WebSite (home) {%- endcomment -%}
+    {%- if template.name == 'index' -%}
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": {{ shop.url | json }},
+        "name": {{ shop.name | json }},
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "{{ shop.url }}/search?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+      </script>
+    {%- endif -%}
+
+    {%- comment -%}=== Page Loader ==={%- endcomment -%}
+    {%- if settings.global_page_loader_enabled %}
+    {%- assign _loader_dur    = settings.global_page_loader_duration | default: 300 -%}
+    {%- assign _loader_bg     = settings.global_page_loader_bg_color | default: '#ffffff' -%}
+    {%- assign _loader_type   = settings.global_page_loader_type | default: 'spinner' -%}
+    {%- assign _loader_size   = settings.global_page_loader_media_size | default: 64 -%}
+    {%- assign _loader_color  = settings.global_page_loader_spinner_color | default: '#0058BB' -%}
+    {%- assign _loader_url    = settings.global_page_loader_media_url | default: 'none' -%}
+    {%- if _loader_url == 'none' or _loader_url == blank %}{%- assign _loader_url = '' -%}{%- endif -%}
+    {%- assign _border_w      = _loader_size | divided_by: 8 -%}
+    <style>
+      #page-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: {{ _loader_bg }};
+        opacity: 1;
+        transition: opacity {{ _loader_dur }}ms ease;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #page-loader.pl-out  { opacity: 0; }
+      #page-loader.pl-done { display: none; }
+      .pl-spinner {
+        width: {{ _loader_size }}px;
+        height: {{ _loader_size }}px;
+        border: {{ _border_w }}px solid {{ _loader_color }}33;
+        border-top-color: {{ _loader_color }};
+        border-radius: 50%;
+        animation: pl-spin 0.7s linear infinite;
+        flex-shrink: 0;
+      }
+      @keyframes pl-spin { to { transform: rotate(360deg); } }
+      .pl-media {
+        width: {{ _loader_size }}px;
+        height: {{ _loader_size }}px;
+        object-fit: contain;
+        flex-shrink: 0;
+      }
+    </style>
+    <script>
+      (function() {
+        var dur = {{ _loader_dur }};
+        var loader;
+        function hide() {
+          if (!loader) return;
+          loader.classList.add('pl-out');
+          setTimeout(function() { loader.classList.add('pl-done'); }, dur + 50);
+        }
+        function show() {
+          if (!loader) return;
+          loader.classList.remove('pl-done', 'pl-out');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+          loader = document.getElementById('page-loader');
+          setTimeout(hide, dur);
+          document.addEventListener('click', function(e) {
+            var a = e.target.closest('a[href]');
+            if (!a) return;
+            var href = a.getAttribute('href');
+            if (!href || href.charAt(0) === '#') return;
+            if (a.target === '_blank' || e.ctrlKey || e.metaKey || e.shiftKey) return;
+            if (href.indexOf('javascript:') === 0) return;
+            if (a.hasAttribute('data-ajax-nav')) return;
+            try {
+              var u = new URL(a.href);
+              if (u.hostname !== window.location.hostname) return;
+            } catch(err) { return; }
+            show();
+          });
+        });
+        /* Failsafe: never leave page covered */
+        setTimeout(function() { loader = document.getElementById('page-loader'); hide(); }, 8000);
+      })();
+    </script>
+    {%- endif %}
+    <script defer src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      const headingFont = {{ settings.heading_font_family | default: 'Plus Jakarta Sans' | json }};
+      const bodyFont = {{ settings.body_font_family | default: 'Inter' | json }};
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: 'var(--color-accent)',
+              'primary-dark': 'var(--color-accent-dark)',
+              secondary: 'var(--color-secondary)',
+              surface: 'var(--color-surface)',
+              'surface-subtle': 'var(--color-surface-subtle)',
+              'on-surface': 'var(--color-text)',
+              muted: 'var(--color-muted)',
+              success: 'var(--color-success)',
+              warning: 'var(--color-warning)',
+              danger: 'var(--color-danger)',
+              'surface-container': 'var(--color-surface-card)',
+              outline: 'var(--color-border)'
+            },
+            fontFamily: {
+              headline: [headingFont, 'sans-serif'],
+              body: [bodyFont, 'sans-serif']
+            },
+            borderRadius: {
+              DEFAULT: '8px',
+              lg: '12px',
+              xl: '16px',
+              full: '9999px'
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    {{ content_for_header }}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {% if settings.global_product_card_media_full_bleed %}
+      <style>
+        .gc-product-card {
+          padding: 0 !important;
+          overflow: hidden;
+        }
+
+        .gc-product-card .gc-product-media-frame {
+          margin-bottom: 0 !important;
+          border-bottom-left-radius: 0 !important;
+          border-bottom-right-radius: 0 !important;
+          border-top-left-radius: inherit;
+          border-top-right-radius: inherit;
+        }
+
+        .gc-product-card .gc-product-card-content {
+          padding: 12px;
+          padding-bottom: 14px;
+        }
+
+        @media (min-width: 768px) {
+          .gc-product-card .gc-product-card-content {
+            padding: 16px;
+          }
+        }
+      </style>
+    {% endif %}
+    <style>
+      :root {
+        --color-primary: {{ settings.global_primary_color | default: settings.accent_color }};
+        --color-primary-hover: {{ settings.global_primary_hover_color | default: settings.global_button_primary_bg_hover_color | default: '#004A9D' }};
+        --color-primary-active: {{ settings.global_primary_active_color | default: settings.global_button_primary_bg_active_color | default: '#003E84' }};
+        --color-primary-soft: {{ settings.global_primary_soft_color | default: '#EAF3FF' }};
+        --color-primary-border: {{ settings.global_primary_border_color | default: '#B9D5F5' }};
+
+        --color-title: {{ settings.global_text_primary_color | default: settings.global_neutral_black | default: settings.text_color }};
+        --color-text: {{ settings.global_text_secondary_color | default: settings.global_neutral_gray | default: settings.global_text_muted_color | default: settings.muted_color }};
+        --color-text-muted: {{ settings.global_text_muted_color | default: '#6B7280' }};
+        --color-text-disabled: {{ settings.global_text_disabled_color | default: '#9CA3AF' }};
+
+        --color-bg: {{ settings.global_surface_base_color | default: settings.surface_color }};
+        --color-bg-soft: {{ settings.global_surface_subtle_color | default: '#F7F7F7' }};
+        --color-bg-hover: {{ settings.global_surface_hover_color | default: '#F3F4F6' }};
+
+        --color-border: {{ settings.global_border_color | default: settings.border_color }};
+        --color-border-strong: {{ settings.global_border_strong_color | default: '#D1D5DB' }};
+
+        --color-danger: {{ settings.global_danger_color | default: '#EF4444' }};
+        --color-danger-hover: {{ settings.global_danger_hover_color | default: '#DC2626' }};
+        --color-danger-active: {{ settings.global_danger_active_color | default: '#B91C1C' }};
+        --color-danger-soft: {{ settings.global_danger_soft_color | default: '#FEF2F2' }};
+        --color-danger-border: {{ settings.global_danger_border_color | default: '#FECACA' }};
+
+        --color-success: {{ settings.global_success_color | default: settings.success_color }};
+        --color-success-hover: {{ settings.global_success_hover_color | default: '#15803D' }};
+        --color-success-active: {{ settings.global_success_active_color | default: '#166534' }};
+        --color-success-soft: {{ settings.global_success_soft_color | default: '#ECFDF3' }};
+        --color-success-border: {{ settings.global_success_border_color | default: '#BBF7D0' }};
+        --color-success-text-dark: #14532D;
+
+        --color-link: var(--color-primary);
+        --color-link-hover: var(--color-primary-hover);
+        --color-link-active: var(--color-primary-active);
+
+        --color-button-primary-bg: {{ settings.global_button_primary_bg_color | default: settings.global_primary_color | default: settings.accent_color }};
+        --color-button-primary-bg-hover: {{ settings.global_button_primary_bg_hover_color | default: settings.global_primary_hover_color | default: '#004A9D' }};
+        --color-button-primary-bg-active: {{ settings.global_button_primary_bg_active_color | default: settings.global_primary_active_color | default: '#003E84' }};
+        --color-button-primary-text: {{ settings.global_button_primary_text_color | default: settings.accent_contrast }};
+
+        --color-button-secondary-bg: {{ settings.global_button_secondary_bg_color | default: '#FFFFFF' }};
+        --color-button-secondary-border: {{ settings.global_button_secondary_border_color | default: '#E5E7EB' }};
+        --color-button-secondary-text: {{ settings.global_button_secondary_text_color | default: '#1A1C1C' }};
+        --color-button-secondary-bg-hover: {{ settings.global_button_secondary_bg_hover_color | default: '#F7F7F7' }};
+        --color-button-secondary-bg-active: {{ settings.global_button_secondary_bg_active_color | default: '#F3F4F6' }};
+
+        --color-input-bg: var(--color-bg);
+        --color-input-border: var(--color-border);
+        --color-input-text: var(--color-title);
+        --color-input-placeholder: var(--color-text-muted);
+
+        /* Backward-compatible aliases used across existing sections/snippets */
+        --color-accent: var(--color-primary);
+        --color-accent-dark: var(--color-primary-active);
+        --color-accent-contrast: {{ settings.global_button_primary_text_color | default: settings.accent_contrast }};
+        --color-secondary: {{ settings.global_secondary_color | default: settings.secondary_color }};
+        --color-surface: var(--color-bg);
+        --color-surface-card: {{ settings.global_surface_card_color | default: settings.surface_card_color }};
+        --color-surface-subtle: {{ settings.global_surface_subtle_color | default: settings.global_product_card_media_bg_color | default: '#F7F7F7' }};
+        --color-hero-bg: {{ settings.global_hero_bg_color | default: settings.hero_bg_color }};
+        --color-dark: {{ settings.global_neutral_black | default: settings.dark_color }};
+        --color-review-bg: {{ settings.global_review_bg_color | default: settings.review_bg_color }};
+        --color-footer-bg: {{ settings.global_footer_bg_color | default: settings.footer_bg_color }};
+        --color-social-bg: {{ settings.global_social_bg_color | default: settings.social_bg_color }};
+        --color-warning: {{ settings.global_warning_color | default: '#f59e0b' }};
+        --color-focus-ring: {{ settings.global_focus_ring_color | default: settings.global_primary_color | default: settings.accent_color }};
+        --color-overlay: {{ settings.global_overlay_color | default: '#00000066' }};
+        --color-muted: var(--color-text-muted);
+        --color-promo-final-price: {{ settings.global_tabs_promo_final_price_color | default: settings.global_product_card_price_color | default: '#1a1c1c' }};
+        --color-promo-old-price: {{ settings.global_tabs_promo_old_price_color | default: settings.global_text_muted_color | default: '#7b7f86' }};
+        --font-heading-family: {{ settings.heading_font_family | default: 'Plus Jakarta Sans' | json }};
+        --font-body-family: {{ settings.body_font_family | default: 'Inter' | json }};
+        --font-weight-black: {{ settings.global_font_black_weight | default: 900 }};
+        --page-width: {{ settings.global_layout_max_width | default: 1440 }}px;
+        --section-gap: {{ settings.section_gap | default: 24 }}px;
+        --section-py: {{ settings.section_py_mobile | default: 24 }}px;
+        --section-py-md: {{ settings.section_py_md | default: 32 }}px;
+        --section-py-lg: {{ settings.section_py_lg | default: 40 }}px;
+        --section-px: {{ settings.section_px_mobile | default: 16 }}px;
+        --section-px-md: {{ settings.section_px_md | default: 24 }}px;
+      }
+
+      @supports (font-variation-settings: normal) {
+        html { font-family: var(--font-body-family), sans-serif; }
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+
+      .font-black {
+        font-weight: var(--font-weight-black) !important;
+      }
+
+      .favorite-btn.is-favorite,
+      .favorite-btn.is-favorite:hover {
+        color: var(--color-danger) !important;
+      }
+
+      .favorite-btn.is-favorite .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+      }
+
+      /* Zoom-out global de 10% no layout */
+      @media (min-width: 750px) {
+        html {
+          zoom: 0.9;
+        }
+      }
+
+      /* Fallback para navegadores sem suporte a zoom */
+      @supports not (zoom: 1) {
+        @media (min-width: 750px) {
+          body {
+            transform: scale(0.9);
+            transform-origin: top center;
+            width: 111.111%;
+          }
+        }
+      }
+    </style>
+    <script>(function(){
+      var _f=window.fetch;
+      window.fetch=function(){
+        var u=arguments[0];
+        if(u&&typeof u!=='string')u=u.url;
+        var p=_f.apply(this,arguments);
+        if(typeof u==='string'&&/\/cart\/add/.test(u)){
+          p.then(function(r){if(r.ok)document.dispatchEvent(new CustomEvent('mx:cart:added'));}).catch(function(){});
+        }
+        return p;
+      };
+      var _o=XMLHttpRequest.prototype.open,_s=XMLHttpRequest.prototype.send;
+      XMLHttpRequest.prototype.open=function(m,u){this._mxu=u;return _o.apply(this,arguments);};
+      XMLHttpRequest.prototype.send=function(){
+        var x=this;
+        if(x._mxu&&/\/cart\/add/.test(x._mxu))
+          x.addEventListener('load',function(){if(x.status>=200&&x.status<300)document.dispatchEvent(new CustomEvent('mx:cart:added'));});
+        return _s.apply(this,arguments);
+      };
+    }());</script>
+  </head>
+  <body class="template-{{ template.name1| handle }}">
+    {%- if settings.global_page_loader_enabled %}
+    <div id="page-loader" aria-hidden="true">
+      {%- if _loader_type == 'gif' and _loader_url != blank -%}
+        <img class="pl-media" src="{{ _loader_url }}" alt="" loading="eager" draggable="false">
+      {%- elsif _loader_type == 'video' and _loader_url != blank -%}
+        <video class="pl-media" autoplay loop muted playsinline><source src="{{ _loader_url }}"></video>
+      {%- else -%}
+        <div class="pl-spinner"></div>
+      {%- endif -%}
+    </div>
+    {%- endif %}
+    {% liquid
+      assign requires_customer_login = false
+      assign return_url_target = request.path
+      assign account_custom_paths = '' | split: '|'
+
+      if customer == blank
+        for account_custom_path in account_custom_paths
+          if request.path == account_custom_path
+            assign requires_customer_login = true
+            assign return_url_target = account_custom_path
+            break
+          endif
+        endfor
+
+        if requires_customer_login == false and settings.enable_customer_page_protection
+          unless request.path contains '/account'
+          assign protected_page_handles_raw = settings.protected_page_handles | default: ''
+          assign protected_page_handles = protected_page_handles_raw | newline_to_br | split: '<br />'
+
+          for protected_handle_item in protected_page_handles
+            assign protected_handle = protected_handle_item | strip
+            if protected_handle != blank and protected_handle != '-'
+              assign expected_page_path = '/pages/' | append: protected_handle
+              if expected_page_path == '/pages/favoritos'
+                continue
+              endif
+
+              if request.path == expected_page_path
+                assign requires_customer_login = true
+                break
+              endif
+            endif
+          endfor
+
+            if requires_customer_login == false
+            assign protected_paths_raw = settings.protected_custom_paths | default: ''
+            assign protected_paths = protected_paths_raw | newline_to_br | split: '<br />'
+
+            for protected_path_item in protected_paths
+              assign protected_path = protected_path_item | strip
+              if protected_path != blank and protected_path != '-'
+                assign protected_path_with_slash = protected_path
+                unless protected_path_with_slash contains '/'
+                  assign protected_path_with_slash = '/' | append: protected_path
+                endunless
+
+                if protected_path_with_slash == '/pages/favoritos' or protected_path == '/pages/favoritos'
+                  continue
+                endif
+
+                if request.path == protected_path or request.path == protected_path_with_slash
+                  assign requires_customer_login = true
+                  break
+                endif
+              endif
+            endfor
+            endif
+          endunless
+        endif
+      endif
+    %}
+
+    {% if requires_customer_login %}
+      <script>
+        window.location.replace('{{ routes.account_login_url }}?return_url={{ return_url_target | url_encode }}');
+      </script>
+      <noscript>
+        <meta http-equiv="refresh" content="0;url={{ routes.account_login_url }}?return_url={{ return_url_target | url_encode }}">
+      </noscript>
+    {% endif %}
+
+    <a class="skip-link" href="#MainContent">Pular para o conteúdo</a>
+    {% section 'top-bar' %}
+    {% section 'header' %}
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+    <main id="MainContent" class="site-main" role="main">
+      {{ content_for_layout }}
+    </main>
+    {% section 'footer' %}
+    <script src="{{ 'carousel.js' | asset_url }}" defer></script>
+  <!-- iframe pp-form-sink: absorve POST nativo do form de produto para evitar reload -->
+  <iframe id="pp-form-sink" name="pp-form-sink" style="display:none;position:absolute;width:0;height:0;border:0;" aria-hidden="true" tabindex="-1"></iframe>
+  </body>
+</html>
+

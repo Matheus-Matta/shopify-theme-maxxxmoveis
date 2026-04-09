@@ -1,0 +1,692 @@
+{% liquid
+  assign section_bg = '#f5f5f5'
+  assign section_text = '#18181b'
+  assign tile_bg = '#ffffff'
+  assign content_bg = '#f8f8f8'
+  assign eyebrow_color = '#0058BB'
+  assign title_color = '#18181b'
+  assign button_dark_bg = '#18181b'
+  assign button_dark_text = '#ffffff'
+  assign button_accent_bg = '#0058BB'
+  assign button_accent_text = '#ffffff'
+
+  assign section_bg = section.settings.section_bg_color | default: section_bg
+  assign section_text = section.settings.section_text_color | default: section_text
+  assign tile_bg = section.settings.tile_bg_color | default: tile_bg
+  assign content_bg = section.settings.content_bg_color | default: content_bg
+  assign eyebrow_color = section.settings.eyebrow_color | default: eyebrow_color
+  assign title_color = section.settings.title_color | default: title_color
+  assign button_dark_bg = section.settings.button_dark_bg_color | default: button_dark_bg
+  assign button_dark_text = section.settings.button_dark_text_color | default: button_dark_text
+  assign button_accent_bg = section.settings.button_accent_bg_color | default: button_accent_bg
+  assign button_accent_text = section.settings.button_accent_text_color | default: button_accent_text
+  assign tile_border_color = section.settings.tile_border_color | default: '#d4d4d8'
+  assign content_border_color = section.settings.content_border_color | default: '#d4d4d8'
+  assign button_border_color = section.settings.button_border_color | default: 'transparent'
+  assign section_border_color = section.settings.section_border_color | default: '#d4d4d8'
+
+  assign tile_max_height_mobile_css = 'none'
+  if section.settings.tile_max_height_mobile > 0
+    assign tile_max_height_mobile_css = section.settings.tile_max_height_mobile | append: 'px'
+  endif
+
+  assign tile_max_height_desktop_css = 'none'
+  if section.settings.tile_max_height_desktop > 0
+    assign tile_max_height_desktop_css = section.settings.tile_max_height_desktop | append: 'px'
+  endif
+
+  assign media_max_height_mobile_css = 'none'
+  if section.settings.media_max_height_mobile > 0
+    assign media_max_height_mobile_css = section.settings.media_max_height_mobile | append: 'px'
+  endif
+
+  assign media_max_height_desktop_css = 'none'
+  if section.settings.media_max_height_desktop > 0
+    assign media_max_height_desktop_css = section.settings.media_max_height_desktop | append: 'px'
+  endif
+%}
+
+<style>
+  #shopify-section-{{ section.id }} .promo-banner__grid {
+    gap: {{ section.settings.grid_gap_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .promo-banner-section {
+    border-style: solid;
+    border-color: var(--promo-section-border);
+    border-width: {{ section.settings.section_border_width_mobile }}px;
+    border-radius: {{ section.settings.section_border_radius_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .promo-banner__tile {
+    --promo-tile-radius: {{ section.settings.tile_radius_mobile }}px;
+    --promo-tile-border-width: {{ section.settings.tile_border_width_mobile }}px;
+    --promo-tile-border-hover: var(--promo-tile-border);
+    border-radius: {{ section.settings.tile_radius_mobile }}px !important;
+    min-height: {{ section.settings.tile_min_height_mobile }}px !important;
+    max-height: {{ tile_max_height_mobile_css }} !important;
+    border-style: solid;
+    border-width: {{ section.settings.tile_border_width_mobile }}px !important;
+    border-color: var(--promo-tile-border) !important;
+  }
+
+  #shopify-section-{{ section.id }} .promo-banner__media {
+    min-height: {{ section.settings.media_min_height_mobile }}px !important;
+    max-height: {{ media_max_height_mobile_css }} !important;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .promo-banner__media-bg {
+    min-height: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .promo-banner__content {
+    padding: {{ section.settings.content_padding_mobile }}px !important;
+    border-style: solid;
+    border-color: var(--promo-content-border) !important;
+    border-width: {{ section.settings.content_border_width_mobile }}px !important;
+  }
+
+  #shopify-section-{{ section.id }} .promo-banner__eyebrow {
+    font-size: {{ section.settings.eyebrow_size_mobile }}px !important;
+  }
+
+  #shopify-section-{{ section.id }} .promo-banner__title {
+    font-size: {{ section.settings.title_size_mobile }}px !important;
+  }
+
+  #shopify-section-{{ section.id }} .promo-banner__button {
+    font-size: {{ section.settings.button_text_size_mobile }}px !important;
+    border-style: solid;
+    border-width: {{ section.settings.button_border_width_mobile }}px !important;
+    border-color: var(--promo-button-border) !important;
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .promo-banner__grid {
+      gap: {{ section.settings.grid_gap_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .promo-banner-section {
+      border-width: {{ section.settings.section_border_width_desktop }}px;
+      border-radius: {{ section.settings.section_border_radius_desktop }}px;
+    }
+
+    #shopify-section-{{ section.id }} .promo-banner__tile {
+      --promo-tile-radius: {{ section.settings.tile_radius_desktop }}px;
+      --promo-tile-border-width: {{ section.settings.tile_border_width_desktop }}px;
+      border-radius: {{ section.settings.tile_radius_desktop }}px !important;
+      min-height: {{ section.settings.tile_min_height_desktop }}px !important;
+      max-height: {{ tile_max_height_desktop_css }} !important;
+      border-width: {{ section.settings.tile_border_width_desktop }}px !important;
+    }
+
+    #shopify-section-{{ section.id }} .promo-banner__media {
+      min-height: {{ section.settings.media_min_height_desktop }}px !important;
+      max-height: {{ media_max_height_desktop_css }} !important;
+    }
+
+    #shopify-section-{{ section.id }} .promo-banner__content {
+      padding: {{ section.settings.content_padding_desktop }}px !important;
+      border-width: {{ section.settings.content_border_width_desktop }}px !important;
+    }
+
+    #shopify-section-{{ section.id }} .promo-banner__eyebrow {
+      font-size: {{ section.settings.eyebrow_size_desktop }}px !important;
+    }
+
+    #shopify-section-{{ section.id }} .promo-banner__title {
+      font-size: {{ section.settings.title_size_desktop }}px !important;
+    }
+
+    #shopify-section-{{ section.id }} .promo-banner__button {
+      font-size: {{ section.settings.button_text_size_desktop }}px !important;
+      border-width: {{ section.settings.button_border_width_desktop }}px !important;
+    }
+  }
+</style>
+
+<section class="promo-banner-section section-layout-py" style="--section-bg: {{ section_bg }}; --section-text: {{ section_text }}; --promo-text: {{ section_text }}; --promo-section-border: {{ section_border_color }}; --promo-tile-bg: {{ tile_bg }}; --promo-content-bg: {{ content_bg }}; --promo-eyebrow: {{ eyebrow_color }}; --promo-title: {{ title_color }}; --promo-tile-border: {{ tile_border_color }}; --promo-content-border: {{ content_border_color }}; --promo-button-border: {{ button_border_color }}; --promo-button-dark-bg: {{ button_dark_bg }}; --promo-button-dark-text: {{ button_dark_text }}; --promo-button-accent-bg: {{ button_accent_bg }}; --promo-button-accent-text: {{ button_accent_text }};">
+  <div class="max-w-[1440px] mx-auto section-layout-px">
+  <div class="promo-banner__grid grid grid-cols-1 md:grid-cols-2">
+    {% for block in section.blocks %}
+      <div {{ block.shopify_attributes }}>
+        {% render 'promo-tile', block_id: block.id, eyebrow: block.settings.eyebrow, title: block.settings.title, button_label: block.settings.button_label, button_link: block.settings.button_link, button_style: block.settings.button_style, button_radius: block.settings.button_radius, image: block.settings.image, image_fit: block.settings.image_fit, image_position: block.settings.image_position, image_scale: block.settings.image_scale, image_border_width: block.settings.image_border_width, image_border_color: block.settings.image_border_color, image_radius: block.settings.image_radius %}
+      </div>
+    {% endfor %}
+  </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promo banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Responsividade"
+    },
+    {
+      "type": "range",
+      "id": "tile_min_height_mobile",
+      "label": "Tile: altura mínima (mobile)",
+      "min": 180,
+      "max": 520,
+      "step": 5,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "tile_max_height_mobile",
+      "label": "Tile: altura máxima (mobile, 0 = sem limite)",
+      "min": 0,
+      "max": 760,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "media_min_height_mobile",
+      "label": "Imagem: altura mínima (mobile)",
+      "min": 120,
+      "max": 420,
+      "step": 5,
+      "unit": "px",
+      "default": 180
+    },
+    {
+      "type": "range",
+      "id": "media_max_height_mobile",
+      "label": "Imagem: altura máxima (mobile, 0 = sem limite)",
+      "min": 0,
+      "max": 560,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "tile_min_height_desktop",
+      "label": "Tile: altura mínima (desktop)",
+      "min": 220,
+      "max": 620,
+      "step": 5,
+      "unit": "px",
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "tile_max_height_desktop",
+      "label": "Tile: altura máxima (desktop, 0 = sem limite)",
+      "min": 0,
+      "max": 860,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "media_min_height_desktop",
+      "label": "Imagem: altura mínima (desktop)",
+      "min": 160,
+      "max": 520,
+      "step": 5,
+      "unit": "px",
+      "default": 240
+    },
+    {
+      "type": "range",
+      "id": "media_max_height_desktop",
+      "label": "Imagem: altura máxima (desktop, 0 = sem limite)",
+      "min": 0,
+      "max": 640,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "label": "Espaço entre tiles (mobile)",
+      "min": 8,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_desktop",
+      "label": "Espaço entre tiles (desktop)",
+      "min": 10,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "tile_radius_mobile",
+      "label": "Tile: raio (mobile)",
+      "min": 8,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "tile_radius_desktop",
+      "label": "Tile: raio (desktop)",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "content_padding_mobile",
+      "label": "Conteúdo: padding (mobile)",
+      "min": 12,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "content_padding_desktop",
+      "label": "Conteúdo: padding (desktop)",
+      "min": 16,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size_mobile",
+      "label": "Selo: tamanho (mobile)",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size_desktop",
+      "label": "Selo: tamanho (desktop)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Título do tile (mobile)",
+      "min": 18,
+      "max": 44,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Título do tile (desktop)",
+      "min": 24,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "button_text_size_mobile",
+      "label": "Botão: texto (mobile)",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "button_text_size_desktop",
+      "label": "Botão: texto (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "tile_border_width_mobile",
+      "label": "Tile: borda (mobile)",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "tile_border_width_desktop",
+      "label": "Tile: borda (desktop)",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "content_border_width_mobile",
+      "label": "Conteúdo: borda (mobile)",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "content_border_width_desktop",
+      "label": "Conteúdo: borda (desktop)",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_border_width_mobile",
+      "label": "Botão: borda (mobile)",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_border_width_desktop",
+      "label": "Botão: borda (desktop)",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Bordas"
+    },
+    {
+      "type": "range",
+      "id": "section_border_width_mobile",
+      "label": "Seção: borda (mobile)",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_border_width_desktop",
+      "label": "Seção: borda (desktop)",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_border_radius_mobile",
+      "label": "Seção: raio (mobile)",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_border_radius_desktop",
+      "label": "Seção: raio (desktop)",
+      "min": 0,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Cores"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Fundo da seção",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "section_text_color",
+      "label": "Cor base dos textos",
+      "default": "#18181b"
+    },
+    {
+      "type": "color",
+      "id": "section_border_color",
+      "label": "Seção: cor da borda",
+      "default": "#d4d4d8"
+    },
+    {
+      "type": "color",
+      "id": "tile_bg_color",
+      "label": "Tile: fundo externo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "content_bg_color",
+      "label": "Tile: fundo do conteúdo",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Selo: cor",
+      "default": "#0058BB"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Título do tile: cor",
+      "default": "#18181b"
+    },
+    {
+      "type": "color",
+      "id": "tile_border_color",
+      "label": "Tile: cor da borda",
+      "default": "#d4d4d8"
+    },
+    {
+      "type": "color",
+      "id": "content_border_color",
+      "label": "Conteúdo: cor da borda",
+      "default": "#d4d4d8"
+    },
+    {
+      "type": "color",
+      "id": "button_dark_bg_color",
+      "label": "Botão escuro: fundo",
+      "default": "#18181b"
+    },
+    {
+      "type": "color",
+      "id": "button_dark_text_color",
+      "label": "Botão escuro: texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_accent_bg_color",
+      "label": "Botão destaque: fundo",
+      "default": "#0058BB"
+    },
+    {
+      "type": "color",
+      "id": "button_accent_text_color",
+      "label": "Botão destaque: texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Botão: cor da borda",
+      "default": "#000000"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promo",
+      "name": "Promo tile",
+      "settings": [
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Selo",
+          "default": "Projetos exclusivos"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Crie sua Cozinha Modulada"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Texto do botão",
+          "default": "SAIBA MAIS"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Link do botão"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagem"
+        },
+        {
+          "type": "select",
+          "id": "image_fit",
+          "label": "Imagem: ajuste",
+          "default": "cover",
+          "options": [
+            { "value": "cover", "label": "Preencher (cover)" },
+            { "value": "contain", "label": "Enquadrar inteira (contain)" },
+            { "value": "custom", "label": "Customizado (zoom)" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Imagem: posicionamento",
+          "default": "center center",
+          "options": [
+            { "value": "left top", "label": "Esquerda superior" },
+            { "value": "center top", "label": "Centro superior" },
+            { "value": "right top", "label": "Direita superior" },
+            { "value": "left center", "label": "Esquerda centro" },
+            { "value": "center center", "label": "Centro" },
+            { "value": "right center", "label": "Direita centro" },
+            { "value": "left bottom", "label": "Esquerda inferior" },
+            { "value": "center bottom", "label": "Centro inferior" },
+            { "value": "right bottom", "label": "Direita inferior" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "image_scale",
+          "label": "Imagem: tamanho (modo custom)",
+          "min": 20,
+          "max": 200,
+          "step": 2,
+          "unit": "%",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "image_border_width",
+          "label": "Imagem: borda",
+          "min": 0,
+          "max": 12,
+          "step": 1,
+          "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "color",
+          "id": "image_border_color",
+          "label": "Imagem: cor da borda",
+          "default": "#d4d4d8"
+        },
+        {
+          "type": "range",
+          "id": "image_radius",
+          "label": "Imagem: raio",
+          "min": 0,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Estilo do botão",
+          "default": "dark",
+          "options": [
+            { "value": "dark", "label": "Escuro" },
+            { "value": "accent", "label": "Destaque" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "button_radius",
+          "label": "Botão: raio da borda",
+          "min": 0,
+          "max": 40,
+          "step": 2,
+          "unit": "px",
+          "default": 12
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promo banner",
+      "blocks": [
+        { "type": "promo" },
+        { "type": "promo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

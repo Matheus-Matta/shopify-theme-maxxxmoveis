@@ -1,0 +1,528 @@
+{% liquid
+  assign first_collection = product.collections.first
+  assign rec_source = first_collection.products
+  assign list_best_sellers_collection = section.settings.list_best_sellers_collection
+  assign rec_eyebrow_text = section.settings.recommended_eyebrow
+  assign rec_title_text = section.settings.recommended_title
+  assign rec_description_text = blank
+  assign rec_heading_size_mobile = settings.global_tabs_title_size_mobile | default: settings.global_recommended_title_size_mobile | default: 28
+  assign rec_heading_size_desktop = settings.global_tabs_title_size_desktop | default: settings.global_recommended_title_size_desktop | default: 36
+  assign rec_limit = settings.global_recommended_limit | default: 8
+  assign rec_track_gap = settings.global_recommended_track_gap | default: 20
+  assign rec_secondary_color = settings.global_primary_color
+  assign rec_card_bg = settings.global_product_card_bg_color | default: settings.global_surface_card_color
+  assign rec_card_border = settings.global_product_card_border_color | default: settings.global_border_color
+  assign rec_card_border_hover = settings.global_product_card_border_hover_color | default: settings.global_primary_color
+  assign rec_card_border_width = settings.global_product_card_border_width | default: 1
+  assign rec_card_radius = settings.global_product_card_radius | default: 16
+  assign rec_card_padding = settings.global_product_card_padding | default: 16
+  assign rec_card_width_mobile = settings.global_product_card_width_mobile | default: 230
+  assign rec_card_width_desktop = settings.global_product_card_width_desktop | default: 270
+  assign rec_card_height_mobile = settings.global_product_card_height_mobile | default: 430
+  assign rec_card_height_desktop = settings.global_product_card_height_desktop | default: 500
+  assign rec_media_height_mobile = settings.global_product_card_media_height_mobile | default: 230
+  assign rec_media_height_desktop = settings.global_product_card_media_height_desktop | default: 270
+  assign rec_title_color = settings.global_product_card_title_color | default: settings.global_text_primary_color
+  assign rec_title_hover_color = settings.global_product_card_title_hover_color | default: settings.global_primary_color
+  assign rec_meta_color = settings.global_product_card_meta_color | default: settings.global_text_muted_color
+  assign rec_price_color = settings.global_product_card_price_color | default: settings.global_text_primary_color
+  assign rec_discount_badge_bg = settings.global_product_card_discount_badge_bg | default: settings.global_primary_color
+  assign rec_discount_badge_text = settings.global_product_card_discount_badge_text | default: settings.global_button_primary_text_color
+  assign rec_buy_bg = settings.global_button_primary_bg_color | default: settings.global_primary_color
+  assign rec_buy_bg_hover = settings.global_button_primary_bg_hover_color | default: '#004A9D'
+  assign rec_buy_text = settings.global_button_primary_text_color
+  assign rec_buy_radius = settings.global_button_primary_radius | default: 12
+  assign rec_buy_text_size = settings.global_button_primary_text_size | default: 14
+  assign rec_title_size_mobile = settings.global_product_title_size_mobile | default: 14
+  assign rec_title_size_desktop = settings.global_product_title_size_desktop | default: 16
+  assign rec_price_size_mobile = settings.global_product_price_size_mobile | default: 24
+  assign rec_price_size_desktop = settings.global_product_price_size_desktop | default: 28
+  assign rec_meta_size_mobile = settings.global_product_card_meta_size_mobile | default: 12
+  assign rec_meta_size_desktop = settings.global_product_card_meta_size_desktop | default: 12
+  assign rec_show_ratings = settings.global_product_card_show_ratings
+  assign rec_show_buy_button = settings.global_product_card_show_buy_button
+  assign rec_show_discount_badge = settings.global_product_card_show_discount_badge
+  assign rec_buy_label = settings.global_product_card_buy_label | default: 'COMPRAR'
+  assign rec_media_bg_color = settings.global_recommended_media_bg_color | default: settings.global_product_card_media_bg_color | default: '#F7F7F7'
+  assign rec_image_fit = settings.global_product_card_image_fit | default: 'cover'
+  assign rec_image_position = settings.global_product_card_image_position | default: 'center center'
+  assign rec_rating_color = settings.global_recommended_rating_color | default: settings.global_product_card_rating_color | default: '#facc15'
+  assign rec_arrow_bg_color = settings.global_arrow_bg_color | default: '#ffffff'
+  assign rec_arrow_border_color = settings.global_arrow_border_color | default: '#D1D5DB'
+  assign rec_arrow_icon_color = settings.global_arrow_icon_color | default: '#1a1c1c'
+  assign rec_arrow_bg_hover_color = settings.global_arrow_bg_hover_color | default: '#F3F4F6'
+  assign rec_arrow_border_hover_color = settings.global_arrow_border_hover_color | default: '#0058BB'
+  assign rec_arrow_icon_hover_color = settings.global_arrow_icon_hover_color | default: '#0058BB'
+  assign global_installments_count = settings.global_installments_count | default: 10 | plus: 0
+  assign product_min_inventory = settings.global_product_card_min_inventory | default: 0 | plus: 0
+
+  if global_installments_count < 1
+    assign global_installments_count = 1
+  endif
+
+  if product_min_inventory < 0
+    assign product_min_inventory = 0
+  endif
+
+  if request.page_type == 'list-collections'
+    assign rec_eyebrow_text = 'Mais vendidos'
+
+    if list_best_sellers_collection != blank
+      assign rec_source = list_best_sellers_collection.products
+      assign rec_title_text = list_best_sellers_collection.title
+
+      if list_best_sellers_collection.description != blank
+        assign rec_description_text = list_best_sellers_collection.description | strip_html
+      endif
+    else
+      assign rec_source = collections['all'].products
+      assign rec_title_text = 'Produtos mais vendidos'
+    endif
+  elsif first_collection == blank
+    assign rec_source = collections.all.products
+  endif
+%}
+
+<style>
+  #shopify-section-{{ section.id }} .pp-secondary { color: {{ rec_secondary_color }}; }
+  #shopify-section-{{ section.id }} .pp-rec-wrap { position: relative; }
+  #shopify-section-{{ section.id }} .pp-rec-track {
+    display: flex;
+    gap: {{ rec_track_gap }}px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #shopify-section-{{ section.id }} .pp-rec-track::-webkit-scrollbar { display: none; }
+  #shopify-section-{{ section.id }} .pp-rec-slide { flex: 0 0 auto; width: {{ rec_card_width_mobile }}px; }
+  #shopify-section-{{ section.id }} .pp-rec-card {
+    background-color: var(--gc-card-bg);
+    border: var(--gc-card-border-width) solid var(--gc-card-border);
+    border-radius: var(--gc-card-radius);
+    padding: var(--gc-card-padding);
+    min-height: var(--gc-card-height-mobile);
+    max-height: var(--gc-card-height-mobile);
+    display: flex;
+    flex-direction: column;
+  }
+  #shopify-section-{{ section.id }} .pp-rec-card:hover {
+    border-color: var(--gc-card-border-hover);
+  }
+  #shopify-section-{{ section.id }} .pp-rec-title {
+    color: {{ rec_title_color }};
+    font-size: {{ rec_title_size_mobile }}px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .pp-rec-card:hover .pp-rec-title { color: {{ rec_title_hover_color }}; }
+  #shopify-section-{{ section.id }} .pp-rec-meta { color: var(--gc-meta-color); font-size: var(--gc-meta-size-mobile); }
+  #shopify-section-{{ section.id }} .pp-rec-price { color: var(--gc-price-color); font-size: var(--gc-price-size-mobile); }
+  #shopify-section-{{ section.id }} .pp-rec-price-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  #shopify-section-{{ section.id }} .pp-discount-badge {
+    background-color: {{ rec_discount_badge_bg }};
+    color: {{ rec_discount_badge_text }};
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1;
+  }
+  #shopify-section-{{ section.id }} .pp-rec-rating { color: {{ rec_rating_color }}; }
+  #shopify-section-{{ section.id }} .pp-rec-buy {
+    background-color: var(--gc-buy-bg);
+    color: var(--gc-buy-text);
+    font-size: var(--gc-buy-text-size);
+    border-radius: var(--gc-buy-radius);
+  }
+  #shopify-section-{{ section.id }} .pp-rec-buy:hover { background-color: var(--gc-buy-bg-hover); }
+  #shopify-section-{{ section.id }} .pp-rec-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid {{ rec_arrow_border_color }};
+    background-color: {{ rec_arrow_bg_color }};
+    color: {{ rec_arrow_icon_color }};
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .pp-rec-arrow:hover {
+    border-color: {{ rec_arrow_border_hover_color }};
+    background-color: {{ rec_arrow_bg_hover_color }};
+    color: {{ rec_arrow_icon_hover_color }};
+  }
+  #shopify-section-{{ section.id }} .pp-recommended-title {
+    font-size: {{ rec_heading_size_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .pp-recommended-description {
+    color: color-mix(in srgb, var(--gc-price-color) 72%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .pp-rec-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .pp-rec-header-actions {
+    display: inline-flex;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .pp-rec-header {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      text-align: left;
+    }
+
+    #shopify-section-{{ section.id }} .pp-rec-slide { width: var(--gc-card-width-desktop); }
+    #shopify-section-{{ section.id }} .pp-rec-card {
+      min-height: var(--gc-card-height-desktop);
+      max-height: var(--gc-card-height-desktop);
+    }
+    #shopify-section-{{ section.id }} .pp-rec-title { font-size: {{ rec_title_size_desktop }}px; }
+    #shopify-section-{{ section.id }} .pp-rec-meta { font-size: var(--gc-meta-size-desktop); }
+    #shopify-section-{{ section.id }} .pp-rec-price { font-size: var(--gc-price-size-desktop); }
+    #shopify-section-{{ section.id }} .pp-recommended-title { font-size: {{ rec_heading_size_desktop }}px; }
+  }
+</style>
+
+<section class="section-layout-py" style="--gc-card-bg: {{ rec_card_bg }}; --gc-card-border: {{ rec_card_border }}; --gc-card-border-hover: {{ rec_card_border_hover }}; --gc-card-border-width: {{ rec_card_border_width }}px; --gc-card-radius: {{ rec_card_radius }}px; --gc-card-padding: {{ rec_card_padding }}px; --gc-card-width-mobile: {{ rec_card_width_mobile }}px; --gc-card-width-desktop: {{ rec_card_width_desktop }}px; --gc-card-height-mobile: {{ rec_card_height_mobile }}px; --gc-card-height-desktop: {{ rec_card_height_desktop }}px; --gc-media-height-mobile: {{ rec_media_height_mobile }}px; --gc-media-height-desktop: {{ rec_media_height_desktop }}px; --gc-image-fit: {{ rec_image_fit }}; --gc-image-position: {{ rec_image_position }}; --gc-meta-color: {{ rec_meta_color }}; --gc-price-color: {{ rec_price_color }}; --gc-meta-size-mobile: {{ rec_meta_size_mobile }}px; --gc-meta-size-desktop: {{ rec_meta_size_desktop }}px; --gc-price-size-mobile: {{ rec_price_size_mobile }}px; --gc-price-size-desktop: {{ rec_price_size_desktop }}px; --gc-buy-bg: {{ rec_buy_bg }}; --gc-buy-bg-hover: {{ rec_buy_bg_hover }}; --gc-buy-text: {{ rec_buy_text }}; --gc-buy-text-size: {{ rec_buy_text_size }}px; --gc-buy-radius: {{ rec_buy_radius }}px; --gc-track-gap-mobile: {{ rec_track_gap }}px; --gc-track-gap-desktop: {{ rec_track_gap }}px; --gc-card-shadow-rest: var(--card-shadow-rest); --gc-card-shadow-hover: var(--card-shadow-hover); --gc-card-lift-hover: -2px;">
+  <div class="max-w-none mx-auto section-layout-px" style="max-width: {{ settings.global_layout_max_width | default: 1440 }}px;">
+  <div>
+    <div class="pp-rec-header">
+      <div>
+        <span class="text-primary font-bold uppercase tracking-widest text-xs mb-2 block">{{ rec_eyebrow_text }}</span>
+        <h2 class="font-extrabold font-headline pp-secondary pp-recommended-title">{{ rec_title_text }}</h2>
+        {% if rec_description_text != blank %}
+          <p class="pp-recommended-description mt-2 text-sm">{{ rec_description_text }}</p>
+        {% endif %}
+      </div>
+      <div class="pp-rec-header-actions">
+        <button class="pp-rec-arrow flex items-center justify-center" type="button" data-rec-prev><span class="material-symbols-outlined">chevron_left</span></button>
+        <button class="pp-rec-arrow flex items-center justify-center" type="button" data-rec-next><span class="material-symbols-outlined">chevron_right</span></button>
+      </div>
+    </div>
+
+    <div class="pp-rec-wrap">
+      <div class="pp-rec-track gc-carousel-track gc-unified-track" data-rec-track>
+        {% assign minimum_recommended = 6 %}
+        {% assign target_recommended = rec_limit %}
+        {% if target_recommended < minimum_recommended %}
+          {% assign target_recommended = minimum_recommended %}
+        {% endif %}
+        {% assign shown_related = 0 %}
+        {% assign rendered_product_ids = ',' %}
+        {% for related in rec_source %}
+          {% assign related_token = ',' | append: related.id | append: ',' %}
+          {% liquid
+            assign meets_min_inventory = true
+            assign related_variant = related.selected_or_first_available_variant
+
+            if related_variant.inventory_management == 'shopify'
+              assign related_inventory_quantity = related_variant.inventory_quantity | default: 0 | plus: 0
+              if related_inventory_quantity < product_min_inventory
+                assign meets_min_inventory = false
+              endif
+            elsif related.available == false
+              assign meets_min_inventory = false
+            endif
+          %}
+          {% if related.id != product.id and shown_related < target_recommended and meets_min_inventory %}
+            {% unless rendered_product_ids contains related_token %}
+              {% assign shown_related = shown_related | plus: 1 %}
+              {% assign rendered_product_ids = rendered_product_ids | append: related.id | append: ',' %}
+            {% liquid
+              assign rating_value = related.metafields.custom.rating_value | default: 5
+              assign review_count = related.metafields.custom.review_count | default: 0
+              assign primary_category_title = blank
+              assign price_block_class = 'pt-1'
+              assign has_discount = false
+              assign discount_percent = 0
+              assign primary_collection = related.collections | first
+              if primary_collection != blank
+                assign primary_category_title = primary_collection.title
+              elsif related.type != blank
+                assign primary_category_title = related.type
+              endif
+              assign rec_display_price = 0
+              assign rec_display_compare = 0
+              for v in related.variants
+                if v.available
+                  if rec_display_price == 0 or v.price < rec_display_price
+                    assign rec_display_price = v.price
+                    assign rec_display_compare = v.compare_at_price | default: 0
+                  endif
+                endif
+              endfor
+              if rec_display_price == 0
+                assign rec_fallback_var = related.selected_or_first_available_variant
+                assign rec_display_price = rec_fallback_var.price | default: related.price
+                assign rec_display_compare = rec_fallback_var.compare_at_price | default: 0
+              endif
+              if rec_display_compare > rec_display_price and rec_display_compare > 0
+                assign has_discount = true
+                assign discount_percent = rec_display_compare | minus: rec_display_price | times: 100.0 | divided_by: rec_display_compare | round
+              endif
+              if rec_show_buy_button
+                assign price_block_class = price_block_class | append: ' mt-auto'
+              endif
+            %}
+            <article class="pp-rec-slide gc-carousel-slide pp-rec-card gc-unified-card gc-product-card group" data-card-url="{{ related.url }}" role="link" tabindex="0" aria-label="Abrir produto {{ related.title | escape }}">
+              <div class="pp-rec-media-frame gc-product-media-frame mb-4 rounded-xl overflow-hidden relative" style="background-color: {{ rec_media_bg_color }};">
+                {% if related.featured_image %}
+                  <div class="pp-rec-image gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ related.featured_image | image_url: width: 900 }}');" aria-label="{{ related.title | escape }}"></div>
+                {% endif %}
+                <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-id="{{ related.id }}" data-product-gid="gid://shopify/Product/{{ related.id }}" data-product-handle="{{ related.handle }}">
+                  <span class="material-symbols-outlined text-xl">favorite</span>
+                </button>
+              </div>
+
+              <div class="flex flex-col gap-2 gc-product-card-content">
+                <h3 class="pp-rec-title font-medium">{{ related.title }}</h3>
+                {% if primary_category_title != blank %}
+                  <p class="pp-rec-meta">{{ primary_category_title }}</p>
+                {% endif %}
+
+                {% if rec_show_ratings %}
+                  <div class="flex items-center gap-1">
+                    <div class="flex pp-rec-rating">
+                      {% for i in (1..5) %}
+                        {% if i <= rating_value %}
+                          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                        {% else %}
+                          <span class="material-symbols-outlined text-sm">star</span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    {% if review_count > 0 %}
+                      <span class="pp-rec-meta">({{ review_count }})</span>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                <div class="{{ price_block_class }}">
+                  {% if rec_display_compare > rec_display_price %}
+                    <span class="pp-rec-meta line-through" style="color: var(--color-promo-old-price)">{{ rec_display_compare | money }}</span>
+                  {% endif %}
+                  <div class="pp-rec-price-row">
+                    <div class="flex items-baseline gap-1">
+                      <span class="pp-rec-meta font-bold italic"{% if has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>R$</span>
+                      <span class="pp-rec-price font-black"{% if has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>{{ rec_display_price | money_without_currency }}</span>
+                    </div>
+                    {% if rec_show_discount_badge and has_discount %}
+                      <span class="pp-discount-badge">-{{ discount_percent }}%</span>
+                    {% endif %}
+                  </div>
+                  <span class="pp-rec-meta">{{ global_installments_count }}x de {{ rec_display_price | divided_by: global_installments_count | money }} sem juros</span>
+                </div>
+
+                {% if rec_show_buy_button %}
+                  <a class="pp-rec-buy py-3 mt-3 font-bold text-center" href="{{ related.url }}">{{ rec_buy_label }}</a>
+                {% endif %}
+              </div>
+            </article>
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+
+        {% if shown_related < target_recommended %}
+          {% for related in collections.all.products %}
+            {% assign related_token = ',' | append: related.id | append: ',' %}
+            {% liquid
+              assign meets_min_inventory = true
+              assign related_variant = related.selected_or_first_available_variant
+
+              if related_variant.inventory_management == 'shopify'
+                assign related_inventory_quantity = related_variant.inventory_quantity | default: 0 | plus: 0
+                if related_inventory_quantity < product_min_inventory
+                  assign meets_min_inventory = false
+                endif
+              elsif related.available == false
+                assign meets_min_inventory = false
+              endif
+            %}
+            {% if related.id != product.id and shown_related < target_recommended and meets_min_inventory %}
+              {% unless rendered_product_ids contains related_token %}
+                {% assign shown_related = shown_related | plus: 1 %}
+                {% assign rendered_product_ids = rendered_product_ids | append: related.id | append: ',' %}
+              {% liquid
+                assign rating_value = related.metafields.custom.rating_value | default: 5
+                assign review_count = related.metafields.custom.review_count | default: 0
+                assign primary_category_title = blank
+                assign price_block_class = 'pt-1'
+                assign has_discount = false
+                assign discount_percent = 0
+                assign primary_collection = related.collections | first
+                if primary_collection != blank
+                  assign primary_category_title = primary_collection.title
+                elsif related.type != blank
+                  assign primary_category_title = related.type
+                endif
+                assign rec_display_price = 0
+                assign rec_display_compare = 0
+                for v in related.variants
+                  if v.available
+                    if rec_display_price == 0 or v.price < rec_display_price
+                      assign rec_display_price = v.price
+                      assign rec_display_compare = v.compare_at_price | default: 0
+                    endif
+                  endif
+                endfor
+                if rec_display_price == 0
+                  assign rec_fallback_var = related.selected_or_first_available_variant
+                  assign rec_display_price = rec_fallback_var.price | default: related.price
+                  assign rec_display_compare = rec_fallback_var.compare_at_price | default: 0
+                endif
+                if rec_display_compare > rec_display_price and rec_display_compare > 0
+                  assign has_discount = true
+                  assign discount_percent = rec_display_compare | minus: rec_display_price | times: 100.0 | divided_by: rec_display_compare | round
+                endif
+                if rec_show_buy_button
+                  assign price_block_class = price_block_class | append: ' mt-auto'
+                endif
+              %}
+              <article class="pp-rec-slide gc-carousel-slide pp-rec-card gc-unified-card gc-product-card group" data-card-url="{{ related.url }}" role="link" tabindex="0" aria-label="Abrir produto {{ related.title | escape }}">
+                <div class="pp-rec-media-frame gc-product-media-frame mb-4 rounded-xl overflow-hidden relative" style="background-color: {{ rec_media_bg_color }};">
+                  {% if related.featured_image %}
+                    <div class="pp-rec-image gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ related.featured_image | image_url: width: 900 }}');" aria-label="{{ related.title | escape }}"></div>
+                  {% endif %}
+                  <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-id="{{ related.id }}" data-product-gid="gid://shopify/Product/{{ related.id }}" data-product-handle="{{ related.handle }}">
+                    <span class="material-symbols-outlined text-xl">favorite</span>
+                  </button>
+                </div>
+
+                <div class="flex flex-col gap-2 gc-product-card-content">
+                  <h3 class="pp-rec-title font-medium">{{ related.title }}</h3>
+                  {% if primary_category_title != blank %}
+                    <p class="pp-rec-meta">{{ primary_category_title }}</p>
+                  {% endif %}
+
+                  {% if rec_show_ratings %}
+                    <div class="flex items-center gap-1">
+                      <div class="flex pp-rec-rating">
+                        {% for i in (1..5) %}
+                          {% if i <= rating_value %}
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                          {% else %}
+                            <span class="material-symbols-outlined text-sm">star</span>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      {% if review_count > 0 %}
+                        <span class="pp-rec-meta">({{ review_count }})</span>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+
+                  <div class="{{ price_block_class }}">
+                    {% if rec_display_compare > rec_display_price %}
+                      <span class="pp-rec-meta line-through" style="color: var(--color-promo-old-price)">{{ rec_display_compare | money }}</span>
+                    {% endif %}
+                    <div class="pp-rec-price-row">
+                      <div class="flex items-baseline gap-1">
+                        <span class="pp-rec-meta font-bold italic"{% if has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>R$</span>
+                        <span class="pp-rec-price font-black"{% if has_discount %} style="color: var(--color-promo-final-price)"{% endif %}>{{ rec_display_price | money_without_currency }}</span>
+                      </div>
+                      {% if rec_show_discount_badge and has_discount %}
+                        <span class="pp-discount-badge">-{{ discount_percent }}%</span>
+                      {% endif %}
+                    </div>
+                    <span class="pp-rec-meta">{{ global_installments_count }}x de {{ rec_display_price | divided_by: global_installments_count | money }} sem juros</span>
+                  </div>
+
+                  {% if rec_show_buy_button %}
+                    <a class="pp-rec-buy py-3 mt-3 font-bold text-center" href="{{ related.url }}">{{ rec_buy_label }}</a>
+                  {% endif %}
+                </div>
+              </article>
+              {% endunless %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const sectionRoot = document.getElementById('shopify-section-{{ section.id }}');
+    if (!sectionRoot) return;
+
+    const recTrack = sectionRoot.querySelector('[data-rec-track]');
+    const recPrev = sectionRoot.querySelector('[data-rec-prev]');
+    const recNext = sectionRoot.querySelector('[data-rec-next]');
+
+    if (recTrack && recPrev && recNext) {
+      const getStep = () => {
+        const firstSlide = recTrack.querySelector('.pp-rec-slide');
+        if (!firstSlide) return Math.max(260, Math.round(recTrack.clientWidth * 0.85));
+        const styles = window.getComputedStyle(recTrack);
+        const gap = Number.parseFloat(styles.columnGap || styles.gap || '0') || 0;
+        return firstSlide.getBoundingClientRect().width + gap;
+      };
+
+      recPrev.addEventListener('click', () => {
+        recTrack.scrollBy({ left: -getStep(), behavior: 'smooth' });
+      });
+
+      recNext.addEventListener('click', () => {
+        recTrack.scrollBy({ left: getStep(), behavior: 'smooth' });
+      });
+    }
+
+    const clickableCards = sectionRoot.querySelectorAll('.gc-product-card[data-card-url]');
+    clickableCards.forEach((card) => {
+      const targetUrl = card.getAttribute('data-card-url');
+      if (!targetUrl) return;
+
+      card.addEventListener('click', (event) => {
+        if (event.target.closest('a, button, input, select, textarea, label')) return;
+        window.location.href = targetUrl;
+      });
+
+      card.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        window.location.href = targetUrl;
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Produto recomendados",
+  "settings": [
+    { "type": "color", "id": "secondary_color", "label": "Cor do titulo", "default": "#0058BB" },
+    { "type": "text", "id": "recommended_eyebrow", "label": "Texto pequeno do titulo", "default": "Curadoria" },
+    { "type": "text", "id": "recommended_title", "label": "Titulo dos recomendados", "default": "Quem viu, viu tambem" },
+    { "type": "collection", "id": "list_best_sellers_collection", "label": "Colecao de mais vendidos (somente pagina /collections)" },
+    { "type": "paragraph", "content": "Os tamanhos de titulo, quantidade de cards, espacamento, fundo da imagem, cor das estrelas e estilos das setas sao controlados em Theme settings > Recomendados global." }
+  ],
+  "presets": [
+    { "name": "Produto recomendados" }
+  ]
+}
+{% endschema %}

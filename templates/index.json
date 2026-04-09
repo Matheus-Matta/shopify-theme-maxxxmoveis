@@ -1,0 +1,1148 @@
+{
+  "sections": {
+    "home_hero": {
+      "type": "home-hero",
+      "blocks": {
+        "banner_w8BFTy": {
+          "type": "banner",
+          "settings": {
+            "title": "Banner principal",
+            "image_desktop": "shopify://shop_images/1920x600.png",
+            "link": "shopify://collections/promocoes",
+            "alt_text": "Banner promocional"
+          }
+        },
+        "banner_GABFrX": {
+          "type": "banner",
+          "settings": {
+            "title": "Banner principal",
+            "image_desktop": "shopify://shop_images/Vantagens_2.png",
+            "link": "shopify://pages/montagem-e-instalacao",
+            "alt_text": "Banner promocional"
+          }
+        },
+        "banner_BhBLba": {
+          "type": "banner",
+          "settings": {
+            "title": "Banner principal",
+            "image_desktop": "shopify://shop_images/localizacao_maxx_site_a4c58277-110a-4ca5-98ea-a4cbd2db26fa_1.jpg",
+            "link": "shopify://pages/contact",
+            "alt_text": "Banner promocional"
+          }
+        },
+        "banner_BrifxQ": {
+          "type": "banner",
+          "settings": {
+            "title": "Banner principal",
+            "image_desktop": "shopify://shop_images/Site_9.png",
+            "link": "https://www.instagram.com/maxmoveis_oficial/",
+            "alt_text": "Banner promocional"
+          }
+        },
+        "banner_YwA7kA": {
+          "type": "banner",
+          "settings": {
+            "title": "Banner principal",
+            "image_desktop": "shopify://shop_images/SAC_1.png",
+            "link": "shopify://pages/contact",
+            "alt_text": "Banner promocional"
+          }
+        }
+      },
+      "block_order": [
+        "banner_w8BFTy",
+        "banner_GABFrX",
+        "banner_BhBLba",
+        "banner_BrifxQ",
+        "banner_YwA7kA"
+      ],
+      "settings": {
+        "layout_width": "full",
+        "padding_top": 16,
+        "padding_bottom": 0,
+        "border_radius": 16,
+        "image_fit": "cover",
+        "image_bg_color": "#ffffff",
+        "desktop_height": 600,
+        "mobile_height": 160,
+        "autoplay": true,
+        "autoplay_seconds": 6,
+        "show_arrows": true,
+        "arrow_bg_color": "rgba(0,0,0,0)",
+        "arrow_icon_color": "#1f2937",
+        "show_dots": true,
+        "dot_inactive_color": "rgba(0,0,0,0)",
+        "dot_active_color": "rgba(0,0,0,0)"
+      }
+    },
+    "banner_strip_KTMQQc": {
+      "type": "banner-strip",
+      "disabled": true,
+      "name": "Banner Faixa",
+      "settings": {
+        "image_desktop": "shopify://shop_images/banner-faixa.png",
+        "image_fit": "cover",
+        "link": "",
+        "aria_label": "Banner",
+        "layout_width": "full",
+        "height_mobile": 15,
+        "height_desktop": 50,
+        "border_radius": 0,
+        "bg_color": "#ffffff"
+      }
+    },
+    "home_categories": {
+      "type": "home-categories",
+      "blocks": {
+        "category_CVdPyk": {
+          "type": "category",
+          "settings": {
+            "title": "Cozinha",
+            "collection": "cozinha",
+            "link": ""
+          }
+        },
+        "category_ywHtC4": {
+          "type": "category",
+          "settings": {
+            "title": "Sala de Estar",
+            "collection": "sala",
+            "link": ""
+          }
+        },
+        "category_d7HYcW": {
+          "type": "category",
+          "settings": {
+            "title": "Sala de Jantar",
+            "collection": "sala-de-jantar",
+            "link": ""
+          }
+        },
+        "category_kBh6KM": {
+          "type": "category",
+          "settings": {
+            "title": "Quarto",
+            "collection": "quarto",
+            "link": ""
+          }
+        },
+        "category_JqaJEc": {
+          "type": "category",
+          "settings": {
+            "title": "Quarto Infantil",
+            "collection": "quarto-infantil",
+            "link": ""
+          }
+        },
+        "category_PWizrR": {
+          "type": "category",
+          "settings": {
+            "title": "Escritorio",
+            "collection": "escritorio",
+            "link": ""
+          }
+        },
+        "category_MXJFh4": {
+          "type": "category",
+          "settings": {
+            "title": "Decoração",
+            "collection": "decoracao",
+            "link": ""
+          }
+        },
+        "category_WjtmGC": {
+          "type": "category",
+          "settings": {
+            "title": "Mesas",
+            "collection": "mesa",
+            "link": ""
+          }
+        },
+        "category_EjciJ3": {
+          "type": "category",
+          "settings": {
+            "title": "Aéreos",
+            "collection": "aereo",
+            "link": ""
+          }
+        },
+        "category_ECTYcj": {
+          "type": "category",
+          "settings": {
+            "title": "Sofá",
+            "collection": "sofa",
+            "link": "",
+            "image": "shopify://shop_images/SOFA-CALIFORNIA-LINHO-CINZA-COM-FUNDO.png"
+          }
+        },
+        "category_XDr8Dc": {
+          "type": "category",
+          "settings": {
+            "title": "Colchões",
+            "collection": "colchoes",
+            "link": "",
+            "image": "shopify://shop_images/Colchao-Titan-3.jpeg"
+          }
+        }
+      },
+      "block_order": [
+        "category_CVdPyk",
+        "category_ywHtC4",
+        "category_d7HYcW",
+        "category_kBh6KM",
+        "category_JqaJEc",
+        "category_PWizrR",
+        "category_MXJFh4",
+        "category_WjtmGC",
+        "category_EjciJ3",
+        "category_ECTYcj",
+        "category_XDr8Dc"
+      ],
+      "settings": {
+        "title": "Navegue por categorias",
+        "view_all_url": "shopify://collections",
+        "view_all_label": "Ver todas as categorias",
+        "view_all_text_color": "",
+        "view_all_hover_color": "#004a9d",
+        "section_bg_color": "#ffffff",
+        "section_text_color": "#1a1c1c",
+        "section_border_color": "#d4d4d8",
+        "arrow_bg_color": "#ffffff",
+        "arrow_border_color": "#d4d4d8",
+        "arrow_icon_color": "#71717a",
+        "arrow_bg_hover_color": "#f3f4f6",
+        "arrow_border_hover_color": "#0058bb",
+        "arrow_icon_hover_color": "#0058bb",
+        "category_bg_color": "#eeeeee",
+        "category_title_color": "#4b5563",
+        "category_hover_border_color": "#0058bb",
+        "category_hover_title_color": "#0058bb",
+        "title_align": "center",
+        "item_width_desktop": 128,
+        "item_height_desktop": 128,
+        "item_width_mobile": 104,
+        "item_height_mobile": 104,
+        "item_gap": 8,
+        "title_size": 14,
+        "title_box_height": 16,
+        "image_fit": "cover",
+        "image_position": "center center",
+        "image_repeat": "no-repeat",
+        "image_hover_scale": 1.1,
+        "category_shape": "rounded_square",
+        "corner_radius": 24
+      }
+    },
+    "flash_offers": {
+      "type": "flash-offers",
+      "settings": {
+        "title": "OFERTAS RELÂMPAGO!",
+        "text": "Aproveite descontos de até",
+        "discount": "60% OFF",
+        "timer_label": "CORRE QUE ACABA EM:",
+        "countdown_mode": "end_at",
+        "countdown_end_at": "2026-12-31 23:59",
+        "countdown_duration_minutes": 15,
+        "countdown_persistence_key": "oferta-1",
+        "countdown_expired_label": "ENCERRADA",
+        "hours": "04",
+        "minutes": "22",
+        "seconds": "15",
+        "hours_label": "Horas",
+        "minutes_label": "Minutos",
+        "seconds_label": "Segundos",
+        "button_label": "VER OFERTAS",
+        "button_link": "shopify://collections/aparadores-e-buffets",
+        "bg_color": "#0058bb",
+        "bg_image_fit": "cover",
+        "bg_image_position": "center center",
+        "overlay_color": "#00000026",
+        "min_height_desktop": 260,
+        "min_height_mobile": 320,
+        "title_color": "#ffffff",
+        "text_color": "#fff4ea",
+        "discount_color": "#ffffff",
+        "timer_label_color": "#ffe6d3",
+        "counter_bg_color": "#1a1c1c",
+        "counter_text_color": "#ffffff",
+        "button_bg_color": "#ef4444",
+        "button_text_color": "#ffffff",
+        "button_bg_hover_color": "#f7f7f7",
+        "card_border_color": "#e5e7eb",
+        "card_border_width": 0,
+        "card_radius_mobile": 24,
+        "card_radius_desktop": 24,
+        "card_shadow_opacity": 25,
+        "counter_radius": 16,
+        "button_radius": 16,
+        "title_size_desktop": 48,
+        "title_size_mobile": 24,
+        "text_size_desktop": 24,
+        "text_size_mobile": 13,
+        "counter_size_desktop": 28,
+        "counter_size_mobile": 22
+      }
+    },
+    "collection_tabs_carousel": {
+      "type": "collection-tabs-carousel",
+      "blocks": {
+        "tab_1": {
+          "type": "collection_tab",
+          "settings": {
+            "label": "Lançamentos",
+            "collection": "aparadores-e-buffets"
+          }
+        },
+        "tab_2": {
+          "type": "collection_tab",
+          "settings": {
+            "label": "Cozinha",
+            "collection": "cozinha"
+          }
+        },
+        "collection_tab_7J8pQf": {
+          "type": "collection_tab",
+          "name": "Aba de colecao",
+          "settings": {
+            "label": "Quarto",
+            "collection": "quarto"
+          }
+        },
+        "collection_tab_3WBPUg": {
+          "type": "collection_tab",
+          "name": "Aba de colecao",
+          "settings": {
+            "label": "Quarto Infantil",
+            "collection": "quarto-infantil"
+          }
+        },
+        "collection_tab_3XJPfy": {
+          "type": "collection_tab",
+          "name": "Aba de colecao",
+          "settings": {
+            "label": "Sala de Estar",
+            "collection": "sala"
+          }
+        },
+        "collection_tab_YAJ9hj": {
+          "type": "collection_tab",
+          "name": "Aba de colecao",
+          "settings": {
+            "label": "Sala de Jantar",
+            "collection": "sala-de-jantar"
+          }
+        },
+        "tab_3": {
+          "type": "collection_tab",
+          "settings": {
+            "label": "Decoração",
+            "collection": "decoracao"
+          }
+        },
+        "tab_4": {
+          "type": "collection_tab",
+          "disabled": true,
+          "settings": {
+            "label": "Balcão Para Cooktop",
+            "collection": "balcao-para-cooktop"
+          }
+        }
+      },
+      "block_order": [
+        "tab_1",
+        "tab_2",
+        "collection_tab_7J8pQf",
+        "collection_tab_3WBPUg",
+        "collection_tab_3XJPfy",
+        "collection_tab_YAJ9hj",
+        "tab_3",
+        "tab_4"
+      ],
+      "settings": {}
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Sófas",
+        "collection": "banqueta",
+        "limit": 8,
+        "button_label": "Ver todos",
+        "show_carrousel_arrows": true
+      }
+    },
+    "featured_collection_kmLmji": {
+      "type": "featured-collection",
+      "name": "Featured collection",
+      "settings": {
+        "title": "Cozinha",
+        "collection": "cozinha",
+        "limit": 8,
+        "button_label": "Ver todos",
+        "show_carrousel_arrows": true
+      }
+    },
+    "promo_banner": {
+      "type": "promo-banner",
+      "blocks": {
+        "promo_tbwpCa": {
+          "type": "promo",
+          "settings": {
+            "eyebrow": "Visite nossas lojas",
+            "title": "Encontre móveis incríveis e atendimento especial.",
+            "button_label": "SAIBA MAIS",
+            "button_link": "",
+            "image": "shopify://shop_images/Design_sem_nome_7.png",
+            "image_fit": "cover",
+            "image_position": "center center",
+            "image_scale": 100,
+            "image_border_width": 0,
+            "image_border_color": "#d4d4d8",
+            "image_radius": 0,
+            "button_style": "dark",
+            "button_radius": 12
+          }
+        },
+        "promo_48X6fL": {
+          "type": "promo",
+          "settings": {
+            "eyebrow": "Montagem Grátis Para Você",
+            "title": "Ganhe Montagem Grátis, escolha seus móveis favoritos e garanta agora",
+            "button_label": "CONFIRA AGORA",
+            "button_link": "",
+            "image": "shopify://shop_images/11.png",
+            "image_fit": "cover",
+            "image_position": "center center",
+            "image_scale": 100,
+            "image_border_width": 0,
+            "image_border_color": "#d4d4d8",
+            "image_radius": 0,
+            "button_style": "dark",
+            "button_radius": 12
+          }
+        }
+      },
+      "block_order": [
+        "promo_tbwpCa",
+        "promo_48X6fL"
+      ],
+      "settings": {
+        "tile_min_height_mobile": 200,
+        "tile_max_height_mobile": 0,
+        "media_min_height_mobile": 160,
+        "media_max_height_mobile": 0,
+        "tile_min_height_desktop": 240,
+        "tile_max_height_desktop": 0,
+        "media_min_height_desktop": 160,
+        "media_max_height_desktop": 0,
+        "grid_gap_mobile": 8,
+        "grid_gap_desktop": 10,
+        "tile_radius_mobile": 8,
+        "tile_radius_desktop": 8,
+        "content_padding_mobile": 12,
+        "content_padding_desktop": 16,
+        "eyebrow_size_mobile": 9,
+        "eyebrow_size_desktop": 10,
+        "title_size_mobile": 18,
+        "title_size_desktop": 24,
+        "button_text_size_mobile": 11,
+        "button_text_size_desktop": 12,
+        "tile_border_width_mobile": 1,
+        "tile_border_width_desktop": 1,
+        "content_border_width_mobile": 0,
+        "content_border_width_desktop": 0,
+        "button_border_width_mobile": 0,
+        "button_border_width_desktop": 0,
+        "section_border_width_mobile": 0,
+        "section_border_width_desktop": 0,
+        "section_border_radius_mobile": 16,
+        "section_border_radius_desktop": 16,
+        "section_bg_color": "#ffffff",
+        "section_text_color": "#1a1c1c",
+        "section_border_color": "#d4d4d8",
+        "tile_bg_color": "#ffffff",
+        "content_bg_color": "#ffffff",
+        "eyebrow_color": "#0058bb",
+        "title_color": "#1a1c1c",
+        "tile_border_color": "#e5e7eb",
+        "content_border_color": "#f7f7f7",
+        "button_dark_bg_color": "#0058bb",
+        "button_dark_text_color": "#ffffff",
+        "button_accent_bg_color": "#0058bb",
+        "button_accent_text_color": "#ffffff",
+        "button_border_color": "#f7f7f7"
+      }
+    },
+    "featured_collection_prdntC": {
+      "type": "featured-collection",
+      "name": "Featured collection",
+      "settings": {
+        "title": "Quarda Roupas",
+        "collection": "armarios",
+        "limit": 8,
+        "button_label": "Ver todos",
+        "show_carrousel_arrows": true
+      }
+    },
+    "reviews_carousel": {
+      "type": "reviews-carousel",
+      "blocks": {
+        "review_CUaA9k": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Priscila Araujo",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "5 meses atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Muito bom o atendimento !",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_pqHyMq": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Anderson Soriano",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "1 ano atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Loja bem organizada, produtos bem expostos, de boa qualidade e sofisticados. Fui atendido pelos vendedores Charles e Tati que são super simpáticos e atenciosos. Me atenderam com muita atenção e com um belo sorriso estampado no rosto. Com certeza voltarei para ter mais uma incrível experiência.  Nota 1000!\nAtendimento de excelência da gerente Neide onde veio até a mim com toda educação e m convidou para conhecer a loja. Por meus profissionais como vc",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_pHNXzH": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Quetlen Almeida",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "2 meses atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Um destaque ao atendimento, em especial a atendente Carol, que foi gentil, muito simpática e pro ativa. Voltarei a comprar na loja com certeza!",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_EkC7hV": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Michele Diniz",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "2 anos atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Comprei pela internet, entrega super rápida, atendentes super solícitos, montagem antes do prazo final!\nGuarda-roupa me surpreendeu, adorei!\nSuper espaçoso, ótimos compartimentos!\nMontagem muito bem feita!\nCom toda certeza, ganharam uma cliente!!\nGrata!",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_LJnHVN": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Marcelle Meireles",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "2 anos atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Fui muito bem atendida pelo vendedor Pedro de Niterói e meus móveis foram muito bem instalados pelo montador Eddie (excelente profissional). Loja muito boa. Preços muito bons e móveis com designer muito bonitos . Recomendo a Maxxx , que mal chegou e já está fazendo muito sucesso em Niterói.",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_wGiKWb": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Maria Teles Mendes",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "1 ano atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Sou fã dessa loja, atendimento top muito bom do gerente Bruno e dos vendedores",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_rBGYda": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Rafael Soares",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "1 ano atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "ótimo atendimento, facilidade para pagamento no ato da entrega!",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_YPfMTQ": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Jadinale Oliveira",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "2 anos atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Vendedora atenciosa,entrega no prazo combinado ,satisfeita com o colchão!! A loja tem muita novidades.",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_zqDKjq": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Bruna Mendes",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "1 ano atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Foi ótima, adorei o produto, mas especial o atendimento da Tatiana vendedora da loja do Cantagalo, ela foi super atenciosa desde o atendimento até a data da entrega e da montagem. Obrigada Tatiana pelo seu atendimento.",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_6zGVw7": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Dan Soares",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "7 meses atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Recomendo muito, a vendedora Juliana super atenciosa! Ótima Vendedora, voltarei mais vezes.",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_neQzbF": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Eliane Da Conceição da Silva",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "1 ano atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Ótima compra, do meu armário multiuso, bem atendida pelo vendedor, muito atencioso, recebi na data certa, montagem ficou perfeita. Montador nota 10.",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_FiwG4q": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "SILEIDE ROSA",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "1 ano atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Particularmente amei o atendimento... A atendente Evelyn da loja em Pacheco foi super educada, paciente e prestativa,os entregadores muito educados e não mediram esforços pra fazer minha entrega... São honesto e cumpridores de sua palavra!! Obg equipe do Pacheco da loja Max móveis.",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        },
+        "review_BKJNU4": {
+          "type": "review",
+          "settings": {
+            "review_link": "",
+            "name": "Recicle Bem",
+            "name_color": "",
+            "name_size_mobile": 15,
+            "name_size_desktop": 16,
+            "meta": "3 semanas atrás",
+            "meta_color": "",
+            "meta_size_mobile": 11,
+            "meta_size_desktop": 12,
+            "text": "Gostei muito de comprar  na loja,\nO vendedor Luciano me atendeu muito\nBem  , a entrega é muito rapido",
+            "text_color": "",
+            "stars": 5,
+            "star_color": "#f4b400",
+            "avatar_bg": "#22c55e"
+          }
+        }
+      },
+      "block_order": [
+        "review_CUaA9k",
+        "review_pqHyMq",
+        "review_pHNXzH",
+        "review_EkC7hV",
+        "review_LJnHVN",
+        "review_wGiKWb",
+        "review_rBGYda",
+        "review_YPfMTQ",
+        "review_zqDKjq",
+        "review_6zGVw7",
+        "review_neQzbF",
+        "review_FiwG4q",
+        "review_BKJNU4"
+      ],
+      "settings": {
+        "title": "AVALIAÇÕES DE NOSSOS CLIENTES!",
+        "section_bg_color": "#ffffff",
+        "section_text_color": "#1a1c1c",
+        "title_color": "#1a1c1c",
+        "title_size_mobile": 14,
+        "title_size_desktop": 16,
+        "review_card_bg_color": "#ffffff",
+        "review_card_border_color": "#f2f2f2",
+        "review_card_text_color": "#18181b",
+        "review_card_muted_color": "#4b5563",
+        "card_height_mobile": 260,
+        "card_height_desktop": 260,
+        "review_card_border_width": 1,
+        "arrow_color": "#6b7280",
+        "arrow_bg_color": "#ffffff",
+        "arrow_size": 40,
+        "arrow_icon_size": 24,
+        "autoplay_enabled": true,
+        "autoplay_interval": 4
+      }
+    },
+    "social_links": {
+      "type": "social-links",
+      "blocks": {
+        "social_link_M4b34M": {
+          "type": "social_link",
+          "settings": {
+            "social_image": "shopify://shop_images/Instagram_icon_png.webp",
+            "image_width_mobile": 72,
+            "image_height_mobile": 72,
+            "image_width_desktop": 72,
+            "image_height_desktop": 72,
+            "label": "",
+            "link": "https://www.instagram.com/maxmoveis_oficial/"
+          }
+        },
+        "social_link_tr64MM": {
+          "type": "social_link",
+          "settings": {
+            "social_image": "shopify://shop_images/facebook_2.png",
+            "image_width_mobile": 72,
+            "image_height_mobile": 72,
+            "image_width_desktop": 72,
+            "image_height_desktop": 72,
+            "label": "",
+            "link": "https://www.facebook.com/maxxxmoveis"
+          }
+        },
+        "social_link_kDaAzp": {
+          "type": "social_link",
+          "settings": {
+            "social_image": "shopify://shop_images/Design_sem_nome_1.png",
+            "image_width_mobile": 140,
+            "image_height_mobile": 140,
+            "image_width_desktop": 138,
+            "image_height_desktop": 138,
+            "label": "",
+            "link": "https://www.reclameaqui.com.br/empresa/maxxx-moveis/"
+          }
+        }
+      },
+      "block_order": [
+        "social_link_M4b34M",
+        "social_link_tr64MM",
+        "social_link_kDaAzp"
+      ],
+      "settings": {
+        "title": "Siga-nos nas Redes Sociais",
+        "title_size_mobile": 24,
+        "title_size_desktop": 32,
+        "title_color": "#18181b",
+        "text": "Fique por dentro de todas as novidades",
+        "text_size_mobile": 14,
+        "text_size_desktop": 16,
+        "text_color": "#52525b",
+        "section_bg_color": "#ffffff",
+        "section_border_color": "#ffffff",
+        "show_label": true,
+        "label_size_mobile": 10,
+        "label_size_desktop": 10,
+        "label_color": "#52525b",
+        "items_gap_mobile": 4,
+        "items_gap_desktop": 4
+      }
+    },
+    "stores_carousel_BVYMPN": {
+      "type": "stores-carousel",
+      "blocks": {
+        "store_8xbcKL": {
+          "type": "store",
+          "settings": {
+            "store_name": "Maricá - Centro",
+            "store_image": "shopify://shop_images/marica_centro_5f5c06cc-8773-4e93-8ecd-2a693d87c8df.jpg",
+            "store_badge": "",
+            "store_address": "R. Ribeiro de Almeida, 131 - Centro, Maricá - RJ, 24900-885",
+            "store_hours": "Seg–Sáb 08h–20h  |  Dom 08h–13h",
+            "store_phone": "(21) 99899-5199",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Maric%C3%A1+Centro/@-22.918347,-42.8176435,17z/data=!3m1!4b1!4m6!3m5!1s0x99edca0b087c3b:0xf46e1a958e99e4b4!8m2!3d-22.918347!4d-42.8176435!16s%2Fg%2F11y7d7nzrb?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_YiiwrX": {
+          "type": "store",
+          "settings": {
+            "store_name": "Alcântara",
+            "store_image": "shopify://shop_images/alcantara.png",
+            "store_badge": "",
+            "store_address": "Estr. Raul Veiga, 385 - Alcantara, São Gonçalo - RJ, 24710-480",
+            "store_hours": "Seg–Sáb 08h–19h  |  Dom 09h–13h",
+            "store_phone": "(21) 2605-8922",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Alc%C3%A2ntara/@-22.8227841,-42.9976761,17z/data=!3m1!4b1!4m6!3m5!1s0x9990b899ac0d33:0xb881b020131c429d!8m2!3d-22.8227841!4d-42.9976761!16s%2Fg%2F1ptyz3vl5?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_cTGfDP": {
+          "type": "store",
+          "settings": {
+            "store_name": "Niterói - Centro",
+            "store_image": "shopify://shop_images/niteroi_centro.jpg",
+            "store_badge": "",
+            "store_address": "R. São Pedro, 35 - Centro, Niterói - RJ, 24020-054",
+            "store_hours": "Seg–Sex 08h–19h  |  Sáb 08h–17h",
+            "store_phone": "(21) 3758-6598",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Niter%C3%B3i+Centro/@-22.8919145,-43.1227967,17z/data=!3m1!4b1!4m6!3m5!1s0x99832bc8252959:0xca7f69ea19937c0d!8m2!3d-22.8919145!4d-43.1227967!16s%2Fg%2F11v0rxzndx?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_6RN3Ea": {
+          "type": "store",
+          "settings": {
+            "store_name": "Maricá - Inoã",
+            "store_image": "shopify://shop_images/marica_inoa.jpg",
+            "store_badge": "",
+            "store_address": "Rod. Amaral Peixoto, LJ3 - Inoã, Maricá - RJ, 24942-375",
+            "store_hours": "Seg–Sáb 08h–20h  |  Dom 09h–13h",
+            "store_phone": "(21) 99995-4246",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Ino%C3%A3/@-22.9116372,-42.9341411,17z/data=!3m1!4b1!4m6!3m5!1s0x998d005c72cf11:0x60ccc4ea1f05dbff!8m2!3d-22.9116372!4d-42.9341411!16s%2Fg%2F11y3_m5w1k?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_dcAJB7": {
+          "type": "store",
+          "settings": {
+            "store_name": "Santa Luzia",
+            "store_image": "shopify://shop_images/santa_luzia.jpg",
+            "store_badge": "",
+            "store_address": "Av. Santa Luzia, 96 - Santa Luzia, São Gonçalo - RJ, 24722-315",
+            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–18h  |  Dom 08h–13h",
+            "store_phone": "(21) 97191-6748",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Santa+Luzia/@-22.8010458,-42.9822775,17z/data=!3m1!4b1!4m6!3m5!1s0x9990d516fd4e25:0x596c77b38f9cbeff!8m2!3d-22.8010458!4d-42.9822775!16s%2Fg%2F11c1s_7x_z?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_ADQwPL": {
+          "type": "store",
+          "settings": {
+            "store_name": "Pacheco",
+            "store_image": "shopify://shop_images/pacheco.jpg",
+            "store_badge": "",
+            "store_address": "Estr. do Pacheco, 1060 - Loja 05 - Pacheco, São Gonçalo - RJ, 24732-570",
+            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–15h  |  Dom 08h–13h",
+            "store_phone": "(21) 97240-3368",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Pacheco/@-22.8248349,-42.9685773,17z/data=!3m1!4b1!4m6!3m5!1s0x999117b5d4937b:0x74936fcebf87b754!8m2!3d-22.8248349!4d-42.9685773!16s%2Fg%2F11g6xwm0dr?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_wwDhCL": {
+          "type": "store",
+          "settings": {
+            "store_name": "Centro - São Gonçalo",
+            "store_image": "shopify://shop_images/sg_centro.jpg",
+            "store_badge": "",
+            "store_address": "R. Eduardo Viêira de Souza, 75 - Centro, São Gonçalo - RJ, 24445-410",
+            "store_hours": "Seg–Sex 08h–19h  |  Sáb 08h–18h",
+            "store_phone": "(21) 99995-8797",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Centro+SG/@-22.8234089,-43.0826752,14z/data=!4m6!3m5!1s0x999b45b5a02ad1:0x5c24fa34df04b28d!8m2!3d-22.8234089!4d-43.0445664!16s%2Fg%2F11y4028l5w?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_mt3Dki": {
+          "type": "store",
+          "settings": {
+            "store_name": "Itaboraí",
+            "store_image": "shopify://shop_images/itaborai.jpg",
+            "store_badge": "",
+            "store_address": "Av. Vinte e Dois de Maio, sn - Lt 1 Qd B - Centro, Itaboraí - RJ, 24812-222",
+            "store_hours": "Seg–Sáb 08h–19h",
+            "store_phone": "(21) 97160-7996",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Itabora%C3%AD/@-22.7469694,-42.8571345,17z/data=!3m1!4b1!4m6!3m5!1s0x99c1f7a692f239:0xbcfaf66fbad7c635!8m2!3d-22.7469694!4d-42.8571345!16s%2Fg%2F11tnv_j87d?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_zmEfk4": {
+          "type": "store",
+          "settings": {
+            "store_name": "Pendotiba / Cantagalo",
+            "store_image": "shopify://shop_images/cantagalo.jpg",
+            "store_badge": "",
+            "store_address": "Estr. Francisco da Cruz Nunes, 431 - Itaipu, Niterói - RJ, 24310-340",
+            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–15h  |  Dom 09h–13h",
+            "store_phone": "(21) 99555-6884",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Cantagalo/@-22.9102721,-43.0509625,17z/data=!3m1!4b1!4m6!3m5!1s0x9985b7d370e50b:0x841f8311f1d8b8b8!8m2!3d-22.9102721!4d-43.0509625!16s%2Fg%2F1ptz5m2xh?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_Qqce7H": {
+          "type": "store",
+          "settings": {
+            "store_name": "Rio Bonito",
+            "store_image": "shopify://shop_images/rio_bonito.jpg",
+            "store_badge": "",
+            "store_address": "Avenida - R. Pres. Castelo Branco, 50 - Centro, Rio Bonito - RJ, 28800-000",
+            "store_hours": "Seg–Sex 08h–19h  |  Sáb 08h–15h",
+            "store_phone": "(21) 97110-7250",
+            "cta_url": "https://www.google.com/maps/place/MAXXX+M%C3%93VEIS+%7C+Rio+Bonito/@-22.7098261,-42.6239832,17z/data=!3m1!4b1!4m6!3m5!1s0x99d911d5a2d4bb:0x4544cd249ce92e4c!8m2!3d-22.7098261!4d-42.6239832!16s%2Fg%2F11vhzngkf7?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_NNqzJR": {
+          "type": "store",
+          "settings": {
+            "store_name": "Bandeirantes",
+            "store_image": "shopify://shop_images/bandeirantes.jpg",
+            "store_badge": "",
+            "store_address": "Estr. Raul Veiga, 2351 - Lj-02 - Amendoeira, São Gonçalo - RJ, 24730-060",
+            "store_hours": "Seg–Sáb 08h–19h  |  Dom 09h–13h",
+            "store_phone": "(21) 99995-8764",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Pra%C3%A7a+do+Bandeirantes/@-22.826674,-42.9883514,17z/data=!4m6!3m5!1s0x99915dbf5ad437:0x5459bca14bb575e1!8m2!3d-22.8260976!4d-42.9849!16s%2Fg%2F11svggqy3g?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_CQkTVn": {
+          "type": "store",
+          "settings": {
+            "store_name": "São Gonçalo Shopping",
+            "store_image": "shopify://shop_images/sg_shopping.jpg",
+            "store_badge": "",
+            "store_address": "AV SAO GONÇALO 100 - BOA VISTA / SG - RJ 2º Andar | Loja: 232, 233, 234 e 235 - Boa Vista, São Gonçalo - RJ, 24466-315",
+            "store_hours": "Seg–Sáb 10:30h–23:30h  |  Dom 11:30h–23h",
+            "store_phone": "(21) 97206-8733",
+            "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Shopping+BR+S%C3%A3o+Gon%C3%A7alo/@-22.8234089,-43.1207841,13z/data=!4m6!3m5!1s0x999bf929d8beb3:0xe8b7e8ed69cd7c6!8m2!3d-22.814445!4d-43.0701259!16s%2Fg%2F11wfwlg009?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_tKyhcj": {
+          "type": "store",
+          "settings": {
+            "store_name": "Alcantânra II",
+            "store_image": "shopify://shop_images/alcantara_2.png",
+            "store_badge": "",
+            "store_address": "R. Dr. Alfredo Backer, 633 - Alcantara, São Gonçalo - RJ, 24710-395",
+            "store_hours": "Seg–Sáb 09h–19h",
+            "store_phone": "(21) 99584-6104",
+            "cta_url": "https://www.google.com/maps/place/R.+Dr.+Alfredo+Backer,+633+-+Alcantara,+S%C3%A3o+Gon%C3%A7alo+-+RJ,+24710-395/@-22.8197196,-43.0034093,17z/data=!3m1!4b1!4m6!3m5!1s0x99909246755cff:0x170d5bec9003061c!8m2!3d-22.8197196!4d-43.0034093!16s%2Fg%2F11bw44kxq3!5m1!1e4?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
+          }
+        },
+        "store_wFyWRx": {
+          "type": "store",
+          "settings": {
+            "store_name": "São Gonçalo II",
+            "store_image": "shopify://shop_images/sg_2.png",
+            "store_badge": "",
+            "store_address": "R. Dr. Felíciano Sodré, 230 - Centro, São Gonçalo - RJ, 24440-440",
+            "store_hours": "Seg–Sáb 09h–19h",
+            "store_phone": "(21) 99959-3187",
+            "cta_url": "https://www.google.com/maps/place/R.+Dr.+Fel%C3%ADciano+Sodr%C3%A9,+230+-+Centro,+S%C3%A3o+Gon%C3%A7alo+-+RJ,+24440-440/data=!4m2!3m1!1s0x999af0f7ccbc53:0x3b9ead610d9635ee?sa=X&ved=1t:242&ictx=111"
+          }
+        }
+      },
+      "block_order": [
+        "store_8xbcKL",
+        "store_YiiwrX",
+        "store_cTGfDP",
+        "store_6RN3Ea",
+        "store_dcAJB7",
+        "store_ADQwPL",
+        "store_wwDhCL",
+        "store_mt3Dki",
+        "store_zmEfk4",
+        "store_Qqce7H",
+        "store_NNqzJR",
+        "store_CQkTVn",
+        "store_tKyhcj",
+        "store_wFyWRx"
+      ],
+      "name": "Lojas: Carrossel",
+      "settings": {
+        "title": "NOSSAS LOJAS",
+        "subtitle": "",
+        "show_title_dividers": true,
+        "title_color": "#1a1c1c",
+        "title_size_mobile": 20,
+        "title_size_desktop": 26,
+        "subtitle_color": "#6b7280",
+        "subtitle_size_mobile": 14,
+        "subtitle_size_desktop": 16,
+        "section_bg_color": "#ffffff",
+        "section_text_color": "#1a1c1c",
+        "card_width_mobile": 260,
+        "card_width_desktop": 300,
+        "card_media_height": 180,
+        "card_image_fit": "cover",
+        "card_bg_color": "#ffffff",
+        "card_media_bg_color": "#f7f7f7",
+        "card_border_color": "#e5e7eb",
+        "card_border_width": 1,
+        "card_border_hover_color": "#0058bb",
+        "card_radius": 16,
+        "card_title_color": "#1a1c1c",
+        "card_title_hover_color": "#0058bb",
+        "card_title_size_mobile": 15,
+        "card_title_size_desktop": 16,
+        "card_muted_color": "#6b7280",
+        "card_meta_size_mobile": 13,
+        "card_meta_size_desktop": 13,
+        "card_icon_color": "#0058bb",
+        "card_badge_bg_color": "#0058bb",
+        "card_badge_text_color": "#ffffff",
+        "arrow_size": 40,
+        "arrow_icon_size": 22,
+        "arrow_bg_color": "#ffffff",
+        "arrow_border_color": "#d1d5db",
+        "arrow_icon_color": "#1a1c1c",
+        "arrow_bg_hover_color": "#f3f4f6",
+        "arrow_border_hover_color": "#0058bb",
+        "arrow_icon_hover_color": "#0058bb",
+        "autoplay_enabled": false,
+        "autoplay_interval": 5
+      }
+    },
+    "image_banner_float_JFmdhB": {
+      "type": "image-banner-float",
+      "name": "Banner com Balão Fixo",
+      "settings": {
+        "balloon_enabled": true,
+        "balloon_image": "shopify://shop_images/wpp-full_2.jpg",
+        "balloon_image_fit": "contain",
+        "balloon_link": "https://api.whatsapp.com/send/?phone=5521997307980&text=Ol%C3%A1.+Vim+pelo+site%21+Gostaria+de+mais+informa%C3%A7%C3%B5es.&type=phone_number&app_absent=0",
+        "balloon_position": "bottom-right",
+        "balloon_offset_x": 24,
+        "balloon_offset_y": 24,
+        "balloon_width": 60,
+        "balloon_height": 60,
+        "balloon_radius": 50,
+        "balloon_z_index": 1000
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "title": "Fique por dentro das",
+        "title_emphasis": "melhores ofertas!",
+        "text": "Receba cupons exclusivos e novidades diretamente no seu e-mail e WhatsApp.",
+        "name_label": "Nome completo",
+        "name_placeholder": "Ex: João Silva",
+        "email_label": "E-mail",
+        "email_placeholder": "joao@exemplo.com",
+        "phone_label": "Telefone",
+        "phone_placeholder": "(00) 00000-0000",
+        "button_label": "QUERO RECEBER AS OFERTAS",
+        "privacy_text": "Ao se cadastrar você concorda com nossa Política de Privacidade.",
+        "title_size_mobile": 28,
+        "title_size_desktop": 38,
+        "description_size_mobile": 14,
+        "description_size_desktop": 16,
+        "button_text_size_mobile": 13,
+        "button_text_size_desktop": 14,
+        "panel_padding_mobile": 24,
+        "panel_padding_desktop": 48,
+        "panel_radius_mobile": 24,
+        "panel_radius_desktop": 32,
+        "section_bg_color": "#ffffff",
+        "section_text_color": "#18181b",
+        "section_border_color": "#ffffff",
+        "panel_bg_color": "#ffffff",
+        "panel_border_color": "#e5e7eb",
+        "title_emphasis_color": "#0058bb",
+        "description_color": "#3f3f46",
+        "privacy_color": "#71717a",
+        "label_color": "#71717a",
+        "input_bg_color": "#fafafa",
+        "input_text_color": "#18181b",
+        "input_border_color": "#d4d4d8",
+        "button_bg_color": "#0058bb",
+        "button_bg_hover_color": "#004a9d",
+        "button_text_color": "#ffffff",
+        "form_action_url": "https://n8nwebhook.starchats.com.br/webhook/b4ac9f80-a15f-4e7b-904d-f91d5ad5d752",
+        "extra_fields_json": "[]"
+      }
+    }
+  },
+  "order": [
+    "home_hero",
+    "banner_strip_KTMQQc",
+    "home_categories",
+    "flash_offers",
+    "collection_tabs_carousel",
+    "featured_collection",
+    "featured_collection_kmLmji",
+    "promo_banner",
+    "featured_collection_prdntC",
+    "reviews_carousel",
+    "social_links",
+    "stores_carousel_BVYMPN",
+    "image_banner_float_JFmdhB",
+    "newsletter"
+  ]
+}

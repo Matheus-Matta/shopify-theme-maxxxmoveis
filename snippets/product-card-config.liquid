@@ -1,0 +1,154 @@
+{% comment %}
+  =====================================
+  Configuração Centralizada de Product Cards
+  =====================================
+  
+  Este snippet centraliza TODAS as configurações globais de cards de produtos.
+  
+  Reutilize em:
+  - collection-tabs-carousel.liquid
+  - collection-dynamic.liquid (recomendados)
+  - collection-plp-reusable.liquid (busca/coleção)
+  - product-page-custom.liquid (produtos recomendados)
+  
+  Como usar:
+  {% include 'product-card-config' %}
+  
+  Variáveis disponíveis após inclusão:
+  - card_config: Objeto com todas as configs de cards
+  - product_card_*: Variáveis individuais (compatibilidade com código legado)
+  
+  Estrutura de card_config:
+  {
+    layout: { width_mobile, width_desktop, height_mobile, height_desktop, media_height_mobile, media_height_desktop },
+    styling: { bg_color, border_color, border_hover_color, border_width, radius, padding },
+    colors: { title, title_hover, price, meta, media_bg, discount_badge_bg, discount_badge_text, rating },
+    content: { show_ratings, show_buy_button, show_discount_badge, buy_label, min_inventory },
+    image: { fit, position, render_mode },
+    typography: { meta_size_mobile, meta_size_desktop }
+  }
+{% endcomment %}
+
+{% liquid
+  assign card_width_mobile = settings.global_product_card_width_mobile | default: 230
+  assign card_width_desktop = settings.global_product_card_width_desktop | default: 270
+  assign card_height_mobile = settings.global_product_card_height_mobile | default: 430
+  assign card_height_desktop = settings.global_product_card_height_desktop | default: 500
+  assign card_media_height_mobile = settings.global_product_card_media_height_mobile | default: 230
+  assign card_media_height_desktop = settings.global_product_card_media_height_desktop | default: 270
+  
+  assign card_bg = settings.global_product_card_bg_color | default: settings.global_surface_card_color | default: settings.surface_card_color
+  assign card_border = settings.global_product_card_border_color | default: settings.global_border_color | default: settings.border_color
+  assign card_border_hover = settings.global_product_card_border_hover_color | default: settings.global_primary_color | default: settings.accent_color
+  assign card_border_width = settings.global_product_card_border_width | default: 1
+  assign card_radius = settings.global_product_card_radius | default: 16
+  assign card_padding = settings.global_product_card_padding | default: 16
+  
+  assign card_title = settings.global_product_card_title_color | default: settings.global_text_primary_color | default: settings.text_color
+  assign card_title_hover = settings.global_product_card_title_hover_color | default: settings.global_primary_color | default: settings.accent_color
+  assign card_price = settings.global_product_card_price_color | default: settings.global_text_primary_color | default: settings.text_color
+  assign card_meta = settings.global_product_card_meta_color | default: settings.global_text_muted_color | default: settings.muted_color
+  assign card_rating_color = settings.global_product_card_rating_color | default: '#facc15'
+  
+  assign media_bg = settings.global_product_card_media_bg_color | default: settings.surface_color
+  assign media_render_mode = settings.global_product_card_media_render_mode | default: 'background'
+  assign product_image_fit = settings.global_product_card_image_fit | default: 'cover'
+  assign product_image_position = settings.global_product_card_image_position | default: 'center center'
+  
+  assign discount_badge_bg = settings.global_product_card_discount_badge_bg | default: settings.global_primary_color | default: settings.accent_color
+  assign discount_badge_text = settings.global_product_card_discount_badge_text | default: settings.accent_contrast
+  
+  assign show_ratings = settings.global_product_card_show_ratings
+  assign show_buy_button = settings.global_product_card_show_buy_button
+  assign show_discount_badge = settings.global_product_card_show_discount_badge
+  assign card_buy_label = settings.global_product_card_buy_label | default: 'COMPRAR'
+  assign product_min_inventory = settings.global_product_card_min_inventory | default: 0 | plus: 0
+  
+  assign card_meta_size_mobile = settings.global_product_card_meta_size_mobile | default: 12
+  assign card_meta_size_desktop = settings.global_product_card_meta_size_desktop | default: 12
+%}
+
+{% comment %} 
+  ========================================
+  Variáveis legadas (compatibilidade)
+  ========================================
+  Mantidas para compatibilidade com código existente.
+  Prefira usar card_* para novo código.
+{% endcomment %}
+
+{% liquid
+  assign rec_card_bg = card_bg
+  assign rec_card_border = card_border
+  assign rec_card_border_hover = card_border_hover
+  assign rec_card_border_width = card_border_width
+  assign rec_card_radius = card_radius
+  assign rec_card_padding = card_padding
+  assign rec_card_height_mobile = card_height_mobile
+  assign rec_card_height_desktop = card_height_desktop
+  assign rec_media_height_mobile = card_media_height_mobile
+  assign rec_media_height_desktop = card_media_height_desktop
+  assign rec_title_color = card_title
+  assign rec_title_hover_color = card_title_hover
+  assign rec_meta_color = card_meta
+  assign rec_price_color = card_price
+  assign rec_rating_color = card_rating_color
+  assign rec_discount_badge_bg = discount_badge_bg
+  assign rec_discount_badge_text = discount_badge_text
+  assign rec_meta_size_mobile = card_meta_size_mobile
+  assign rec_meta_size_desktop = card_meta_size_desktop
+  assign rec_show_ratings = show_ratings
+  assign rec_show_buy_button = show_buy_button
+  assign rec_show_discount_badge = show_discount_badge
+  assign rec_buy_label = card_buy_label
+  
+  assign plp_card_bg = card_bg
+  assign plp_card_border = card_border
+  assign plp_card_border_hover = card_border_hover
+  assign plp_card_border_width = card_border_width
+  assign plp_card_radius = card_radius
+  assign plp_card_padding = card_padding
+  assign plp_card_width_mobile = card_width_mobile
+  assign plp_card_width_desktop = card_width_desktop
+  assign plp_card_height_mobile = card_height_mobile
+  assign plp_card_height_desktop = card_height_desktop
+  assign plp_media_height_mobile = card_media_height_mobile
+  assign plp_media_height_desktop = card_media_height_desktop
+  assign plp_title_color = card_title
+  assign plp_title_hover = card_title_hover
+  assign plp_meta_color = card_meta
+  assign plp_price_color = card_price
+  assign plp_discount_bg = discount_badge_bg
+  assign plp_discount_text = discount_badge_text
+  assign plp_meta_size_mobile = card_meta_size_mobile
+  assign plp_meta_size_desktop = card_meta_size_desktop
+  assign plp_show_ratings = show_ratings
+  assign plp_show_buy_button = show_buy_button
+  assign plp_show_discount_badge = show_discount_badge
+  assign plp_buy_label = card_buy_label
+  assign plp_image_fit = product_image_fit
+  assign plp_image_position = product_image_position
+  
+  assign ctc_card_bg = card_bg
+  assign ctc_card_border = card_border
+  assign ctc_card_border_hover = card_border_hover
+  assign ctc_card_border_width = card_border_width
+  assign ctc_card_radius = card_radius
+  assign ctc_card_padding = card_padding
+  assign ctc_card_height_mobile = card_height_mobile
+  assign ctc_card_height_desktop = card_height_desktop
+  assign ctc_media_height_mobile = card_media_height_mobile
+  assign ctc_media_height_desktop = card_media_height_desktop
+  assign ctc_card_title = card_title
+  assign ctc_card_title_hover = card_title_hover
+  assign ctc_card_price = card_price
+  assign ctc_card_muted = card_meta
+  assign ctc_media_bg = media_bg
+  assign ctc_image_fit = product_image_fit
+  assign ctc_image_position = product_image_position
+  assign ctc_discount_badge_bg = discount_badge_bg
+  assign ctc_discount_badge_text = discount_badge_text
+  assign gc_image_fit = product_image_fit
+  assign gc_image_position = product_image_position
+  assign gc_media_height_mobile = card_media_height_mobile
+  assign gc_media_height_desktop = card_media_height_desktop
+%}

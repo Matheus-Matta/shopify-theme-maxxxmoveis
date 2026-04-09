@@ -1,0 +1,1225 @@
+{%- liquid
+  assign map_id     = 'addr-map-' | append: section.id
+  assign sec_el     = 'addr-sec-' | append: section.id
+  assign has_blocks = false
+  if section.blocks.size > 0
+    assign has_blocks = true
+  endif
+-%}
+
+<style>
+  /* ── Página ───────────────────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-page {
+    background: {{ settings.global_surface_base_color | default: '#F8F9FA' }};
+  }
+
+  /* ── Banner ──────────────────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-banner {
+    position: relative;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .addr-banner__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .addr-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .addr-banner__text {
+    text-align: center;
+    color: #fff;
+    padding: 0 1.5rem;
+    max-width: 640px;
+  }
+
+  #shopify-section-{{ section.id }} .addr-banner__heading {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .addr-banner__sub {
+    margin: 0.75rem 0 0;
+    font-size: 1rem;
+    opacity: .9;
+  }
+
+  /* ── Cabeçalho da seção ───────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-section-header {
+    padding: 2rem 1rem 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+  }
+
+  #shopify-section-{{ section.id }} .addr-section-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .addr-section-subtitle {
+    margin: 0.4rem 0 0;
+    font-size: 0.9rem;
+    color: {{ settings.global_text_muted_color | default: '#6B7280' }};
+  }
+
+  /* ── Layout principal ─────────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Painel esquerdo (busca + lista) ──────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-panel {
+    display: flex;
+    flex-direction: column;
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    border-right: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+  }
+
+  /* ── Área de busca/filtros ────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-search {
+    padding: 1rem;
+    border-bottom: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__input-wrap {
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__input {
+    width: 100%;
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    border-radius: 8px;
+    padding: 0.625rem 2.5rem 0.625rem 1rem;
+    font-size: 0.85rem;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color .15s, box-shadow .15s;
+    font-family: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__input:focus {
+    border-color: {{ settings.global_primary_color | default: '#1a73e8' }};
+    box-shadow: 0 0 0 3px rgba(26,115,232,.1);
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: {{ settings.global_text_muted_color | default: '#6B7280' }};
+    font-size: 1.1rem;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__select {
+    width: 100%;
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    border-radius: 8px;
+    padding: 0.625rem 1rem;
+    font-size: 0.85rem;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color .15s;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__select:focus {
+    border-color: {{ settings.global_primary_color | default: '#1a73e8' }};
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__btn {
+    width: 100%;
+    background: {{ settings.global_surface_base_color | default: '#F8F9FA' }};
+    color: {{ settings.global_text_muted_color | default: '#6B7280' }};
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    border-radius: 8px;
+    padding: 0.625rem 1rem;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    font-family: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__btn:hover {
+    background: {{ settings.global_border_color | default: '#E5E7EB' }};
+    border-color: {{ settings.global_text_muted_color | default: '#6B7280' }};
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__locate {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: {{ settings.global_primary_color | default: '#1a73e8' }};
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    transition: color .15s;
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__locate:hover {
+    color: {{ settings.global_primary_hover_color | default: '#1557b0' }};
+  }
+
+  #shopify-section-{{ section.id }} .addr-search__locate .material-symbols-outlined {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  /* ── Lista de lojas (scrollável) ──────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: {{ settings.global_surface_base_color | default: '#F8F9FA' }};
+  }
+
+  #shopify-section-{{ section.id }} .addr-list__empty {
+    padding: 1.5rem 0;
+    text-align: center;
+    font-size: 0.82rem;
+    color: {{ settings.global_text_muted_color | default: '#6B7280' }};
+  }
+
+  /* ── Card individual ──────────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .address-card {
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(15,23,42,.05);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: box-shadow .15s, border-color .15s;
+  }
+
+  #shopify-section-{{ section.id }} .address-card:hover {
+    box-shadow: 0 4px 12px rgba(15,23,42,.1);
+    border-color: {{ settings.global_primary_color | default: '#1a73e8' }};
+  }
+
+  #shopify-section-{{ section.id }} .address-card.is-active {
+    border-color: {{ settings.global_primary_color | default: '#1a73e8' }};
+    box-shadow: 0 4px 12px rgba(15,23,42,.1);
+  }
+
+  /* ── Topo do card (nome + badge) ──────────────────────────────────── */
+  #shopify-section-{{ section.id }} .address-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  #shopify-section-{{ section.id }} .address-card__name {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    line-height: 1.35;
+  }
+
+  /* ── Badge aberto/fechado ─────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .address-card__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #shopify-section-{{ section.id }} .address-card__status--open {
+    color: #16a34a;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+  }
+
+  #shopify-section-{{ section.id }} .address-card__status--closed {
+    color: #dc2626;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+
+  #shopify-section-{{ section.id }} .address-card__status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* ── Endereço ─────────────────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .address-card__addr {
+    font-size: 0.78rem;
+    color: {{ settings.global_text_muted_color | default: '#6B7280' }};
+    line-height: 1.5;
+    margin: 0 0 0.75rem;
+    flex-grow: 1;
+  }
+
+  #shopify-section-{{ section.id }} .address-card__addr p {
+    margin: 0;
+  }
+
+  /* ── Rodapé do card (ações) ───────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .address-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    margin-top: auto;
+  }
+
+  #shopify-section-{{ section.id }} .address-card__btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: {{ settings.global_primary_color | default: '#1a73e8' }};
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0;
+    font-family: inherit;
+    transition: color .15s;
+  }
+
+  #shopify-section-{{ section.id }} .address-card__btn-secondary:hover {
+    color: {{ settings.global_primary_hover_color | default: '#1557b0' }};
+  }
+
+  #shopify-section-{{ section.id }} .address-card__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #fff;
+    background: {{ settings.global_primary_color | default: '#1a73e8' }};
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 0.875rem;
+    border-radius: 6px;
+    transition: background .15s;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .address-card__btn-primary:hover {
+    background: {{ settings.global_primary_hover_color | default: '#1557b0' }};
+  }
+
+  #shopify-section-{{ section.id }} .address-card__btn-secondary .material-symbols-outlined,
+  #shopify-section-{{ section.id }} .address-card__btn-primary .material-symbols-outlined {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  /* ── Coluna do mapa ───────────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-map-wrap {
+    flex: 1;
+    min-height: 300px;
+  }
+
+  #shopify-section-{{ section.id }} #{{ map_id }} {
+    height: 300px;
+    width: 100%;
+  }
+
+  /* ── Estado vazio (sem blocos) ────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-empty {
+    padding: 5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: {{ settings.global_text_muted_color | default: '#6B7280' }};
+  }
+
+  #shopify-section-{{ section.id }} .addr-empty__icon {
+    font-size: 3.5rem;
+    opacity: .35;
+    margin-bottom: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .addr-empty__title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .addr-empty__hint {
+    margin: 0.3rem 0 0;
+    font-size: 0.8rem;
+    opacity: .7;
+  }
+
+  /* ── Popup leaflet ────────────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .addr-popup { font-size:.82rem; line-height:1.5; min-width:170px; }
+  #shopify-section-{{ section.id }} .addr-popup h4 { font-size:.88rem; font-weight:700; margin:0 0 4px; }
+  #shopify-section-{{ section.id }} .addr-popup p  { margin:2px 0; color:#555; }
+  #shopify-section-{{ section.id }} .addr-popup a  { color:{{ settings.global_primary_color | default: '#1a73e8' }}; text-decoration:none; }
+  #shopify-section-{{ section.id }} .addr-popup a:hover { text-decoration:underline; }
+
+  /* ── Global leaflet overrides ─────────────────────────────────────── */
+  .leaflet-popup-content-wrapper { border-radius:10px !important; }
+  .leaflet-container { font-family:inherit; z-index:0; }
+  .leaflet-control-attribution { font-size:10px !important; }
+
+  /* ── Custom pin ───────────────────────────────────────────────────── */
+  .addr-pin { display:flex; flex-direction:column; align-items:center; filter:drop-shadow(0 2px 5px rgba(0,0,0,.3)); }
+  .addr-pin__bubble {
+    width:30px; height:30px;
+    border-radius:50% 50% 50% 0; transform:rotate(-45deg);
+    display:flex; align-items:center; justify-content:center;
+    border:2px solid rgba(255,255,255,.8);
+    transition:background .2s, transform .2s;
+  }
+  .addr-pin__bubble span { transform:rotate(45deg); color:#fff; font-size:12px; font-weight:700; font-style:normal; }
+  .addr-pin__tail { width:3px; height:8px; margin-top:-1px; border-radius:0 0 2px 2px; }
+  .addr-pin.is-active .addr-pin__bubble { transform:rotate(-45deg) scale(1.2); }
+
+  /* ── Desktop ──────────────────────────────────────────────────────── */
+  @media (min-width: 980px) {
+    #shopify-section-{{ section.id }} .addr-layout {
+      flex-direction: row;
+      align-items: stretch;
+      height: calc(100vh - var(--header-height, 72px));
+      overflow: hidden;
+    }
+
+    #shopify-section-{{ section.id }} .addr-panel {
+      width: 33.333%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    #shopify-section-{{ section.id }} .addr-list {
+      height: 0; /* força o flex-grow a respeitar o overflow */
+    }
+
+    #shopify-section-{{ section.id }} .addr-map-wrap {
+      flex: 1;
+      min-height: unset;
+    }
+
+    #shopify-section-{{ section.id }} #{{ map_id }} {
+      height: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .addr-banner__heading {
+      font-size: 3rem;
+    }
+
+    #shopify-section-{{ section.id }} .addr-section-title {
+      font-size: 1.75rem;
+    }
+  }
+
+  /* ── Mobile ───────────────────────────────────────────────────────── */
+  @media (max-width: 979px) {
+    #shopify-section-{{ section.id }} .addr-map-wrap {
+      order: -1;
+    }
+  }
+</style>
+
+<div class="addr-page">
+
+  {%- comment %} ── Banner ──────────────────────────────────────────── {%- endcomment -%}
+  {%- if section.settings.banner_image != blank -%}
+    <div class="addr-banner" style="height:{{ section.settings.banner_height | default: 320 }}px;">
+      <img
+        src="{{ section.settings.banner_image | image_url: width: 1600 }}"
+        alt="{{ section.settings.banner_image.alt | default: section.settings.banner_heading | escape }}"
+        class="addr-banner__img"
+        loading="eager"
+        width="{{ section.settings.banner_image.width }}"
+        height="{{ section.settings.banner_image.height }}"
+      >
+      {%- if section.settings.banner_heading != blank or section.settings.banner_subheading != blank -%}
+        <div class="addr-banner__overlay">
+          <div class="addr-banner__text">
+            {%- if section.settings.banner_heading != blank -%}
+              <h1 class="addr-banner__heading">{{ section.settings.banner_heading }}</h1>
+            {%- endif -%}
+            {%- if section.settings.banner_subheading != blank -%}
+              <p class="addr-banner__sub">{{ section.settings.banner_subheading }}</p>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment %} ── Cabeçalho da seção ──────────────────────────────── {%- endcomment -%}
+  {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+    <div class="addr-section-header">
+      {%- if section.settings.title != blank -%}
+        <h2 class="addr-section-title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subtitle != blank -%}
+        <p class="addr-section-subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment %} ── Layout principal ─────────────────────────────────── {%- endcomment -%}
+  {%- if has_blocks -%}
+    <div id="{{ sec_el }}" class="addr-layout">
+
+      {%- comment %} Painel esquerdo — busca + lista (1/3) {%- endcomment -%}
+      <section class="addr-panel" aria-label="Lista de lojas">
+
+        {%- comment %} Área de busca e filtros {%- endcomment -%}
+        <div class="addr-search">
+          <div class="addr-search__input-wrap">
+            <input
+              class="addr-search__input"
+              type="text"
+              id="{{ sec_el }}-search"
+              placeholder="Buscar por cidade, bairro, rua..."
+              autocomplete="off"
+            >
+            <span class="material-symbols-outlined addr-search__icon">search</span>
+          </div>
+
+          <select class="addr-search__select" id="{{ sec_el }}-state" aria-label="Filtrar por estado">
+            <option value="">Selecione um estado</option>
+          </select>
+
+          <select class="addr-search__select" id="{{ sec_el }}-city" aria-label="Filtrar por cidade">
+            <option value="">Selecione uma cidade</option>
+          </select>
+
+          <button class="addr-search__btn" id="{{ sec_el }}-filter-btn" type="button">Filtrar</button>
+
+          <button class="addr-search__locate" id="{{ sec_el }}-locate-btn" type="button">
+            <span class="material-symbols-outlined">my_location</span>
+            Usar minha localização
+          </button>
+        </div>
+
+        {%- comment %} Lista de cards {%- endcomment -%}
+        <div class="addr-list">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'address' -%}
+              <article
+                class="address-card"
+                data-card-index="{{ forloop.index0 }}"
+                data-lat="{{ block.settings.lat | strip }}"
+                data-lng="{{ block.settings.lng | strip }}"
+                data-address="{{ block.settings.address | strip | escape }}"
+                data-name="{{ block.settings.name | escape }}"
+                data-phone="{{ block.settings.phone | escape }}"
+                data-hours="{{ block.settings.hours | escape }}"
+                data-city="{{ block.settings.city | escape }}"
+                data-state="{{ block.settings.state | escape }}"
+                {{ block.shopify_attributes }}
+              >
+                <div class="address-card__top">
+                  <h3 class="address-card__name">{{ block.settings.name }}</h3>
+                  {%- if block.settings.is_open -%}
+                    <div class="address-card__status address-card__status--open">
+                      <span class="address-card__status-dot"></span>
+                      Aberto
+                    </div>
+                  {%- else -%}
+                    <div class="address-card__status address-card__status--closed">
+                      <span class="address-card__status-dot"></span>
+                      Fechado
+                    </div>
+                  {%- endif -%}
+                </div>
+
+                {%- if block.settings.address != blank -%}
+                  <div class="address-card__addr">
+                    <p>{{ block.settings.address | newline_to_br }}</p>
+                    {%- if block.settings.hours != blank -%}
+                      <p>{{ block.settings.hours }}</p>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+
+                <div class="address-card__footer">
+                  {%- if block.settings.store_page_url != blank -%}
+                    <a
+                      href="{{ block.settings.store_page_url }}"
+                      class="address-card__btn-secondary"
+                    >
+                      <span class="material-symbols-outlined">storefront</span>
+                      Ver loja
+                    </a>
+                  {%- elsif block.settings.phone != blank -%}
+                    <a
+                      href="tel:{{ block.settings.phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-' }}"
+                      class="address-card__btn-secondary"
+                    >
+                      <span class="material-symbols-outlined">phone</span>
+                      {{ block.settings.phone }}
+                    </a>
+                  {%- else -%}
+                    <span></span>
+                  {%- endif -%}
+
+                  {%- if block.settings.maps_link != blank -%}
+                    <a
+                      href="{{ block.settings.maps_link }}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="address-card__btn-primary"
+                    >
+                      <span class="material-symbols-outlined">directions</span>
+                      Ver no mapa
+                    </a>
+                  {%- else -%}
+                    <button class="address-card__btn-primary" type="button" data-fly-to="{{ forloop.index0 }}">
+                      <span class="material-symbols-outlined">directions</span>
+                      Ver no mapa
+                    </button>
+                  {%- endif -%}
+                </div>
+              </article>
+            {%- endif -%}
+          {%- endfor -%}
+
+          <p class="addr-list__empty" id="{{ sec_el }}-no-results" style="display:none;">
+            Nenhuma loja encontrada para os filtros aplicados.
+          </p>
+        </div>
+      </section>
+
+      {%- comment %} Mapa direito (2/3) {%- endcomment -%}
+      <section class="addr-map-wrap" aria-label="Mapa de lojas">
+        <div id="{{ map_id }}"></div>
+      </section>
+
+    </div>
+  {%- else -%}
+    <div class="addr-empty">
+      <span class="material-symbols-outlined addr-empty__icon">location_off</span>
+      <p class="addr-empty__title">Nenhum endereço cadastrado.</p>
+      <p class="addr-empty__hint">Adicione blocos no editor do tema para exibir o mapa.</p>
+    </div>
+  {%- endif -%}
+
+</div>
+
+{%- comment %} ── Leaflet CSS ─────────────────────────────────── {%- endcomment -%}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  crossorigin=""
+>
+
+<script>
+(function () {
+  'use strict';
+
+  var MAP_ID        = {{ map_id | json }};
+  var SEC_EL        = {{ sec_el | json }};
+  var MARKER_COLOR  = {{ section.settings.marker_color | default: '#1a73e8' | json }};
+  var MAP_ZOOM      = {{ section.settings.map_zoom | default: 13 }};
+  var GEO_EMAIL     = {{ section.settings.geocoding_email | default: '' | json }};
+
+  var mapInstance   = null;
+  var markers       = [];
+  var L             = null;
+  var addressData   = [];
+
+  // ── Collect data from DOM ──────────────────────────────────────────
+  var sec = document.getElementById(SEC_EL);
+  if (!sec) return;
+
+  var cards = Array.from(sec.querySelectorAll('.address-card'));
+
+  function collectAddressData() {
+    return cards.map(function (card) {
+      return {
+        index   : parseInt(card.dataset.cardIndex, 10),
+        lat     : card.dataset.lat,
+        lng     : card.dataset.lng,
+        address : card.dataset.address,
+        name    : card.dataset.name,
+        phone   : card.dataset.phone,
+        hours   : card.dataset.hours,
+        city    : card.dataset.city  || '',
+        state   : card.dataset.state || '',
+        el      : card
+      };
+    });
+  }
+
+  addressData = collectAddressData();
+
+  // ── Filter & Search elements ───────────────────────────────────────
+  var searchInput = document.getElementById(SEC_EL + '-search');
+  var stateSelect = document.getElementById(SEC_EL + '-state');
+  var citySelect  = document.getElementById(SEC_EL + '-city');
+  var filterBtn   = document.getElementById(SEC_EL + '-filter-btn');
+  var locateBtn   = document.getElementById(SEC_EL + '-locate-btn');
+  var noResults   = document.getElementById(SEC_EL + '-no-results');
+
+  // ── Populate state/city dropdowns from block data ──────────────────
+  function populateFilters() {
+    if (!stateSelect || !citySelect) return;
+    var states = {}, cities = {};
+    addressData.forEach(function (d) {
+      if (d.state) states[d.state] = 1;
+      if (d.city)  cities[d.city]  = 1;
+    });
+    Object.keys(states).sort().forEach(function (s) {
+      var opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      stateSelect.appendChild(opt);
+    });
+    Object.keys(cities).sort().forEach(function (c) {
+      var opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      citySelect.appendChild(opt);
+    });
+  }
+
+  // ── Filter cards by text / state / city ───────────────────────────
+  function filterCards() {
+    var query    = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    var stateVal = stateSelect ? stateSelect.value : '';
+    var cityVal  = citySelect  ? citySelect.value  : '';
+    var count = 0;
+    addressData.forEach(function (d) {
+      var matchText  = !query    || d.name.toLowerCase().indexOf(query) !== -1
+                                 || d.address.toLowerCase().indexOf(query) !== -1
+                                 || d.city.toLowerCase().indexOf(query) !== -1;
+      var matchState = !stateVal || d.state === stateVal;
+      var matchCity  = !cityVal  || d.city  === cityVal;
+      var show = matchText && matchState && matchCity;
+      d.el.style.display = show ? '' : 'none';
+      if (show) count++;
+    });
+    if (noResults) noResults.style.display = count === 0 ? '' : 'none';
+  }
+
+  populateFilters();
+
+  if (filterBtn)   filterBtn.addEventListener('click', filterCards);
+  if (searchInput) searchInput.addEventListener('input', filterCards);
+
+  if (locateBtn) {
+    locateBtn.addEventListener('click', function () {
+      if (!navigator.geolocation || !mapInstance) return;
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        mapInstance.setView([pos.coords.latitude, pos.coords.longitude], 14);
+      });
+    });
+  }
+
+  // ── Load Leaflet JS lazily ─────────────────────────────────────────
+  function loadLeaflet(cb) {
+    if (window.L) { cb(window.L); return; }
+    var s = document.createElement('script');
+    s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    s.crossOrigin = '';
+    s.onload = function () { cb(window.L); };
+    s.onerror = function () { console.warn('[Addresses] Falha ao carregar Leaflet.'); };
+    document.head.appendChild(s);
+  }
+
+  // ── Custom pin divIcon ─────────────────────────────────────────────
+  function createPinIcon(color, number, active) {
+    var bg   = active ? '#e53935' : color;
+    var html = [
+      '<div class="addr-pin', active ? ' is-active' : '', '">',
+        '<div class="addr-pin__bubble" style="background:', bg, '">',
+          '<span>', number, '</span>',
+        '</div>',
+        '<div class="addr-pin__tail" style="background:', bg, '"></div>',
+      '</div>'
+    ].join('');
+
+    return new L.DivIcon({
+      className    : '',
+      html         : html,
+      iconSize     : [34, 48],
+      iconAnchor   : [17, 48],
+      popupAnchor  : [0, -52]
+    });
+  }
+
+  // ── Build popup HTML ───────────────────────────────────────────────
+  function buildPopup(data) {
+    var h = '<div class="addr-popup">';
+    h += '<h4>' + escHtml(data.name) + '</h4>';
+    if (data.address) {
+      h += '<p>' + escHtml(data.address).replace(/\n/g, '<br>') + '</p>';
+    }
+    if (data.phone) {
+      var tel = data.phone.replace(/\D/g, '');
+      h += '<p><a href="tel:' + tel + '">' + escHtml(data.phone) + '</a></p>';
+    }
+    if (data.hours) {
+      h += '<p>&#128336; ' + escHtml(data.hours) + '</p>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ── Nominatim geocoding ────────────────────────────────────────────
+  function geocodeAddress(address) {
+    var emailParam = GEO_EMAIL ? '&email=' + encodeURIComponent(GEO_EMAIL) : '';
+    var url = 'https://nominatim.openstreetmap.org/search?q='
+      + encodeURIComponent(address)
+      + '&format=json&limit=1&addressdetails=0'
+      + emailParam;
+
+    return fetch(url, {
+      headers: { 'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.7' }
+    }).then(function (res) {
+      if (!res.ok) return null;
+      return res.json();
+    }).then(function (data) {
+      if (!data || !data.length) return null;
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    }).catch(function () { return null; });
+  }
+
+  function delay(ms) {
+    return new Promise(function (r) { setTimeout(r, ms); });
+  }
+
+  // ── Activate card + marker ─────────────────────────────────────────
+  function activateCard(index) {
+    cards.forEach(function (c, i) {
+      var active = i === index;
+      c.classList.toggle('is-active', active);
+      if (active) {
+        c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    markers.forEach(function (m, i) {
+      if (!m) return;
+      m.setIcon(createPinIcon(MARKER_COLOR, i + 1, i === index));
+    });
+  }
+
+  // ── Add a marker to the map ────────────────────────────────────────
+  function addMarker(i, lat, lng) {
+    var data   = addressData[i];
+    var icon   = createPinIcon(MARKER_COLOR, i + 1, false);
+    var marker = L.marker([lat, lng], { icon: icon })
+      .bindPopup(buildPopup(data), { maxWidth: 260, className: 'addr-leaflet-popup' });
+
+    marker.on('click', function () { activateCard(i); });
+    marker.addTo(mapInstance);
+    markers[i] = marker;
+  }
+
+  // ── Initialize map ─────────────────────────────────────────────────
+  async function initMap(Leaflet) {
+    L = Leaflet;
+
+    var mapEl = document.getElementById(MAP_ID);
+    if (!mapEl) return;
+
+    // Destroy existing instance (Shopify editor re-renders section on block changes)
+    var existing = window._addrMaps && window._addrMaps[MAP_ID];
+    if (existing) {
+      try { existing.remove(); } catch (_) {}
+    }
+    if (mapEl._leaflet_id) {
+      try {
+        // Force-clean Leaflet internal state on the container
+        delete mapEl._leaflet_id;
+      } catch (_) {}
+    }
+
+    mapInstance = L.map(MAP_ID, {
+      zoomControl      : true,
+      scrollWheelZoom  : false,
+      tap              : false   // prevent ghost clicks on iOS
+    });
+
+    window._addrMaps = window._addrMaps || {};
+    window._addrMaps[MAP_ID] = mapInstance;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution : '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+      maxZoom     : 19
+    }).addTo(mapInstance);
+
+    var bounds       = [];
+    var geocodeQueue = [];
+
+    // First pass: markers with explicit coordinates
+    addressData.forEach(function (data, i) {
+      markers[i] = null;
+      var lat = parseFloat(data.lat);
+      var lng = parseFloat(data.lng);
+      if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+        addMarker(i, lat, lng);
+        bounds.push([lat, lng]);
+      } else if (data.address) {
+        geocodeQueue.push(i);
+      }
+    });
+
+    // Fit to known markers
+    if (bounds.length === 1) {
+      mapInstance.setView(bounds[0], MAP_ZOOM);
+    } else if (bounds.length > 1) {
+      mapInstance.fitBounds(bounds, { padding: [50, 50] });
+    } else if (!geocodeQueue.length) {
+      mapInstance.setView([-15.78, -47.93], 4); // Brasil
+    }
+
+    // Second pass: geocode remaining (rate-limited 1 req/s — Nominatim ToS)
+    for (var q = 0; q < geocodeQueue.length; q++) {
+      var i = geocodeQueue[q];
+      try {
+        var coords = await geocodeAddress(addressData[i].address);
+        if (coords) {
+          addMarker(i, coords.lat, coords.lng);
+          bounds.push([coords.lat, coords.lng]);
+          if (bounds.length === 1) {
+            mapInstance.setView([coords.lat, coords.lng], MAP_ZOOM);
+          } else {
+            mapInstance.fitBounds(bounds, { padding: [50, 50] });
+          }
+        }
+      } catch (_) {}
+
+      // 1.1 s between requests
+      if (q < geocodeQueue.length - 1) {
+        await delay(1100);
+      }
+    }
+
+    // Activate first card
+    activateCard(0);
+    var firstMarker = markers.find(function (m) { return !!m; });
+    if (firstMarker) firstMarker.openPopup();
+
+    // Card click → fly to marker
+    cards.forEach(function (card, i) {
+      card.addEventListener('click', function () {
+        activateCard(i);
+        var m = markers[i];
+        if (m && mapInstance) {
+          mapInstance.flyTo(m.getLatLng(), Math.max(MAP_ZOOM, 15), { duration: 0.75 });
+          setTimeout(function () { m.openPopup(); }, 400);
+        }
+      });
+    });
+  }
+
+  // ── Lazy init via IntersectionObserver (com fallback para editor Shopify) ──
+  var mapEl = document.getElementById(MAP_ID);
+  if (!mapEl) return;
+
+  function tryInit() {
+    loadLeaflet(initMap);
+  }
+
+  // Shopify editor: re-init quando a section é recarregada após mudança de bloco
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.detail && e.detail.sectionId && SEC_EL.indexOf(e.detail.sectionId) === -1) return;
+    // Recoleta cards após re-render
+    var sec2 = document.getElementById(SEC_EL);
+    if (!sec2) return;
+    cards = Array.from(sec2.querySelectorAll('.address-card'));
+    addressData = collectAddressData();
+    if (cards.length) tryInit();
+  });
+
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      if (entries.some(function (e) { return e.isIntersecting; })) {
+        obs.disconnect();
+        if (cards.length) tryInit();
+      }
+    }, { rootMargin: '300px' });
+    obs.observe(mapEl);
+  } else {
+    if (cards.length) tryInit();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Endereços",
+  "tag": "section",
+  "class": "section-addresses",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Imagem de banner"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "min": 180,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "label": "Altura do banner",
+      "default": 320
+    },
+    {
+      "type": "text",
+      "id": "banner_heading",
+      "label": "Título sobre o banner"
+    },
+    {
+      "type": "text",
+      "id": "banner_subheading",
+      "label": "Subtítulo sobre o banner"
+    },
+    {
+      "type": "header",
+      "content": "Título da seção"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Nossas Lojas"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo"
+    },
+    {
+      "type": "header",
+      "content": "Mapa"
+    },
+    {
+      "type": "range",
+      "id": "map_zoom",
+      "min": 5,
+      "max": 18,
+      "step": 1,
+      "unit": "x",
+      "label": "Zoom inicial",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "marker_color",
+      "label": "Cor dos marcadores",
+      "default": "#1a73e8"
+    },
+    {
+      "type": "header",
+      "content": "Geocodificação"
+    },
+    {
+      "type": "text",
+      "id": "geocoding_email",
+      "label": "E-mail de contato (geocodificação)",
+      "info": "Necessário pela política de uso justo da API Nominatim (OpenStreetMap). Usado apenas quando lat/lng não informados."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "address",
+      "name": "Endereço",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nome da loja",
+          "default": "Loja Principal"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "Endereço completo",
+          "info": "Endereço visível no card e usado para geocodificação automática quando lat/lng não informados."
+        },
+        {
+          "type": "text",
+          "id": "city",
+          "label": "Cidade",
+          "info": "Usado nos filtros de busca. Ex: Rio de Janeiro"
+        },
+        {
+          "type": "text",
+          "id": "state",
+          "label": "Estado",
+          "info": "Usado nos filtros de busca. Ex: Rio de Janeiro"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Telefone"
+        },
+        {
+          "type": "text",
+          "id": "hours",
+          "label": "Horário de funcionamento",
+          "placeholder": "Seg–Sex 9h–18h, Sáb 9h–13h"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_open",
+          "label": "Loja aberta",
+          "default": true
+        },
+        {
+          "type": "url",
+          "id": "store_page_url",
+          "label": "Link da página da loja",
+          "info": "Exibe o botão \"Ver loja\" no card."
+        },
+        {
+          "type": "url",
+          "id": "maps_link",
+          "label": "Link Google Maps / Waze"
+        },
+        {
+          "type": "header",
+          "content": "Localização no mapa"
+        },
+        {
+          "type": "text",
+          "id": "lat",
+          "label": "Latitude",
+          "info": "Opcional. Se vazio, o endereço acima será geocodificado automaticamente. Ex: -22.904736"
+        },
+        {
+          "type": "text",
+          "id": "lng",
+          "label": "Longitude",
+          "info": "Opcional. Ex: -43.172897"
+        },
+        {
+          "type": "header",
+          "content": "Imagem do card"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Foto da loja"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Endereços",
+      "settings": {
+        "title": "Nossas Lojas",
+        "subtitle": "Encontre a loja mais próxima de você.",
+        "map_zoom": 14,
+        "marker_color": "#1a73e8"
+      },
+      "blocks": [
+        {
+          "type": "address",
+          "settings": {
+            "name": "Loja Centro",
+            "address": "Av. Rio Branco, 156 – Centro\nRio de Janeiro – RJ, 20040-901",
+            "phone": "(21) 3333-1001",
+            "hours": "Seg–Sex 9h–18h · Sáb 9h–13h",
+            "maps_link": "https://maps.google.com/?q=Av.+Rio+Branco,+156,+Centro,+Rio+de+Janeiro",
+            "lat": "-22.9035",
+            "lng": "-43.1729"
+          }
+        },
+        {
+          "type": "address",
+          "settings": {
+            "name": "Loja Barra da Tijuca",
+            "address": "Av. das Américas, 4666 – Barra da Tijuca\nRio de Janeiro – RJ, 22640-102",
+            "phone": "(21) 3333-1002",
+            "hours": "Seg–Dom 10h–22h",
+            "maps_link": "https://maps.google.com/?q=Av.+das+Américas,+4666,+Barra+da+Tijuca,+Rio+de+Janeiro",
+            "lat": "-23.0005",
+            "lng": "-43.3650"
+          }
+        },
+        {
+          "type": "address",
+          "settings": {
+            "name": "Loja Niterói",
+            "address": "Rua Visconde do Rio Branco, 772 – Centro\nNiterói – RJ, 24020-005",
+            "phone": "(21) 3333-1003",
+            "hours": "Seg–Sex 9h–18h · Sáb 9h–13h",
+            "maps_link": "https://maps.google.com/?q=Rua+Visconde+do+Rio+Branco,+772,+Niteroi",
+            "lat": "-22.8830",
+            "lng": "-43.1040"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

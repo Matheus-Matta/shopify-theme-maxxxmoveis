@@ -1,0 +1,772 @@
+{% if cart.item_count == 0 %}
+  <script>
+    window.location.href = '{{ routes.cart_url }}';
+  </script>
+{% endif %}
+
+{% liquid
+  assign min_lead_days = section.settings.min_lead_days | default: 3
+  assign max_lead_days = section.settings.max_lead_days | default: 12
+%}
+
+<style>
+  #shopify-section-{{ section.id }} .agendamento-page {
+    background: {{ settings.global_surface_base_color | default: '#F7F7F7' }};
+    padding: 1.5rem 0 2rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-page-width {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-layout {
+    display: grid;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-card,
+  #shopify-section-{{ section.id }} .agendamento-summary {
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-card {
+    padding: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-summary {
+    padding: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-title {
+    margin: 0;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    font-size: clamp(1.2rem, 2.8vw, 1.6rem);
+    line-height: 1.2;
+    font-weight: 600;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-subtitle {
+    margin: 0.45rem 0 0;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-size: 0.84rem;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-form {
+    margin-top: 0.9rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-picker-label {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .delivery-cards {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.55rem;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    border: 1px solid {{ settings.global_border_color | default: '#D1D5DB' }};
+    border-radius: 12px;
+    padding: 0.82rem 0.95rem;
+    cursor: pointer;
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+    transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 9px 22px rgba(15, 23, 42, 0.08);
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card input {
+    position: static;
+    transform: none;
+    margin: 0;
+    margin-top: 0.22rem;
+    flex-shrink: 0;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card.is-selected {
+    background: rgba(0, 88, 187, 0.06);
+    border-color: {{ settings.global_primary_color | default: '#0058BB' }};
+    box-shadow: 0 0 0 2px rgba(0, 88, 187, 0.12);
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card-title {
+    margin: 0;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    font-weight: 400;
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card-subtitle {
+    margin: 0;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-size: 0.76rem;
+    line-height: 1.3;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card-custom .delivery-card-title {
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-field {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-field[data-custom-date-wrap] {
+    margin-top: 0.2rem;
+    padding: 0.65rem;
+    border: 1px solid {{ settings.global_border_color | default: '#D1D5DB' }};
+    border-radius: 12px;
+    background: color-mix(in srgb, {{ settings.global_surface_card_color | default: '#FFFFFF' }} 90%, #f8fafc 10%);
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-label {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-date-shell {
+    margin-top: 0.2rem;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid {{ settings.global_border_color | default: '#D1D5DB' }};
+    border-radius: 12px;
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    padding: 0.36rem 0.38rem 0.36rem 0.62rem;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-date-shell:focus-within {
+    border-color: {{ settings.global_primary_color | default: '#0058BB' }};
+    box-shadow: 0 0 0 3px rgba(0, 88, 187, 0.12);
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-date-icon {
+    color: {{ settings.global_primary_color | default: '#0058BB' }};
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-input {
+    min-height: 40px;
+    border: 0;
+    border-radius: 8px;
+    padding: 0.52rem 0.2rem;
+    background: transparent;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    font-size: 0.84rem;
+    font-weight: 400;
+    width: 100%;
+    line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-input::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    width: 0;
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-date-helper {
+    margin: 0.35rem 0 0;
+    font-size: 0.73rem;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    line-height: 1.3;
+  }
+
+  #shopify-section-{{ section.id }} .hidden {
+    display: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-error {
+    margin: 0.15rem 0 0;
+    color: {{ settings.global_danger_color | default: '#EF4444' }};
+    font-size: 0.78rem;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .summary-title {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.8rem;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-size: 0.82rem;
+  }
+
+  #shopify-section-{{ section.id }} .summary-row strong {
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .summary-row-total {
+    margin-top: 0.95rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .summary-items {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  #shopify-section-{{ section.id }} .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.6rem;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-size: 0.78rem;
+  }
+
+  #shopify-section-{{ section.id }} .summary-item-name {
+    margin: 0;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .summary-item-meta {
+    margin: 0.12rem 0 0;
+    font-size: 0.72rem;
+  }
+
+  #shopify-section-{{ section.id }} .summary-item-price {
+    margin: 0;
+    font-weight: 400;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .summary-actions {
+    margin-top: 0.95rem;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn {
+    min-height: 44px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn-primary {
+    background: {{ settings.global_primary_color | default: '#0058BB' }};
+    color: #FFFFFF;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn-primary:hover {
+    background: {{ settings.global_primary_hover_color | default: '#004A9D' }};
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn-secondary {
+    background: #FFFFFF;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    border-color: {{ settings.global_border_color | default: '#E5E7EB' }};
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn-secondary:hover {
+    background: {{ settings.global_surface_base_color | default: '#F7F7F7' }};
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-mobile-submit {
+    display: none;
+  }
+
+  @media (min-width: 980px) {
+    #shopify-section-{{ section.id }} .agendamento-page {
+      padding: 2.2rem 0 2.6rem;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-layout {
+      grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+      gap: 1rem;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-card,
+    #shopify-section-{{ section.id }} .agendamento-summary {
+      padding: 1.2rem;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-field[data-custom-date-wrap] {
+      padding: 0.75rem;
+      border-radius: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-date-shell {
+      border-radius: 14px;
+      padding: 0.42rem 0.44rem 0.42rem 0.72rem;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-date-icon {
+      font-size: 1.2rem;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-input {
+      font-size: 0.9rem;
+      min-height: 42px;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-date-helper {
+      font-size: 0.76rem;
+    }
+  }
+
+  @media (max-width: 989px) {
+    #shopify-section-{{ section.id }} .agendamento-page {
+      padding: 1.2rem 0 calc(5.1rem + env(safe-area-inset-bottom));
+    }
+
+    #shopify-section-{{ section.id }} .summary-actions .agendamento-btn-primary {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-mobile-submit {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1050;
+      display: block !important;
+      padding: 0.55rem 0.8rem calc(0.55rem + env(safe-area-inset-bottom));
+      background: color-mix(in srgb, {{ settings.global_surface_card_color | default: '#FFFFFF' }} 92%, #ffffff 8%);
+      border-top: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+      box-shadow: 0 -8px 22px rgba(15, 23, 42, 0.1);
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-mobile-submit__inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-mobile-submit__label {
+      margin: 0;
+      color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      line-height: 1.1;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-mobile-submit__total {
+      margin: 0.18rem 0 0;
+      color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+      font-size: 0.96rem;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-mobile-submit__button {
+      min-height: 44px;
+      padding: 0.68rem 1rem;
+      white-space: nowrap;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-field[data-custom-date-wrap] {
+      padding: 0.58rem;
+      border-radius: 11px;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-date-shell {
+      grid-template-columns: auto minmax(0, 1fr);
+      row-gap: 0.42rem;
+      column-gap: 0.5rem;
+      padding: 0.38rem 0.4rem 0.42rem 0.58rem;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-date-helper {
+      font-size: 0.71rem;
+    }
+  }
+  /* ── Custom calendar ────────────────────────────────────────── */
+  #shopify-section-{{ section.id }} .ag-cal {
+    margin-top: 0.5rem;
+    user-select: none;
+    width: 100%;
+    min-width: 280px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    background: {{ settings.global_surface_base_color | default: '#F7F7F7' }};
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    border-radius: 14px;
+    padding: 1rem 0.85rem 0.9rem;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-nav-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: {{ settings.global_primary_color | default: '#0058BB' }};
+    transition: background 0.15s;
+    padding: 0;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-nav-btn:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-nav-btn:hover:not(:disabled) {
+    background: {{ settings.global_border_color | default: '#E5E7EB' }};
+  }
+  #shopify-section-{{ section.id }} .ag-cal-month-label {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    text-transform: capitalize;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 0.15rem;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-weekday {
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: {{ settings.global_text_muted_color | default: '#6B7280' }};
+    padding: 0.2rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-day {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background 0.12s, color 0.12s;
+    padding: 0;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-day:hover:not(.ag-cal-day--disabled):not(.ag-cal-day--empty) {
+    background: color-mix(in srgb, {{ settings.global_primary_color | default: '#0058BB' }} 12%, transparent);
+    color: {{ settings.global_primary_color | default: '#0058BB' }};
+  }
+  #shopify-section-{{ section.id }} .ag-cal-day--selected {
+    background: {{ settings.global_primary_color | default: '#0058BB' }};
+    color: #fff !important;
+    font-weight: 700;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-day--today::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: {{ settings.global_primary_color | default: '#0058BB' }};
+  }
+  #shopify-section-{{ section.id }} .ag-cal-day--today.ag-cal-day--selected::after {
+    background: #fff;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-day--disabled {
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    cursor: not-allowed;
+    text-decoration: line-through;
+    text-decoration-color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    text-decoration-thickness: 1.5px;
+    pointer-events: none;
+    background: color-mix(in srgb, {{ settings.global_surface_base_color | default: '#F7F7F7' }} 80%, transparent);
+    border-color: {{ settings.global_border_color | default: '#E5E7EB' }};
+    opacity: 0.45;
+  }
+  #shopify-section-{{ section.id }} .ag-cal-day--empty {
+    pointer-events: none;
+    background: transparent;
+    border-color: transparent;
+  }
+</style>
+
+<section class="agendamento-page agendamento-page--has-mobile-sticky">
+  <div class="agendamento-page-width">
+    <div class="agendamento-layout">
+      <article class="agendamento-card">
+        <h1 class="agendamento-title font-semibold">Agendamento de entrega</h1>
+        <p class="agendamento-subtitle">Escolha uma data sugerida ou personalize antes de finalizar.</p>
+
+        <form
+          id="AgendamentoForm"
+          class="agendamento-form"
+          data-min-lead-days="{{ min_lead_days }}"
+          data-max-lead-days="{{ max_lead_days }}"
+          data-delivery-monday="{{ section.settings.delivery_monday | json }}"
+          data-delivery-tuesday="{{ section.settings.delivery_tuesday | json }}"
+          data-delivery-wednesday="{{ section.settings.delivery_wednesday | json }}"
+          data-delivery-thursday="{{ section.settings.delivery_thursday | json }}"
+          data-delivery-friday="{{ section.settings.delivery_friday | json }}"
+          data-delivery-saturday="{{ section.settings.delivery_saturday | json }}"
+          data-delivery-sunday="{{ section.settings.delivery_sunday | json }}"
+          data-block-public-holidays="{{ section.settings.block_public_holidays | json }}"
+          data-holiday-country-code="{{ section.settings.holiday_country_code | default: 'BR' | upcase | escape }}"
+          data-block-manual-holidays="{{ section.settings.block_manual_holidays | json }}"
+          data-manual-holiday-dates="{{ section.settings.manual_holiday_dates | strip | escape }}"
+        >
+          <input type="hidden" id="delivery_date_selected" value="{{ cart.attributes['Agendamento'] | escape }}">
+
+          <div>
+            <p class="agendamento-picker-label">Envio</p>
+            <div class="delivery-cards" data-delivery-cards></div>
+          </div>
+
+          <div class="agendamento-field hidden" data-custom-date-wrap>
+            <label class="agendamento-label">Escolha uma data disponível</label>
+            <div class="ag-cal" data-custom-calendar></div>
+            <input type="hidden" id="delivery_date" value="{{ cart.attributes['Agendamento'] | escape }}">
+            <p class="agendamento-date-helper" data-date-helper>Escolha uma data dentro da janela disponível.</p>
+          </div>
+
+          <p id="agendamento-error" class="agendamento-error hidden" role="alert" aria-live="assertive" aria-atomic="true" tabindex="-1"></p>
+        </form>
+      </article>
+
+      <aside class="agendamento-summary" aria-label="Resumo do pedido">
+        <h2 class="summary-title font-semibold">Resumo do pedido</h2>
+        <div class="summary-items" aria-label="Itens do pedido">
+          {% for item in cart.items %}
+            <article class="summary-item">
+              <div>
+                <p class="summary-item-name">{{ item.product.title }}</p>
+                <p class="summary-item-meta">Qtd: {{ item.quantity }}</p>
+              </div>
+              <p class="summary-item-price">{{ item.final_line_price | money }}</p>
+            </article>
+          {% endfor %}
+        </div>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong>{{ cart.items_subtotal_price | money }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Frete</span>
+          <span>Calculado no checkout</span>
+        </div>
+        <div class="summary-row summary-row-total">
+          <span>Total</span>
+          <strong>{{ cart.total_price | money }}</strong>
+        </div>
+
+        <div class="summary-actions">
+          <button class="agendamento-btn agendamento-btn-primary" type="button" data-agendamento-submit>Finalizar pedido</button>
+          <a class="agendamento-btn agendamento-btn-secondary" href="{{ routes.all_products_collection_url }}">Continuar comprando</a>
+        </div>
+      </aside>
+    </div>
+
+    <div class="agendamento-mobile-submit" data-agendamento-mobile-submit>
+      <div class="agendamento-mobile-submit__inner">
+        <div class="agendamento-mobile-submit__meta">
+          <p class="agendamento-mobile-submit__label">Total</p>
+          <p class="agendamento-mobile-submit__total">{{ cart.total_price | money }}</p>
+        </div>
+        <button class="agendamento-btn agendamento-btn-primary agendamento-mobile-submit__button" type="button" data-agendamento-submit>Finalizar pedido</button>
+      </div>
+    </div>
+
+    <pre id="agendamento-debug" class="agendamento-error hidden" aria-live="polite"></pre>
+  </div>
+</section>
+
+<script>
+  window.SchedulingConfig = { checkoutUrl: '{{ routes.checkout_url }}' };
+</script>
+<script src="{{ 'scheduling.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Pagina de agendamento",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Janela de datas"
+    },
+    {
+      "type": "range",
+      "id": "min_lead_days",
+      "label": "Dias minimos apos a compra",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "max_lead_days",
+      "label": "Dias maximos apos a compra",
+      "min": 1,
+      "max": 60,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Dias da semana com entrega"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_monday",
+      "label": "Segunda-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_tuesday",
+      "label": "Terça-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_wednesday",
+      "label": "Quarta-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_thursday",
+      "label": "Quinta-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_friday",
+      "label": "Sexta-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_saturday",
+      "label": "Sábado",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_sunday",
+      "label": "Domingo",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Feriados"
+    },
+    {
+      "type": "checkbox",
+      "id": "block_public_holidays",
+      "label": "Bloquear feriados públicos",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "holiday_country_code",
+      "label": "Código do país para API de feriados (ISO-3166)",
+      "default": "BR",
+      "info": "Exemplo: BR para Brasil. API pública: Nager.Date"
+    },
+    {
+      "type": "checkbox",
+      "id": "block_manual_holidays",
+      "label": "Bloquear feriados manuais",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "manual_holiday_dates",
+      "label": "Datas manuais de feriados bloqueadas",
+      "default": "2026-01-01,2026-12-25",
+      "info": "Separe as datas por virgula no formato YYYY-MM-DD. Exemplo: 2026-04-21,2026-11-15"
+    },
+    {
+      "type": "header",
+      "content": "Cards de entrega"
+    }
+  ]
+}
+{% endschema %}
