@@ -1,3 +1,19 @@
+<script>
+  (function () {
+    var path = window.location.pathname;
+
+    // Detecta qualquer variação de /wp-content/.../FILENAME
+    // Cobre: /wp-content/uploads/YYYY/MM/FILE
+    //        /wp-content/webp-express/webp-images/uploads/YYYY/MM/FILE
+    //        /wp-content/qualquer/caminho/FILE
+    var wpMatch = path.match(/\/wp-content\/.+\/([^/]+\.[a-zA-Z0-9]+)$/);
+    if (wpMatch) {
+      var filename = wpMatch[1];
+      window.location.replace('/cdn/shop/files/' + filename);
+    }
+  })();
+</script>
+
 <section class="section">
   <div class="page-width">
     <div class="card" style="padding: clamp(1.5rem, 4vw, 3rem); text-align: center;">
