@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "home_hero": {
@@ -10,24 +19,7 @@
             "title": "Lucrozero",
             "image_desktop": "shopify://shop_images/1920x600_84b78660-cd39-4059-96ba-4b0a876af86f.png",
             "link": "shopify://collections/promocoes",
-            "alt_text": "Banner promocional",
-            "overlay_title": "",
-            "overlay_subtitle": "",
-            "cta_label": "",
-            "overlay_position": "left",
-            "overlay_text_color": "#ffffff",
-            "cta_btn_bg": "#ffffff",
-            "cta_btn_text": "#1a1c1c"
-          }
-        },
-        "banner_ngfcBq": {
-          "type": "banner",
-          "disabled": true,
-          "settings": {
-            "title": "Combos Dia das Mãesv1",
-            "image_desktop": "shopify://shop_images/1920x600_f3aa9872-0111-48fa-86f8-dfe109c16161.png",
-            "image_mobile": "shopify://shop_images/1080x400_1.png",
-            "link": "shopify://collections/promocoes",
+            "open_in_new_tab": true,
             "alt_text": "Banner promocional",
             "overlay_title": "",
             "overlay_subtitle": "",
@@ -45,23 +37,7 @@
             "image_desktop": "shopify://shop_images/desktop_2.png",
             "image_mobile": "shopify://shop_images/mobile.png",
             "link": "shopify://collections/promocoes",
-            "alt_text": "Banner promocional",
-            "overlay_title": "",
-            "overlay_subtitle": "",
-            "cta_label": "",
-            "overlay_position": "left",
-            "overlay_text_color": "#ffffff",
-            "cta_btn_bg": "#ffffff",
-            "cta_btn_text": "#1a1c1c"
-          }
-        },
-        "banner_VRnKpT": {
-          "type": "banner",
-          "settings": {
-            "title": "Combos Dia das Mãesv2",
-            "image_desktop": "shopify://shop_images/banner_dia_das_maes_72b25f96-f4ea-47e9-bb12-6586d2cd1c56.png",
-            "image_mobile": "shopify://shop_images/banner_telefone.png",
-            "link": "shopify://collections/combos-dia-das-maes",
+            "open_in_new_tab": false,
             "alt_text": "Banner promocional",
             "overlay_title": "",
             "overlay_subtitle": "",
@@ -75,10 +51,11 @@
         "banner_9AyAGt": {
           "type": "banner",
           "settings": {
-            "title": "Combos",
+            "title": "Trio",
             "image_desktop": "shopify://shop_images/1920x600_eeccb8d4-e653-46ef-b852-c0db1fa1ecaf.png",
             "image_mobile": "shopify://shop_images/1080x400_7f271924-2b30-4e2e-b2cd-c00a7bf77197.png",
             "link": "shopify://products/cabideiro-de-parede-industrial-canela-preto-fosco-copy",
+            "open_in_new_tab": false,
             "alt_text": "Banner promocional",
             "overlay_title": "",
             "overlay_subtitle": "",
@@ -89,12 +66,13 @@
             "cta_btn_text": "#1a1c1c"
           }
         },
-        "banner_mK4kLd": {
+        "banner_AwcYNt": {
           "type": "banner",
           "settings": {
-            "title": "Ofertas",
-            "image_desktop": "shopify://shop_images/BANNER_2.png",
-            "link": "shopify://collections/promocoes",
+            "title": "Esther",
+            "image_desktop": "shopify://shop_images/esther.png",
+            "link": "shopify://products/sofa-retratil-esther-suede-bege",
+            "open_in_new_tab": false,
             "alt_text": "Banner promocional",
             "overlay_title": "",
             "overlay_subtitle": "",
@@ -107,11 +85,11 @@
         },
         "banner_GABFrX": {
           "type": "banner",
-          "disabled": true,
           "settings": {
-            "title": "Banner principal",
-            "image_desktop": "shopify://shop_images/banner-vantagens.png",
-            "link": "shopify://pages/montagem-e-instalacao",
+            "title": "ReclameAqui",
+            "image_desktop": "shopify://shop_images/banner_tentativa_3.png",
+            "link": "https://www.reclameaqui.com.br/empresa/maxxx-moveis/sobre/",
+            "open_in_new_tab": false,
             "alt_text": "Banner promocional",
             "overlay_title": "",
             "overlay_subtitle": "",
@@ -129,6 +107,7 @@
             "title": "Banner principal",
             "image_desktop": "shopify://shop_images/localizacao_maxx_site_a4c58277-110a-4ca5-98ea-a4cbd2db26fa_1.jpg",
             "link": "shopify://pages/contact",
+            "open_in_new_tab": false,
             "alt_text": "Banner promocional",
             "overlay_title": "",
             "overlay_subtitle": "",
@@ -146,6 +125,7 @@
             "title": "Banner principal",
             "image_desktop": "shopify://shop_images/Site_9.webp",
             "link": "https://www.instagram.com/maxmoveis_oficial/",
+            "open_in_new_tab": false,
             "alt_text": "Banner promocional",
             "overlay_title": "",
             "overlay_subtitle": "",
@@ -163,6 +143,7 @@
             "title": "Banner principal",
             "image_desktop": "shopify://shop_images/SAC_1.png",
             "link": "shopify://pages/contact",
+            "open_in_new_tab": false,
             "alt_text": "Banner promocional",
             "overlay_title": "",
             "overlay_subtitle": "",
@@ -176,11 +157,9 @@
       },
       "block_order": [
         "banner_w8BFTy",
-        "banner_ngfcBq",
         "banner_trarrp",
-        "banner_VRnKpT",
         "banner_9AyAGt",
-        "banner_mK4kLd",
+        "banner_AwcYNt",
         "banner_GABFrX",
         "banner_BhBLba",
         "banner_BrifxQ",
@@ -633,7 +612,7 @@
       "type": "featured-collection",
       "name": "Featured collection",
       "settings": {
-        "title": "Quarda Roupas",
+        "title": "Guarda Roupas",
         "collection": "armarios",
         "limit": 8,
         "button_label": "Ver todas as ofertas",
@@ -933,6 +912,7 @@
       "blocks": {
         "social_link_M4b34M": {
           "type": "social_link",
+          "name": "Instagram",
           "settings": {
             "social_image": "shopify://shop_images/Instagram_icon_png.webp",
             "image_width_mobile": 72,
@@ -945,6 +925,7 @@
         },
         "social_link_tr64MM": {
           "type": "social_link",
+          "name": "Facebook",
           "settings": {
             "social_image": "shopify://shop_images/facebook_2.png",
             "image_width_mobile": 72,
@@ -957,7 +938,7 @@
         },
         "social_link_kDaAzp": {
           "type": "social_link",
-          "disabled": true,
+          "name": "Reclameaqui",
           "settings": {
             "social_image": "shopify://shop_images/Design_sem_nome_1.png",
             "image_width_mobile": 140,
@@ -965,7 +946,7 @@
             "image_width_desktop": 138,
             "image_height_desktop": 138,
             "label": "",
-            "link": "https://www.reclameaqui.com.br/empresa/maxxx-moveis/"
+            "link": "https://www.reclameaqui.com.br/empresa/maxxx-moveis/sobre/"
           }
         }
       },
