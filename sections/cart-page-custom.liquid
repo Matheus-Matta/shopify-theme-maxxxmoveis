@@ -99,6 +99,10 @@
     font-size: 1.1rem;
     line-height: 1.35;
     font-weight: 500;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   #shopify-section-{{ section.id }} .cart-item__head {
@@ -236,6 +240,10 @@
     font-weight: 400;
   }
 
+  #shopify-section-{{ section.id }} .cart-item__remove .material-symbols-outlined {
+    color: #ef4444;
+  }
+
   #shopify-section-{{ section.id }} .cart-item__remove:hover {
     color: {{ accent_color }};
   }
@@ -269,7 +277,6 @@
   }
 
   #shopify-section-{{ section.id }} .cart-summary__actions {
-    margin-top: 1.25rem;
     display: grid;
     gap: 0.75rem;
   }
@@ -290,10 +297,12 @@
   #shopify-section-{{ section.id }} .cart-btn--primary {
     background: {{ button_bg }};
     color: {{ button_text }};
+    box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
   }
 
   #shopify-section-{{ section.id }} .cart-btn--primary:hover {
     background: {{ button_bg_hover }};
+    box-shadow: 0 3px 10px -3px rgba(0, 0, 0, 0.09), 0 1px 3px -1px rgba(0, 0, 0, 0.05);
   }
 
   #shopify-section-{{ section.id }} .cart-btn--secondary {
@@ -301,11 +310,13 @@
     border-radius: {{ keep_btn_radius }}px;
     color: {{ keep_btn_text }};
     background: transparent;
+    box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
   }
 
   #shopify-section-{{ section.id }} .cart-btn--secondary:hover {
     border-color: {{ accent_color }};
     color: {{ accent_color }};
+    box-shadow: 0 3px 10px -3px rgba(0, 0, 0, 0.09), 0 1px 3px -1px rgba(0, 0, 0, 0.05);
   }
 
   #shopify-section-{{ section.id }} .cart-empty {
@@ -360,10 +371,15 @@
   @media (max-width: 749px) {
     #shopify-section-{{ section.id }} .cart-page {
       padding: 2rem 0;
+      margin-top: -24px;
     }
 
     #shopify-section-{{ section.id }} .cart-page--has-mobile-sticky {
-      padding-bottom: calc(4.6rem + env(safe-area-inset-bottom));
+      padding-bottom: 2rem;
+    }
+
+    #shopify-section-{{ section.id }} .cart-summary {
+      display: none;
     }
 
     #shopify-section-{{ section.id }} .cart-item {
@@ -381,6 +397,11 @@
     #shopify-section-{{ section.id }} .cart-item__title {
       font-size: 0.9rem;
       line-height: 1.28;
+      -webkit-line-clamp: 2;
+    }
+
+    #shopify-section-{{ section.id }} .cart-item__remove > span:not(.material-symbols-outlined) {
+      display: none;
     }
 
     #shopify-section-{{ section.id }} .cart-item__head {
@@ -425,58 +446,142 @@
       gap: 0.22rem;
     }
 
-    #shopify-section-{{ section.id }} .cart-summary__actions .cart-btn--primary {
-      display: none;
-    }
-
     #shopify-section-{{ section.id }} .cart-mobile-checkout {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
       z-index: 1050;
-      padding: 0.55rem 0.8rem calc(0.55rem + env(safe-area-inset-bottom));
-      background: color-mix(in srgb, {{ card_bg }} 92%, #ffffff 8%);
+      background: {{ card_bg }};
       border-top: 1px solid {{ card_border }};
-      box-shadow: 0 -8px 22px rgba(15, 23, 42, 0.1);
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -6px 32px rgba(15, 23, 42, 0.13);
       display: block;
+      padding: 1.1rem 1rem calc(1.1rem + env(safe-area-inset-bottom));
     }
 
-    #shopify-section-{{ section.id }} .cart-mobile-checkout__inner {
+    #shopify-section-{{ section.id }} .cmc-card {
       max-width: {{ section.settings.container_width }}px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 0.8rem;
     }
 
-    #shopify-section-{{ section.id }} .cart-mobile-checkout__meta {
+    #shopify-section-{{ section.id }} .cmc-coupon {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid {{ card_border }};
+    }
+
+    /* Override dcb-wrap para se encaixar no painel mobile */
+    #shopify-section-{{ section.id }} .cmc-coupon .dcb-wrap {
+      flex: 1;
       min-width: 0;
     }
 
-      font-weight: 400;
+    #shopify-section-{{ section.id }} .cmc-divider {
+      border: none;
+      border-top: 1px solid {{ card_border }};
       margin: 0;
+    }
+
+    #shopify-section-{{ section.id }} .cmc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 0;
+    }
+
+    #shopify-section-{{ section.id }} .cmc-row__label {
       color: {{ muted_color }};
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      line-height: 1.1;
+      font-size: 0.93rem;
     }
 
-    #shopify-section-{{ section.id }} .cart-mobile-checkout__total {
-      margin: 0.18rem 0 0;
+    #shopify-section-{{ section.id }} .cmc-row__value {
+      color: {{ text_color }};
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    #shopify-section-{{ section.id }} .cmc-row--discount .cmc-row__label,
+    #shopify-section-{{ section.id }} .cmc-row--discount .cmc-row__value {
+      color: var(--color-success, #16a34a);
+    }
+
+    #shopify-section-{{ section.id }} .cmc-row--total {
+      padding-top: 0.75rem;
+      border-top: 1px solid {{ card_border }};
+    }
+
+    #shopify-section-{{ section.id }} .cmc-row--total .cmc-row__label {
       color: {{ heading_color }};
-      font-size: 1.02rem;
-      font-weight: 400;
-      line-height: 1.2;
+      font-size: 1.05rem;
+      font-weight: 600;
     }
 
-    #shopify-section-{{ section.id }} .cart-mobile-checkout__button {
-      min-height: 44px;
-      padding: 0.68rem 1rem;
-      white-space: nowrap;
+    #shopify-section-{{ section.id }} .cmc-row--total .cmc-row__value {
+      color: {{ heading_color }};
+      font-size: 1.1rem;
+      font-weight: 700;
     }
+
+    #shopify-section-{{ section.id }} .cmc-checkout-btn {
+      display: block;
+      width: 100%;
+      margin-top: 0.75rem;
+      text-align: center;
+      text-decoration: none;
+      background: {{ button_bg }};
+      color: {{ button_text }};
+      border-radius: 9999px;
+      min-height: 48px;
+      line-height: 48px;
+      padding: 0 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    }
+
+    #shopify-section-{{ section.id }} .cmc-checkout-btn:hover {
+      background: {{ button_bg_hover }};
+    }
+
+    /* Entrada do painel */
+    #shopify-section-{{ section.id }} .cart-mobile-checkout {
+      animation: cmc-slide-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* Linhas colapsáveis (cupom + subtotal + desconto) */
+    #shopify-section-{{ section.id }} .cmc-collapsible {
+      overflow: hidden;
+      max-height: 14rem;
+      opacity: 1;
+      transition:
+        max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.28s ease,
+        margin-bottom 0.3s ease;
+      margin-bottom: 0;
+    }
+
+    /* Estado compacto — quando footer entra no viewport */
+    #shopify-section-{{ section.id }} .cart-mobile-checkout.cmc--compact .cmc-collapsible {
+      max-height: 0;
+      opacity: 0;
+      margin-bottom: 0;
+    }
+
+    /* Remove borda do total quando linhas acima estão ocultas */
+    #shopify-section-{{ section.id }} .cart-mobile-checkout.cmc--compact .cmc-row--total {
+      border-top: none;
+      padding-top: 0.1rem;
+    }
+  }
+
+  @keyframes cmc-slide-in {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
   }
 
   @keyframes cart-btn-spin {
@@ -534,7 +639,10 @@
               <div>
                 <div class="cart-item__head">
                   <h2 class="cart-item__title font-medium"><a href="{{ item.url }}">{{ item.product.title }}</a></h2>
-                  <strong class="cart-item__price" data-cart-line-price{% if item.variant.compare_at_price > item.price %} style="color: var(--color-promo-final-price)"{% endif %}>{{ item.final_line_price | money }}</strong>
+                  <button class="cart-item__remove" type="button" data-cart-remove>
+                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                    <span>{{ section.settings.remove_label }}</span>
+                  </button>
                 </div>
 
                 {% unless item.properties == empty %}
@@ -560,7 +668,8 @@
                 {% endunless %}
 
                 {% assign cart_variant_title = item.variant.title | default: '' | strip %}
-                {% unless cart_variant_title == blank or cart_variant_title | downcase == 'default title' %}
+                {% assign cart_variant_title_lower = cart_variant_title | downcase %}
+                {% unless cart_variant_title == blank or cart_variant_title_lower == 'default title' %}
                   <p class="cart-item__meta">{{ cart_variant_title }}</p>
                 {% endunless %}
 
@@ -587,10 +696,7 @@
                       </button>
                     </div>
                   </div>
-                  <button class="cart-item__remove" type="button" data-cart-remove>
-                    <span class="material-symbols-outlined text-[16px]">delete</span>
-                    <span>{{ section.settings.remove_label }}</span>
-                  </button>
+                  <strong class="cart-item__price" data-cart-line-price{% if item.variant.compare_at_price > item.price %} style="color: var(--color-promo-final-price)"{% endif %}>{{ item.final_line_price | money }}</strong>
                 </div>
               </div>
             </article>
@@ -607,25 +713,56 @@
               <span>{{ section.settings.shipping_label }}</span>
               <span>{{ section.settings.shipping_value }}</span>
             </div>
+            <div class="cart-summary__row cart-summary__row--discount" data-discount-row style="display:none;color:var(--color-success,#16a34a);">
+              <span data-discount-row-label>Desconto</span>
+              <strong data-discount-row-value></strong>
+            </div>
             <div class="cart-summary__row cart-summary__row--total">
               <span>{{ section.settings.total_label }}</span>
               <strong data-cart-total>{{ cart.total_price | money }}</strong>
             </div>
 
+            {%- render 'discount-code-box' -%}
             <div class="cart-summary__actions">
               <a class="cart-btn cart-btn--primary" href="/pages/agendamento" data-cart-checkout>Finalizar pedido</a>
               <a class="cart-btn cart-btn--secondary" href="{{ routes.all_products_collection_url }}">{{ section.settings.keep_shopping_label }}</a>
+              <p class="text-center text-xs mt-2" style="color:var(--color-text-muted,#6b7280);">
+                <span class="material-symbols-outlined text-[13px] align-middle" style="font-variation-settings:'FILL' 1;">lock</span>
+                Pagamento 100% seguro &middot; Troca f&aacute;cil
+              </p>
             </div>
           </aside>
         </div>
 
         <div class="cart-mobile-checkout" data-cart-mobile-checkout>
-          <div class="cart-mobile-checkout__inner">
-            <div class="cart-mobile-checkout__meta">
-              <p class="cart-mobile-checkout__label">{{ section.settings.total_label }}</p>
-              <p class="cart-mobile-checkout__total" data-cart-total-mobile>{{ cart.total_price | money }}</p>
+          <div class="cmc-card">
+
+            <div class="cmc-collapsible">
+              {%- render 'discount-code-box' -%}
+
+              {%- assign _installments = settings.global_installments_count | default: 10 | plus: 0 -%}
+              {%- if _installments < 1 -%}{%- assign _installments = 1 -%}{%- endif -%}
+              <div class="cmc-row">
+                <span class="cmc-row__label">Em até {{ _installments }}x sem juros</span>
+                <strong class="cmc-row__value" data-cart-installments data-installments-count="{{ _installments }}">{{ cart.total_price | divided_by: _installments | money }}</strong>
+              </div>
+
+              <div class="cmc-row cmc-row--discount" data-discount-row style="display:none;">
+                <span class="cmc-row__label" data-discount-row-label>Desconto</span>
+                <strong class="cmc-row__value" data-discount-row-value></strong>
+              </div>
             </div>
-            <a class="cart-btn cart-btn--primary cart-mobile-checkout__button" href="/pages/agendamento" data-cart-checkout>Finalizar pedido</a>
+
+            <div class="cmc-row cmc-row--total">
+              <span class="cmc-row__label">{{ section.settings.total_label }}</span>
+              <strong class="cmc-row__value" data-cart-total-mobile>{{ cart.total_price | money }}</strong>
+            </div>
+
+            <a class="cmc-checkout-btn" href="/pages/agendamento" data-cart-checkout>Finalizar pedido</a>
+            <p class="text-center text-xs mt-2" style="color:var(--color-text-muted,#6b7280);">
+              <span class="material-symbols-outlined text-[13px] align-middle" style="font-variation-settings:'FILL' 1;">lock</span>
+              Pagamento 100% seguro &middot; Troca f&aacute;cil
+            </p>
           </div>
         </div>
       </form>
@@ -648,6 +785,34 @@
   window.CartConfig = { currencyCode: '{{ cart.currency.iso_code | escape }}' };
 </script>
 <script src="{{ 'cart.js' | asset_url }}" defer></script>
+<script>
+  (function () {
+    function initFooterObserver() {
+      var panel  = document.querySelector('[data-cart-mobile-checkout]');
+      var footer = document.querySelector('.footer-shell');
+      if (!panel || !footer) return;
+
+      function check() {
+        var nearFooter = footer && footer.getBoundingClientRect().bottom <= window.innerHeight + 40;
+        // Compacto: footer fisicamente atrás do painel
+        panel.classList.toggle('cmc--compact', nearFooter);
+      }
+
+      window.addEventListener('scroll', function () {
+        requestAnimationFrame(check);
+      }, { passive: true });
+
+      // Verificar posição atual (caso página recarregar com scroll != 0)
+      check();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFooterObserver);
+    } else {
+      initFooterObserver();
+    }
+  })();
+</script>
 
 {% schema %}
 {

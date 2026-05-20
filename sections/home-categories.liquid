@@ -89,9 +89,9 @@
 
   #shopify-section-{{ section.id }} .home-categories__view-all {
     color: {{ view_all_color }};
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    display: none;
+    display: flex;
     align-items: center;
     gap: 0.375rem;
     white-space: nowrap;
@@ -149,7 +149,7 @@
   <div class="home-categories__header mb-4 md:mb-6">
     <h2 class="home-categories__heading font-headline font-extrabold" style="color: var(--section-text);">{{ section.settings.title }}</h2>
     {% if section.settings.view_all_url != blank and section.settings.view_all_label != blank %}
-      <a class="home-categories__view-all group hidden md:flex" href="{{ section.settings.view_all_url }}">
+      <a class="home-categories__view-all group flex" href="{{ section.settings.view_all_url }}">
         {{ section.settings.view_all_label }} <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform" style="font-size:18px;">trending_flat</span>
       </a>
     {% endif %}

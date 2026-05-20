@@ -3,14 +3,29 @@
     var path = window.location.pathname;
 
     // Detecta qualquer variação de /wp-content/.../FILENAME
-    // Cobre: /wp-content/uploads/YYYY/MM/FILE
-    //        /wp-content/webp-express/webp-images/uploads/YYYY/MM/FILE
-    //        /wp-content/qualquer/caminho/FILE
     var wpMatch = path.match(/\/wp-content\/.+\/([^/]+\.[a-zA-Z0-9]+)$/);
     if (wpMatch) {
       var filename = wpMatch[1];
       window.location.replace('/cdn/shop/files/' + filename);
+      return;
     }
+
+    // Redireciona para a home após 5 segundos
+    var countdown = 5;
+    var counterEl;
+    function tick() {
+      countdown--;
+      if (counterEl) counterEl.textContent = countdown;
+      if (countdown <= 0) {
+        window.location.replace('/');
+      } else {
+        setTimeout(tick, 1000);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      counterEl = document.getElementById('redirect-countdown');
+      setTimeout(tick, 1000);
+    });
   })();
 </script>
 
@@ -19,8 +34,11 @@
     <div class="card" style="padding: clamp(1.5rem, 4vw, 3rem); text-align: center;">
       <h1 class="section__title">Página não encontrada</h1>
       <p class="section__subtitle">O link solicitado não existe ou foi removido.</p>
+      <p style="margin-top: 0.75rem; color: var(--color-text-muted, #888); font-size: 0.9rem;">
+        Redirecionando para a home em <strong id="redirect-countdown">5</strong> segundo(s)...
+      </p>
       <div style="margin-top: 1.25rem;">
-        <a class="button button--accent" href="{{ routes.root_url }}">Voltar para a home</a>
+        <a class="button button--accent" href="{{ routes.root_url }}">Ir para a home agora</a>
       </div>
     </div>
   </div>

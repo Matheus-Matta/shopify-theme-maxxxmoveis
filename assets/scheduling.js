@@ -342,7 +342,19 @@
         }
 
         const config = window.SchedulingConfig || {};
-        const checkoutUrl = config.checkoutUrl || '/checkout';
+        let checkoutUrl = config.checkoutUrl || '/checkout';
+        // Append discount code if one is stored, then clear it
+        try {
+          var discountCode = (window.MaxxxDiscount && window.MaxxxDiscount.getCode)
+            ? window.MaxxxDiscount.getCode()
+            : (localStorage.getItem('maxxx_discount_code') || '');
+          if (discountCode) {
+            checkoutUrl += (checkoutUrl.indexOf('?') !== -1 ? '&' : '?') + 'discount=' + encodeURIComponent(discountCode);
+            // Limpa o cupom do localStorage ao ir para o checkout
+            try { localStorage.removeItem('maxxx_discount_code'); } catch (_) {}
+            try { localStorage.removeItem('maxxx_discount_info'); } catch (_) {}
+          }
+        } catch (_dc) {}
         this._redirect(checkoutUrl);
       } catch (err) {
         this._setSubmitting(false);

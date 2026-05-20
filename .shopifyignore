@@ -1,0 +1,32 @@
+
+# Arquivos que nunca devem ser enviados ao Shopify via theme push
+
+# Variáveis de ambiente e credenciais
+.env
+.env.*
+*.env
+
+# Dependências e ferramentas locais
+node_modules/*
+.shopify/*
+
+# Scripts locais (não são assets do tema)
+scripts/*
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos de editor/IDE
+.vscode/*
+.idea/*
+*.swp
+*.swo
+*.tmp
+*.tmp.*
+*~
+
+# Controle de versão
+.git/*
+.gitignore

@@ -292,6 +292,7 @@
                 {% if related.featured_image %}
                   <div class="pp-rec-image gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ related.featured_image | image_url: width: 900 }}');" aria-label="{{ related.title | escape }}"></div>
                 {% endif %}
+                {%- render 'low-stock-badge', ls_product: related -%}
                 <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-id="{{ related.id }}" data-product-gid="gid://shopify/Product/{{ related.id }}" data-product-handle="{{ related.handle }}">
                   <span class="material-symbols-outlined text-xl">favorite</span>
                 </button>
@@ -406,6 +407,7 @@
                   {% if related.featured_image %}
                     <div class="pp-rec-image gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ related.featured_image | image_url: width: 900 }}');" aria-label="{{ related.title | escape }}"></div>
                   {% endif %}
+                  {%- render 'low-stock-badge', ls_product: related -%}
                   <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-id="{{ related.id }}" data-product-gid="gid://shopify/Product/{{ related.id }}" data-product-handle="{{ related.handle }}">
                     <span class="material-symbols-outlined text-xl">favorite</span>
                   </button>

@@ -234,6 +234,51 @@
     background: transparent;
   }
 
+  /* ── Toolbar de ordenação ─────────────────────────────── */
+  #shopify-section-{{ section.id }} .cdyn-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid {{ rec_card_border }};
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  #shopify-section-{{ section.id }} .cdyn-results-count {
+    font-size: 0.875rem;
+    color: color-mix(in srgb, {{ section_text }} 60%, transparent);
+  }
+  #shopify-section-{{ section.id }} .cdyn-sort-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: {{ section_text }};
+  }
+  #shopify-section-{{ section.id }} .cdyn-sort-select {
+    border: 1px solid {{ rec_card_border }};
+    border-radius: 8px;
+    padding: 0.45rem 2.2rem 0.45rem 0.75rem;
+    font-size: 0.875rem;
+    font-family: inherit;
+    background-color: {{ rec_card_bg }};
+    color: {{ section_text }};
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5l5 5 5-5' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 18px;
+    cursor: pointer;
+    outline: none;
+    max-width: 220px;
+    transition: border-color 180ms ease;
+  }
+  #shopify-section-{{ section.id }} .cdyn-sort-select:focus {
+    border-color: {{ rec_secondary_color }};
+    box-shadow: 0 0 0 3px color-mix(in srgb, {{ rec_secondary_color }} 18%, transparent);
+  }
+
   /* ── Skeleton de loading ────────────────────────────────── */
   #shopify-section-{{ section.id }} .cdyn-sk-card {
     background-color: {{ rec_card_bg }};
@@ -336,6 +381,30 @@
       </div>
 
       <div id="cdyn-products-{{ section.id }}">
+        {% if collection.sort_options.size > 0 %}
+          <div class="cdyn-toolbar">
+            <span class="cdyn-results-count">
+              {{ collection.products_count }}
+              produto{% if collection.products_count != 1 %}s{% endif %}
+            </span>
+            <div class="flex items-center gap-2">
+              <label class="cdyn-sort-label" for="cdyn-sort-{{ section.id }}">Ordenar:</label>
+              <select
+                id="cdyn-sort-{{ section.id }}"
+                class="cdyn-sort-select"
+                onchange="window.location.href=this.value"
+                aria-label="Ordenar produtos"
+              >
+                {% for option in collection.sort_options %}
+                  <option
+                    value="{{ collection.url }}?sort_by={{ option.value }}"
+                    {% if collection.sort_by == option.value %}selected{% endif %}
+                  >{{ option.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        {% endif %}
         <div class="pp-rec-grid">
           {% assign related_products_shown = 0 %}
         {% for related in collection.products %}
@@ -402,6 +471,7 @@
               {% if related.featured_image %}
                 <div class="gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ related.featured_image | image_url: width: 900 }}');" aria-label="{{ related.title | escape }}"></div>
               {% endif %}
+              {%- render 'low-stock-badge', ls_product: related -%}
             </div>
 
             <div class="flex flex-col gap-2 gc-product-card-content">

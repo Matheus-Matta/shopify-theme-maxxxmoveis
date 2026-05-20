@@ -10,6 +10,21 @@
   --card-shadow-hover: 0 16px 36px -24px rgba(16, 24, 40, 0.42);
   --transition-fast: 160ms ease;
   --transition-base: 240ms ease;
+  /* Feedback colors */
+  --color-success: #16a34a;
+  --color-success-soft: #f0fdf4;
+  --color-success-border: #bbf7d0;
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
 }
 
 .gc-unified-card {
@@ -134,6 +149,32 @@ textarea {
   .section-layout-py {
     padding-top: var(--section-py-lg, 40px);
     padding-bottom: var(--section-py-lg, 40px);
+  }
+}
+
+/* Variantes semânticas de seção */
+.section-py-sm {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.section-py-lg {
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+@media (min-width: 768px) {
+  .section-py-sm {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+  .section-py-lg {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+}
+@media (min-width: 1024px) {
+  .section-py-lg {
+    padding-top: 80px;
+    padding-bottom: 80px;
   }
 }
 
@@ -1017,4 +1058,116 @@ textarea {
 }
 
 .gs-skeleton-line--title { height: 13px; width: 68%; }
+
+/* ─── Discount Code Box (DCB) ────────────────────────────────────── */
+.dcb-wrap {
+  padding: 0.75rem 0;
+}
+.dcb-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #6b7280);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.dcb-label-icon {
+  font-size: 0.9375rem;
+  color: var(--color-primary);
+}
+/* Input group colado */
+.dcb-group {
+  display: flex;
+  border: 1px solid var(--color-input-border, var(--color-border));
+  border-radius: var(--dcb-radius, 12px);
+  overflow: hidden;
+  background: var(--color-input-bg, var(--color-bg));
+  box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.dcb-group:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 3px 10px -3px rgba(0, 0, 0, 0.09), 0 1px 3px -1px rgba(0, 0, 0, 0.05);
+}
+.dcb-group:focus-within {
+  border-color: var(--color-primary);
+}
+.dcb-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+  color: var(--color-input-text, var(--color-title));
+  outline: none;
+}
+.dcb-input::placeholder {
+  color: var(--color-input-placeholder, var(--color-text-muted));
+}
+.dcb-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.dcb-btn {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-left: 1px solid var(--color-input-border, var(--color-border));
+  border-radius: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.dcb-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.dcb-btn--apply {
+  background: var(--color-button-primary-bg);
+  color: var(--color-button-primary-text);
+}
+.dcb-btn--apply:hover:not(:disabled) {
+  background: var(--color-button-primary-bg-hover);
+}
+.dcb-btn--remove {
+  background: var(--color-button-secondary-bg, #f3f4f6);
+  color: var(--color-button-secondary-text, #374151);
+}
+.dcb-btn--remove:hover:not(:disabled) {
+  background: var(--color-button-secondary-bg-hover, #e5e7eb);
+}
+.dcb-message {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.dcb-message[data-type="success"] { color: var(--color-success, #16a34a); }
+.dcb-message[data-type="error"]   { color: var(--color-danger, #dc2626); }
+.dcb-message[data-type="info"]    { color: var(--color-primary, #2563eb); }
+.dcb-preview {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-success, #16a34a);
+  font-weight: 500;
+}
+.dcb-preview s {
+  color: var(--color-text-muted, #6b7280);
+  font-weight: 400;
+  margin-right: 0.25rem;
+}
+.dcb-preview strong {
+  font-weight: 700;
+}
+.dcb-preview-discount {
+  font-size: 0.8125rem;
+  opacity: 0.85;
+}
 .gs-skeleton-line--price { height: 12px; width: 38%; }

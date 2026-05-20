@@ -67,6 +67,56 @@
         height: var(--hero-desktop-height);
       }
     }
+
+    /* Overlay CTA */
+    #shopify-section-{{ section.id }} .hero-banner-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1.25rem 1.25rem 3.5rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.44) 0%, transparent 80%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      pointer-events: none;
+    }
+    @media (min-width: 768px) {
+      #shopify-section-{{ section.id }} .hero-banner-overlay {
+        padding: 2rem 2.5rem 3rem;
+      }
+    }
+    #shopify-section-{{ section.id }} .hero-overlay-title {
+      margin: 0;
+      font-size: clamp(1rem, 3.5vw, 2.25rem);
+      font-weight: 800;
+      line-height: 1.15;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.28);
+    }
+    #shopify-section-{{ section.id }} .hero-overlay-subtitle {
+      margin: 0;
+      font-size: clamp(0.8rem, 1.8vw, 1.1rem);
+      font-weight: 400;
+      opacity: 0.9;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.22);
+    }
+    #shopify-section-{{ section.id }} .hero-overlay-btn {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      padding: 0.6rem 1.4rem;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      pointer-events: auto;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      transition: filter 160ms ease;
+    }
+    #shopify-section-{{ section.id }} .hero-overlay-btn:hover {
+      filter: brightness(0.92);
+    }
   </style>
 
   <section id="hero-carousel-{{ section.id }}" class="hero-carousel-section{% if section.settings.layout_width != 'full' %} section-layout-py{% endif %}" style="--hero-mobile-height: {{ section.settings.mobile_height }}px; --hero-desktop-height: {{ section.settings.desktop_height }}px; --hero-radius: {{ hero_border_radius }}px; --hero-dot-inactive: {{ section.settings.dot_inactive_color }}; --hero-dot-active: {{ section.settings.dot_active_color }};">
@@ -82,7 +132,7 @@
               {% if block.settings.image_desktop != blank or block.settings.image_mobile != blank %}
                 {% assign banner_url = block.settings.link | default: '#' %}
                 <article class="hero-carousel-slide" style="background-color: {{ section.settings.image_bg_color }};" {{ block.shopify_attributes }}>
-                  <a href="{{ banner_url }}" class="block w-full h-full" aria-label="{{ block.settings.alt_text | default: block.settings.title | escape }}">
+                  <a href="{{ banner_url }}" class="block w-full h-full relative" aria-label="{{ block.settings.alt_text | default: block.settings.title | escape }}"{% if block.settings.open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>
                     <picture>
                       {% if block.settings.image_mobile != blank %}
                         <source media="(max-width: 767px)" srcset="{{ block.settings.image_mobile | image_url: width: 1080 }}">
@@ -96,6 +146,30 @@
                         {{ block.settings.image_mobile | image_url: width: 2400 | image_tag: class: banner_image_class, loading: 'eager', alt: block.settings.alt_text | default: block.settings.title }}
                       {% endif %}
                     </picture>
+                    {% if block.settings.overlay_title != blank or block.settings.cta_label != blank %}
+                      {% liquid
+                        assign overlay_align = 'flex-start'
+                        assign overlay_text_align = 'left'
+                        if block.settings.overlay_position == 'center'
+                          assign overlay_align = 'center'
+                          assign overlay_text_align = 'center'
+                        elsif block.settings.overlay_position == 'right'
+                          assign overlay_align = 'flex-end'
+                          assign overlay_text_align = 'right'
+                        endif
+                      %}
+                      <div class="hero-banner-overlay" style="align-items: {{ overlay_align }}; text-align: {{ overlay_text_align }}; color: {{ block.settings.overlay_text_color | default: '#ffffff' }};">
+                        {% if block.settings.overlay_title != blank %}
+                          <p class="hero-overlay-title">{{ block.settings.overlay_title | escape }}</p>
+                        {% endif %}
+                        {% if block.settings.overlay_subtitle != blank %}
+                          <p class="hero-overlay-subtitle">{{ block.settings.overlay_subtitle | escape }}</p>
+                        {% endif %}
+                        {% if block.settings.cta_label != blank %}
+                          <span class="hero-overlay-btn" style="background-color: {{ block.settings.cta_btn_bg | default: '#ffffff' }}; color: {{ block.settings.cta_btn_text | default: '#1a1c1c' }};">{{ block.settings.cta_label | escape }}</span>
+                        {% endif %}
+                      </div>
+                    {% endif %}
                   </a>
                 </article>
               {% endif %}
@@ -424,10 +498,64 @@
           "label": "Link do banner"
         },
         {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "Abrir link em nova aba",
+          "default": false
+        },
+        {
           "type": "text",
           "id": "alt_text",
           "label": "Texto alternativo",
           "default": "Banner promocional"
+        },
+        {
+          "type": "header",
+          "content": "Overlay CTA (opcional)"
+        },
+        {
+          "type": "text",
+          "id": "overlay_title",
+          "label": "Título do overlay"
+        },
+        {
+          "type": "text",
+          "id": "overlay_subtitle",
+          "label": "Subtítulo do overlay"
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "Texto do botão CTA"
+        },
+        {
+          "type": "select",
+          "id": "overlay_position",
+          "label": "Alinhamento do overlay",
+          "options": [
+            { "value": "left", "label": "Esquerda" },
+            { "value": "center", "label": "Centro" },
+            { "value": "right", "label": "Direita" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "color",
+          "id": "overlay_text_color",
+          "label": "Cor do texto",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "cta_btn_bg",
+          "label": "Fundo do botão",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "cta_btn_text",
+          "label": "Texto do botão",
+          "default": "#1a1c1c"
         }
       ]
     }

@@ -29,6 +29,13 @@
     {%- endif -%}
     <link rel="canonical" href="{{ canonical_url }}">
 
+    {%- comment -%} Favicon {%- endcomment -%}
+    {%- assign _favicon = settings.favicon | default: shop.logo -%}
+    {%- if _favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ _favicon | image_url: width: 64 }}">
+      <link rel="apple-touch-icon" href="{{ _favicon | image_url: width: 180 }}">
+    {%- endif -%}
+
     {%- comment -%} Open Graph {%- endcomment -%}
     <meta property="og:site_name" content="{{ shop.name | escape }}">
     <meta property="og:url" content="{{ canonical_url }}">
@@ -63,178 +70,157 @@
     {%- comment -%} JSON-LD: Produto {%- endcomment -%}
     {%- if template.name == 'product' -%}
       <script type="application/ld+json">
-      {
-        "@context": "https://schema.org/",
-        "@type": "Product",
-        "name": {{ product.title | json }},
-        "url": {{ shop.url | append: product.url | json }},
-        {%- if product.featured_image -%}
-        "image": [
-          {{ product.featured_image | image_url: width: 1200 | prepend: 'https:' | json }}
-        ],
-        {%- endif -%}
-        "description": {{ product.description | strip_html | truncate: 500 | json }},
-        "sku": {{ product.selected_or_first_available_variant.sku | json }},
-        "brand": {
-          "@type": "Brand",
-          "name": {{ product.vendor | json }}
-        },
-        "offers": {
-          "@type": "Offer",
+        {
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          "name": {{ product.title | json }},
           "url": {{ shop.url | append: product.url | json }},
-          "priceCurrency": {{ shop.currency | json }},
-          "price": "{{ product.price | divided_by: 100.0 }}",
-          "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
-          "seller": {
-            "@type": "Organization",
-            "name": {{ shop.name | json }}
+          {%- if product.featured_image -%}
+          "image": [
+            {{ product.featured_image | image_url: width: 1200 | prepend: 'https:' | json }}
+          ],
+          {%- endif -%}
+          "description": {{ product.description | strip_html | truncate: 500 | json }},
+          "sku": {{ product.selected_or_first_available_variant.sku | json }},
+          "brand": {
+            "@type": "Brand",
+            "name": {{ product.vendor | json }}
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": {{ shop.url | append: product.url | json }},
+            "priceCurrency": {{ shop.currency | json }},
+            "price": "{{ product.price | divided_by: 100.0 }}",
+            "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+            "seller": {
+              "@type": "Organization",
+              "name": {{ shop.name | json }}
+            }
           }
         }
-      }
       </script>
     {%- endif -%}
 
     {%- comment -%} JSON-LD: WebSite (home) {%- endcomment -%}
     {%- if template.name == 'index' -%}
       <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "url": {{ shop.url | json }},
-        "name": {{ shop.name | json }},
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "{{ shop.url }}/search?q={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "url": {{ shop.url | json }},
+          "name": {{ shop.name | json }},
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "{{ shop.url }}/search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
         }
-      }
       </script>
     {%- endif -%}
 
     {%- comment -%}=== Page Loader ==={%- endcomment -%}
     {%- if settings.global_page_loader_enabled %}
-    {%- assign _loader_dur    = settings.global_page_loader_duration | default: 300 -%}
-    {%- assign _loader_bg     = settings.global_page_loader_bg_color | default: '#ffffff' -%}
-    {%- assign _loader_type   = settings.global_page_loader_type | default: 'spinner' -%}
-    {%- assign _loader_size   = settings.global_page_loader_media_size | default: 64 -%}
-    {%- assign _loader_color  = settings.global_page_loader_spinner_color | default: '#0058BB' -%}
-    {%- assign _loader_url    = settings.global_page_loader_media_url | default: 'none' -%}
-    {%- if _loader_url == 'none' or _loader_url == blank %}{%- assign _loader_url = '' -%}{%- endif -%}
-    {%- assign _border_w      = _loader_size | divided_by: 8 -%}
-    <style>
-      #page-loader {
-        position: fixed;
-        inset: 0;
-        z-index: 99999;
-        background: {{ _loader_bg }};
-        opacity: 1;
-        transition: opacity {{ _loader_dur }}ms ease;
-        pointer-events: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      #page-loader.pl-out  { opacity: 0; }
-      #page-loader.pl-done { display: none; }
-      .pl-spinner {
-        width: {{ _loader_size }}px;
-        height: {{ _loader_size }}px;
-        border: {{ _border_w }}px solid {{ _loader_color }}33;
-        border-top-color: {{ _loader_color }};
-        border-radius: 50%;
-        animation: pl-spin 0.7s linear infinite;
-        flex-shrink: 0;
-      }
-      @keyframes pl-spin { to { transform: rotate(360deg); } }
-      .pl-media {
-        width: {{ _loader_size }}px;
-        height: {{ _loader_size }}px;
-        object-fit: contain;
-        flex-shrink: 0;
-      }
-    </style>
-    <script>
-      (function() {
-        var dur = {{ _loader_dur }};
-        var loader;
-        function hide() {
-          if (!loader) return;
-          loader.classList.add('pl-out');
-          setTimeout(function() { loader.classList.add('pl-done'); }, dur + 50);
+      {%- assign _loader_dur = settings.global_page_loader_duration | default: 300 -%}
+      {%- assign _loader_bg = settings.global_page_loader_bg_color | default: '#ffffff' -%}
+      {%- assign _loader_type = settings.global_page_loader_type | default: 'spinner' -%}
+      {%- assign _loader_size = settings.global_page_loader_media_size | default: 64 -%}
+      {%- assign _loader_color = settings.global_page_loader_spinner_color | default: '#0058BB' -%}
+      {%- assign _loader_url = settings.global_page_loader_media_url | default: 'none' -%}
+      {%- if _loader_url == 'none' or _loader_url == blank %}{%- assign _loader_url = '' -%}{%- endif -%}
+      {%- assign _border_w = _loader_size | divided_by: 8 -%}
+      <style>
+        #page-loader {
+          position: fixed;
+          inset: 0;
+          z-index: 99999;
+          background: {{ _loader_bg }};
+          opacity: 1;
+          transition: opacity {{ _loader_dur }}ms ease;
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        function show() {
-          if (!loader) return;
-          loader.classList.remove('pl-done', 'pl-out');
+        #page-loader.pl-out  { opacity: 0; }
+        #page-loader.pl-done { display: none; }
+        .pl-spinner {
+          width: {{ _loader_size }}px;
+          height: {{ _loader_size }}px;
+          border: {{ _border_w }}px solid {{ _loader_color }}33;
+          border-top-color: {{ _loader_color }};
+          border-radius: 50%;
+          animation: pl-spin 0.7s linear infinite;
+          flex-shrink: 0;
         }
-        document.addEventListener('DOMContentLoaded', function() {
-          loader = document.getElementById('page-loader');
-          setTimeout(hide, dur);
-          document.addEventListener('click', function(e) {
-            var a = e.target.closest('a[href]');
-            if (!a) return;
-            var href = a.getAttribute('href');
-            if (!href || href.charAt(0) === '#') return;
-            if (a.target === '_blank' || e.ctrlKey || e.metaKey || e.shiftKey) return;
-            if (href.indexOf('javascript:') === 0) return;
-            if (a.hasAttribute('data-ajax-nav')) return;
-            try {
-              var u = new URL(a.href);
-              if (u.hostname !== window.location.hostname) return;
-            } catch(err) { return; }
-            show();
-          });
-        });
-        /* Failsafe: never leave page covered */
-        setTimeout(function() { loader = document.getElementById('page-loader'); hide(); }, 8000);
-      })();
-    </script>
-    {%- endif %}
-    <script defer src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-      const headingFont = {{ settings.heading_font_family | default: 'Plus Jakarta Sans' | json }};
-      const bodyFont = {{ settings.body_font_family | default: 'Inter' | json }};
-      window.tailwind = window.tailwind || {};
-      window.tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              primary: 'var(--color-accent)',
-              'primary-dark': 'var(--color-accent-dark)',
-              secondary: 'var(--color-secondary)',
-              surface: 'var(--color-surface)',
-              'surface-subtle': 'var(--color-surface-subtle)',
-              'on-surface': 'var(--color-text)',
-              muted: 'var(--color-muted)',
-              success: 'var(--color-success)',
-              warning: 'var(--color-warning)',
-              danger: 'var(--color-danger)',
-              'surface-container': 'var(--color-surface-card)',
-              outline: 'var(--color-border)'
-            },
-            fontFamily: {
-              headline: [headingFont, 'sans-serif'],
-              body: [bodyFont, 'sans-serif']
-            },
-            borderRadius: {
-              DEFAULT: '8px',
-              lg: '12px',
-              xl: '16px',
-              full: '9999px'
-            }
+        @keyframes pl-spin { to { transform: rotate(360deg); } }
+        .pl-media {
+          width: {{ _loader_size }}px;
+          height: {{ _loader_size }}px;
+          object-fit: contain;
+          flex-shrink: 0;
+        }
+      </style>
+      <script>
+        (function() {
+          var dur = {{ _loader_dur }};
+          var loader;
+          var hidden = false;
+          function hide() {
+            if (hidden) return;
+            hidden = true;
+            loader = loader || document.getElementById('page-loader');
+            if (!loader) return;
+            loader.classList.add('pl-out');
+            setTimeout(function() { if (loader) loader.classList.add('pl-done'); }, dur + 50);
           }
-        }
-      }
-    </script>
+          function show() {
+            hidden = false;
+            loader = loader || document.getElementById('page-loader');
+            if (!loader) return;
+            loader.classList.remove('pl-done', 'pl-out');
+          }
+          function scheduleHide() {
+            requestAnimationFrame(function() { requestAnimationFrame(hide); });
+          }
+          document.addEventListener('DOMContentLoaded', function() {
+            loader = document.getElementById('page-loader');
+            scheduleHide();
+            document.addEventListener('click', function(e) {
+              var a = e.target.closest('a[href]');
+              if (!a) return;
+              var href = a.getAttribute('href');
+              if (!href || href.charAt(0) === '#') return;
+              if (a.target === '_blank' || e.ctrlKey || e.metaKey || e.shiftKey) return;
+              if (href.indexOf('javascript:') === 0) return;
+              if (a.hasAttribute('data-ajax-nav')) return;
+              try {
+                var u = new URL(a.href);
+                if (u.hostname !== window.location.hostname) return;
+              } catch(err) { return; }
+              show();
+            });
+          });
+          /* Failsafe: nunca deixar a página coberta por mais de 3s */
+          setTimeout(function() { hide(); }, 3000);
+        })();
+      </script>
+    {%- endif %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    {{ content_for_header }}
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    >
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    >
     {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ 'tailwind-built.css' | asset_url | stylesheet_tag }}
+    {{ content_for_header }}
     {% if settings.global_product_card_media_full_bleed %}
       <style>
         .gc-product-card {
@@ -385,38 +371,48 @@
         }
       }
     </style>
-    <script>(function(){
-      var _f=window.fetch;
-      window.fetch=function(){
-        var u=arguments[0];
-        if(u&&typeof u!=='string')u=u.url;
-        var p=_f.apply(this,arguments);
-        if(typeof u==='string'&&/\/cart\/add/.test(u)){
-          p.then(function(r){if(r.ok)document.dispatchEvent(new CustomEvent('mx:cart:added'));}).catch(function(){});
-        }
-        return p;
-      };
-      var _o=XMLHttpRequest.prototype.open,_s=XMLHttpRequest.prototype.send;
-      XMLHttpRequest.prototype.open=function(m,u){this._mxu=u;return _o.apply(this,arguments);};
-      XMLHttpRequest.prototype.send=function(){
-        var x=this;
-        if(x._mxu&&/\/cart\/add/.test(x._mxu))
-          x.addEventListener('load',function(){if(x.status>=200&&x.status<300)document.dispatchEvent(new CustomEvent('mx:cart:added'));});
-        return _s.apply(this,arguments);
-      };
-    }());</script>
+    <script>
+      (function () {
+        var _f = window.fetch;
+        window.fetch = function () {
+          var u = arguments[0];
+          if (u && typeof u !== 'string') u = u.url;
+          var p = _f.apply(this, arguments);
+          if (typeof u === 'string' && /\/cart\/add/.test(u)) {
+            p.then(function (r) {
+              if (r.ok) document.dispatchEvent(new CustomEvent('mx:cart:added'));
+            }).catch(function () {});
+          }
+          return p;
+        };
+        var _o = XMLHttpRequest.prototype.open,
+          _s = XMLHttpRequest.prototype.send;
+        XMLHttpRequest.prototype.open = function (m, u) {
+          this._mxu = u;
+          return _o.apply(this, arguments);
+        };
+        XMLHttpRequest.prototype.send = function () {
+          var x = this;
+          if (x._mxu && /\/cart\/add/.test(x._mxu))
+            x.addEventListener('load', function () {
+              if (x.status >= 200 && x.status < 300) document.dispatchEvent(new CustomEvent('mx:cart:added'));
+            });
+          return _s.apply(this, arguments);
+        };
+      })();
+    </script>
   </head>
   <body class="template-{{ template.name1| handle }}">
     {%- if settings.global_page_loader_enabled %}
-    <div id="page-loader" aria-hidden="true">
-      {%- if _loader_type == 'gif' and _loader_url != blank -%}
-        <img class="pl-media" src="{{ _loader_url }}" alt="" loading="eager" draggable="false">
-      {%- elsif _loader_type == 'video' and _loader_url != blank -%}
-        <video class="pl-media" autoplay loop muted playsinline><source src="{{ _loader_url }}"></video>
-      {%- else -%}
-        <div class="pl-spinner"></div>
-      {%- endif -%}
-    </div>
+      <div id="page-loader" aria-hidden="true">
+        {%- if _loader_type == 'gif' and _loader_url != blank -%}
+          <img class="pl-media" src="{{ _loader_url }}" alt="" loading="eager" draggable="false">
+        {%- elsif _loader_type == 'video' and _loader_url != blank -%}
+          <video class="pl-media" autoplay loop muted playsinline><source src="{{ _loader_url }}"></video>
+        {%- else -%}
+          <div class="pl-spinner"></div>
+        {%- endif -%}
+      </div>
     {%- endif %}
     {% liquid
       assign requires_customer_login = false
@@ -434,46 +430,46 @@
 
         if requires_customer_login == false and settings.enable_customer_page_protection
           unless request.path contains '/account'
-          assign protected_page_handles_raw = settings.protected_page_handles | default: ''
-          assign protected_page_handles = protected_page_handles_raw | newline_to_br | split: '<br />'
+            assign protected_page_handles_raw = settings.protected_page_handles | default: ''
+            assign protected_page_handles = protected_page_handles_raw | newline_to_br | split: '<br />'
 
-          for protected_handle_item in protected_page_handles
-            assign protected_handle = protected_handle_item | strip
-            if protected_handle != blank and protected_handle != '-'
-              assign expected_page_path = '/pages/' | append: protected_handle
-              if expected_page_path == '/pages/favoritos'
-                continue
-              endif
-
-              if request.path == expected_page_path
-                assign requires_customer_login = true
-                break
-              endif
-            endif
-          endfor
-
-            if requires_customer_login == false
-            assign protected_paths_raw = settings.protected_custom_paths | default: ''
-            assign protected_paths = protected_paths_raw | newline_to_br | split: '<br />'
-
-            for protected_path_item in protected_paths
-              assign protected_path = protected_path_item | strip
-              if protected_path != blank and protected_path != '-'
-                assign protected_path_with_slash = protected_path
-                unless protected_path_with_slash contains '/'
-                  assign protected_path_with_slash = '/' | append: protected_path
-                endunless
-
-                if protected_path_with_slash == '/pages/favoritos' or protected_path == '/pages/favoritos'
+            for protected_handle_item in protected_page_handles
+              assign protected_handle = protected_handle_item | strip
+              if protected_handle != blank and protected_handle != '-'
+                assign expected_page_path = '/pages/' | append: protected_handle
+                if expected_page_path == '/pages/favoritos'
                   continue
                 endif
 
-                if request.path == protected_path or request.path == protected_path_with_slash
+                if request.path == expected_page_path
                   assign requires_customer_login = true
                   break
                 endif
               endif
             endfor
+
+            if requires_customer_login == false
+              assign protected_paths_raw = settings.protected_custom_paths | default: ''
+              assign protected_paths = protected_paths_raw | newline_to_br | split: '<br />'
+
+              for protected_path_item in protected_paths
+                assign protected_path = protected_path_item | strip
+                if protected_path != blank and protected_path != '-'
+                  assign protected_path_with_slash = protected_path
+                  unless protected_path_with_slash contains '/'
+                    assign protected_path_with_slash = '/' | append: protected_path
+                  endunless
+
+                  if protected_path_with_slash == '/pages/favoritos' or protected_path == '/pages/favoritos'
+                    continue
+                  endif
+
+                  if request.path == protected_path or request.path == protected_path_with_slash
+                    assign requires_customer_login = true
+                    break
+                  endif
+                endif
+              endfor
             endif
           endunless
         endif
@@ -485,7 +481,10 @@
         window.location.replace('{{ routes.account_login_url }}?return_url={{ return_url_target | url_encode }}');
       </script>
       <noscript>
-        <meta http-equiv="refresh" content="0;url={{ routes.account_login_url }}?return_url={{ return_url_target | url_encode }}">
+        <meta
+          http-equiv="refresh"
+          content="0;url={{ routes.account_login_url }}?return_url={{ return_url_target | url_encode }}"
+        >
       </noscript>
     {% endif %}
 
@@ -498,8 +497,15 @@
     </main>
     {% section 'footer' %}
     <script src="{{ 'carousel.js' | asset_url }}" defer></script>
-  <!-- iframe pp-form-sink: absorve POST nativo do form de produto para evitar reload -->
-  <iframe id="pp-form-sink" name="pp-form-sink" style="display:none;position:absolute;width:0;height:0;border:0;" aria-hidden="true" tabindex="-1"></iframe>
+    <script src="{{ 'discount-code.js' | asset_url }}" defer></script>
+    <script src="{{ 'purchase-toast.js' | asset_url }}" defer></script>
+    <!-- iframe pp-form-sink: absorve POST nativo do form de produto para evitar reload -->
+    <iframe
+      id="pp-form-sink"
+      name="pp-form-sink"
+      style="display:none;position:absolute;width:0;height:0;border:0;"
+      aria-hidden="true"
+      tabindex="-1"
+    ></iframe>
   </body>
 </html>
-

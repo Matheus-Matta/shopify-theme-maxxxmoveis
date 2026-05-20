@@ -315,24 +315,114 @@
   #shopify-section-{{ section.id }} .agendamento-btn-primary {
     background: {{ settings.global_primary_color | default: '#0058BB' }};
     color: #FFFFFF;
+    box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
   }
 
   #shopify-section-{{ section.id }} .agendamento-btn-primary:hover {
     background: {{ settings.global_primary_hover_color | default: '#004A9D' }};
+    box-shadow: 0 3px 10px -3px rgba(0, 0, 0, 0.09), 0 1px 3px -1px rgba(0, 0, 0, 0.05);
   }
 
   #shopify-section-{{ section.id }} .agendamento-btn-secondary {
     background: #FFFFFF;
     color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
     border-color: {{ settings.global_border_color | default: '#E5E7EB' }};
+    box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
   }
 
   #shopify-section-{{ section.id }} .agendamento-btn-secondary:hover {
     background: {{ settings.global_surface_base_color | default: '#F7F7F7' }};
+    box-shadow: 0 3px 10px -3px rgba(0, 0, 0, 0.09), 0 1px 3px -1px rgba(0, 0, 0, 0.05);
   }
 
   #shopify-section-{{ section.id }} .agendamento-mobile-submit {
     display: none;
+  }
+
+  @keyframes ams-slide-in {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  #shopify-section-{{ section.id }} .ams-card {
+    /* inner wrapper — styled only inside @media 989px */
+  }
+
+  /* Linhas colapsáveis */
+  #shopify-section-{{ section.id }} .ams-collapsible {
+    overflow: hidden;
+    max-height: 14rem;
+    opacity: 1;
+    transition:
+      max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.28s ease,
+      margin-bottom 0.3s ease;
+    margin-bottom: 0;
+  }
+
+  /* Estado compacto — oculta detalhes, mostra só total + botão */
+  #shopify-section-{{ section.id }} .agendamento-mobile-submit.ams--compact .ams-collapsible {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+  }
+  #shopify-section-{{ section.id }} .agendamento-mobile-submit.ams--compact .ams-row--total {
+    border-top: none;
+    padding-top: 0.1rem;
+  }
+
+  #shopify-section-{{ section.id }} .ams-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 0;
+    gap: 0.5rem;
+  }
+
+  #shopify-section-{{ section.id }} .ams-row__label {
+    font-size: 0.93rem;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .ams-row__value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .ams-row--discount .ams-row__value {
+    color: {{ settings.global_danger_color | default: '#ef4444' }};
+  }
+
+  #shopify-section-{{ section.id }} .ams-row--total {
+    border-top: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    padding-top: 0.75rem;
+  }
+
+  #shopify-section-{{ section.id }} .ams-row--total .ams-row__label {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .ams-row--total .ams-row__value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .ams-submit-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.75rem;
+    text-align: center;
+    border-radius: 9999px;
+    min-height: 48px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
   }
 
   @media (min-width: 980px) {
@@ -376,7 +466,12 @@
 
   @media (max-width: 989px) {
     #shopify-section-{{ section.id }} .agendamento-page {
-      padding: 1.2rem 0 calc(5.1rem + env(safe-area-inset-bottom));
+      padding: 2rem 0rem 0rem 0rem;
+    }
+
+    /* Resumo lateral oculto no mobile — substituído pelo painel fixo */
+    #shopify-section-{{ section.id }} .agendamento-summary {
+      display: none !important;
     }
 
     #shopify-section-{{ section.id }} .summary-actions .agendamento-btn-primary {
@@ -390,42 +485,35 @@
       bottom: 0;
       z-index: 1050;
       display: block !important;
-      padding: 0.55rem 0.8rem calc(0.55rem + env(safe-area-inset-bottom));
-      background: color-mix(in srgb, {{ settings.global_surface_card_color | default: '#FFFFFF' }} 92%, #ffffff 8%);
+      background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
       border-top: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
-      box-shadow: 0 -8px 22px rgba(15, 23, 42, 0.1);
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -6px 32px rgba(15, 23, 42, 0.13);
+      padding: 1.1rem 1rem calc(1.1rem + env(safe-area-inset-bottom));
+      animation: ams-slide-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    #shopify-section-{{ section.id }} .agendamento-mobile-submit__inner {
+    #shopify-section-{{ section.id }} .ams-card {
       max-width: 1160px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 0.8rem;
+    }
+
+    #shopify-section-{{ section.id }} .ams-coupon {
+      display: flex;
       align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
     }
 
-    #shopify-section-{{ section.id }} .agendamento-mobile-submit__label {
-      margin: 0;
-      color: {{ settings.global_text_muted_color | default: '#4B5563' }};
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      line-height: 1.1;
+    #shopify-section-{{ section.id }} .ams-coupon .dcb-wrap {
+      flex: 1;
+      min-width: 0;
     }
 
-    #shopify-section-{{ section.id }} .agendamento-mobile-submit__total {
-      margin: 0.18rem 0 0;
-      color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
-      font-size: 0.96rem;
-      font-weight: 400;
-      line-height: 1.2;
-    }
-
-    #shopify-section-{{ section.id }} .agendamento-mobile-submit__button {
-      min-height: 44px;
-      padding: 0.68rem 1rem;
-      white-space: nowrap;
+    /* Respiro no final da página para o painel não cobrir conteúdo */
+    #shopify-section-{{ section.id }} .agendamento-page {
+      padding-bottom: 0; /* nao mude isso */
     }
 
     #shopify-section-{{ section.id }} .agendamento-field[data-custom-date-wrap] {
@@ -630,9 +718,13 @@
           <span>Frete</span>
           <span>Calculado no checkout</span>
         </div>
+        <div class="summary-row summary-row--discount" data-discount-row style="display:none;color:var(--color-success,#16a34a);">
+          <span data-discount-row-label>Desconto</span>
+          <strong data-discount-row-value></strong>
+        </div>
         <div class="summary-row summary-row-total">
           <span>Total</span>
-          <strong>{{ cart.total_price | money }}</strong>
+          <strong data-cart-total>{{ cart.total_price | money }}</strong>
         </div>
 
         <div class="summary-actions">
@@ -643,12 +735,27 @@
     </div>
 
     <div class="agendamento-mobile-submit" data-agendamento-mobile-submit>
-      <div class="agendamento-mobile-submit__inner">
-        <div class="agendamento-mobile-submit__meta">
-          <p class="agendamento-mobile-submit__label">Total</p>
-          <p class="agendamento-mobile-submit__total">{{ cart.total_price | money }}</p>
+      <div class="ams-card">
+        {%- assign _ams_inst = settings.global_installments_count | default: 10 | plus: 0 -%}
+        {%- if _ams_inst < 1 -%}{%- assign _ams_inst = 1 -%}{%- endif -%}
+        <div class="ams-collapsible">
+          <div class="ams-coupon">
+            {%- render 'discount-code-box' -%}
+          </div>
+          <div class="ams-row">
+            <span class="ams-row__label">Em até {{ _ams_inst }}x sem juros</span>
+            <strong class="ams-row__value" data-cart-installments data-installments-count="{{ _ams_inst }}">{{ cart.total_price | divided_by: _ams_inst | money }}</strong>
+          </div>
+          <div class="ams-row ams-row--discount" data-discount-row style="display:none;">
+            <span class="ams-row__label" data-discount-row-label>Desconto</span>
+            <strong class="ams-row__value" data-discount-row-value></strong>
+          </div>
         </div>
-        <button class="agendamento-btn agendamento-btn-primary agendamento-mobile-submit__button" type="button" data-agendamento-submit>Finalizar pedido</button>
+        <div class="ams-row ams-row--total">
+          <span class="ams-row__label">Total</span>
+          <strong class="ams-row__value" data-cart-total>{{ cart.total_price | money }}</strong>
+        </div>
+        <button class="agendamento-btn agendamento-btn-primary ams-submit-btn" type="button" data-agendamento-submit>Finalizar pedido</button>
       </div>
     </div>
 
@@ -660,6 +767,30 @@
   window.SchedulingConfig = { checkoutUrl: '{{ routes.checkout_url }}' };
 </script>
 <script src="{{ 'scheduling.js' | asset_url }}" defer></script>
+<script>
+  (function () {
+    function initAmsPanel() {
+      var panel  = document.querySelector('[data-agendamento-mobile-submit]');
+      var footer = document.querySelector('.footer-shell');
+      if (!panel) return;
+
+      function check() {
+        var nearFooter = footer && footer.getBoundingClientRect().bottom <= window.innerHeight + 40;
+        // Compacto: footer fisicamente atrás do painel
+        panel.classList.toggle('ams--compact', nearFooter);
+      }
+
+      window.addEventListener('scroll', function () { requestAnimationFrame(check); }, { passive: true });
+      check();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAmsPanel);
+    } else {
+      initAmsPanel();
+    }
+  })();
+</script>
 
 {% schema %}
 {

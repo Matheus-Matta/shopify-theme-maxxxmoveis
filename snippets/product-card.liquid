@@ -53,6 +53,20 @@
     assign card_show_buy_button = true
   endif
 
+  assign low_stock_enabled = settings.global_low_stock_badge_enabled | default: true
+  assign low_stock_min = settings.global_low_stock_badge_min | default: 1 | plus: 0
+  assign low_stock_max = settings.global_low_stock_badge_max | default: 10 | plus: 0
+  assign low_stock_badge_bg = settings.global_low_stock_badge_bg | default: '#F97316'
+  assign low_stock_badge_text_color = settings.global_low_stock_badge_text | default: '#ffffff'
+  assign low_stock_qty = 0
+  if product != blank and low_stock_enabled
+    for v in product.variants
+      if v.inventory_management == 'shopify' and v.inventory_quantity > 0
+        assign low_stock_qty = low_stock_qty | plus: v.inventory_quantity
+      endif
+    endfor
+  endif
+
   if product != blank
     if product.tags contains 'TOP OFERTA'
       assign badge_text = 'TOP OFERTA'
@@ -160,6 +174,10 @@
       <div class="absolute top-3 left-3 flex flex-col gap-2">
         <div class="{{ badge_class }} text-[10px] font-bold px-2 py-1 rounded shadow-sm">{{ badge_text }}</div>
       </div>
+    {% endif %}
+
+    {% if product != blank and low_stock_enabled and low_stock_qty >= low_stock_min and low_stock_qty <= low_stock_max and product.available %}
+      {%- render 'low-stock-badge', ls_product: product -%}
     {% endif %}
 
     {% if product != blank %}

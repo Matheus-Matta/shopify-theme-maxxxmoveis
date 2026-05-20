@@ -8,6 +8,12 @@
         "label": "Logo"
       },
       {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Recomendado: imagem quadrada (ex: 64x64px)"
+      },
+      {
         "type": "range",
         "id": "logo_width",
         "label": "Largura do logo",
@@ -812,6 +818,58 @@
         "id": "global_product_card_discount_badge_text",
         "label": "Badge desconto: texto",
         "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Badge de últimas peças"
+      },
+      {
+        "type": "checkbox",
+        "id": "global_low_stock_badge_enabled",
+        "label": "Ativar badge de últimas peças",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "global_low_stock_badge_min",
+        "label": "Estoque mínimo para exibir",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "default": 1,
+        "info": "Exibe o badge quando o estoque for maior ou igual a este valor"
+      },
+      {
+        "type": "range",
+        "id": "global_low_stock_badge_max",
+        "label": "Estoque máximo para exibir",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "default": 10,
+        "info": "Exibe o badge quando o estoque for menor ou igual a este valor"
+      },
+      {
+        "type": "color",
+        "id": "global_low_stock_badge_bg",
+        "label": "Badge últimas peças: fundo",
+        "default": "#F97316"
+      },
+      {
+        "type": "color",
+        "id": "global_low_stock_badge_text",
+        "label": "Badge últimas peças: texto",
+        "default": "#ffffff"
+      },
+      {
+        "type": "range",
+        "id": "global_low_stock_badge_opacity",
+        "label": "Badge últimas peças: opacidade",
+        "min": 1,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 85
       }
     ]
   },
@@ -1300,9 +1358,18 @@
         "label": "Tipo de elemento",
         "default": "spinner",
         "options": [
-          { "value": "spinner", "label": "Spinner padrão" },
-          { "value": "gif",     "label": "GIF personalizado" },
-          { "value": "video",   "label": "Vídeo personalizado" }
+          {
+            "value": "spinner",
+            "label": "Spinner padrão"
+          },
+          {
+            "value": "gif",
+            "label": "GIF personalizado"
+          },
+          {
+            "value": "video",
+            "label": "Vídeo personalizado"
+          }
         ]
       },
       {
@@ -1492,6 +1559,71 @@
         "id": "global_account_order_header_border",
         "label": "Borda inferior do cabeçalho",
         "default": "#e8ebef"
+      }
+    ]
+  },
+  {
+    "name": "Cupom de Desconto",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Aparência"
+      },
+      {
+        "type": "checkbox",
+        "id": "dcb_show_icon",
+        "label": "Exibir ícone na etiqueta",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Textos"
+      },
+      {
+        "type": "text",
+        "id": "dcb_label",
+        "label": "Etiqueta",
+        "default": "Cupom de desconto"
+      },
+      {
+        "type": "text",
+        "id": "dcb_placeholder",
+        "label": "Placeholder do campo",
+        "default": "Digite seu cupom"
+      },
+      {
+        "type": "text",
+        "id": "dcb_apply_label",
+        "label": "Botão: aplicar",
+        "default": "Aplicar"
+      },
+      {
+        "type": "text",
+        "id": "dcb_remove_label",
+        "label": "Botão: remover",
+        "default": "Remover"
+      }
+    ]
+  },
+  {
+    "name": "Storefront API",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Frete via Storefront API"
+      },
+      {
+        "type": "text",
+        "id": "storefront_access_token",
+        "label": "Storefront Access Token",
+        "info": "Token público do canal Headless/Storefront API. Obtenha em: Configurações → Apps e canais de vendas → Develop apps."
+      },
+      {
+        "type": "text",
+        "id": "storefront_api_version",
+        "label": "Versão da API",
+        "default": "2025-01",
+        "info": "Exemplo: 2025-01 ou 2024-10"
       }
     ]
   }

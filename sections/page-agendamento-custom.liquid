@@ -1,0 +1,891 @@
+{% if cart.item_count == 0 %}
+  <script>
+    window.location.href = '{{ routes.cart_url }}';
+  </script>
+{% endif %}
+
+{% liquid
+  assign min_lead_days = section.settings.min_lead_days | default: 3
+  assign max_lead_days = section.settings.max_lead_days | default: 12
+  assign agen_confirm_btn_bg = section.settings.confirm_btn_bg | default: settings.global_primary_color | default: '#0058BB'
+  assign agen_confirm_btn_bg_hover = section.settings.confirm_btn_bg_hover | default: settings.global_primary_hover_color | default: '#004A9D'
+  assign agen_confirm_btn_text = section.settings.confirm_btn_text | default: '#ffffff'
+  assign agen_confirm_btn_radius = section.settings.confirm_btn_radius | default: 10
+  assign agen_confirm_btn_text_size = section.settings.confirm_btn_text_size | default: 14
+  assign agen_back_btn_bg = section.settings.back_btn_bg | default: '#ffffff'
+  assign agen_back_btn_text = section.settings.back_btn_text | default: settings.global_text_primary_color | default: '#1A1C1C'
+  assign agen_back_btn_border = section.settings.back_btn_border | default: settings.global_border_color | default: '#E5E7EB'
+  assign agen_back_btn_bg_hover = section.settings.back_btn_bg_hover | default: settings.global_surface_base_color | default: '#F7F7F7'
+  assign agen_back_btn_radius = section.settings.back_btn_radius | default: 10
+%}
+
+<style>
+  #shopify-section-{{ section.id }} .agendamento-page {
+    background: {{ settings.global_surface_base_color | default: '#F7F7F7' }};
+    padding: 1.5rem 0 2rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-page-width {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-layout {
+    display: grid;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-card,
+  #shopify-section-{{ section.id }} .agendamento-summary {
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    border: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-card {
+    padding: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-summary {
+    padding: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-title {
+    margin: 0;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    font-size: clamp(1.4rem, 3.2vw, 1.95rem);
+    line-height: 1.12;
+    font-weight: 600;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-subtitle {
+    margin: 0.45rem 0 0;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-size: 0.92rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-resumo {
+    margin: 0.9rem 0 0;
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+    background: {{ settings.global_surface_base_color | default: '#F7F7F7' }};
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    font-size: 0.9rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-rules {
+    margin: 0.7rem 0 0;
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+    border: 1px dashed {{ settings.global_border_color | default: '#D1D5DB' }};
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-rules strong {
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-form {
+    margin-top: 0.9rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-picker-label {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .delivery-cards {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 0.55rem;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card {
+    position: relative;
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.8rem 0.9rem 0.8rem 2.2rem;
+    border: 1px solid {{ settings.global_border_color | default: '#D1D5DB' }};
+    border-radius: 12px;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card:hover {
+    border-color: {{ settings.global_primary_color | default: '#0058BB' }};
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card input {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card.is-selected {
+    border-color: {{ settings.global_primary_color | default: '#0058BB' }};
+    box-shadow: 0 0 0 2px rgba(0, 88, 187, 0.14);
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card-title {
+    margin: 0;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    font-weight: 400;
+    font-size: 0.96rem;
+  }
+
+  #shopify-section-{{ section.id }} .delivery-card-subtitle {
+    margin: 0;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-size: 0.82rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-field {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-label {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-input,
+  #shopify-section-{{ section.id }} .agendamento-select,
+  #shopify-section-{{ section.id }} .agendamento-textarea {
+    min-height: 46px;
+    border: 1px solid {{ settings.global_border_color | default: '#D1D5DB' }};
+    border-radius: 10px;
+    padding: 0.72rem 0.85rem;
+    background: {{ settings.global_surface_card_color | default: '#FFFFFF' }};
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+    font: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-input:focus,
+  #shopify-section-{{ section.id }} .agendamento-select:focus,
+  #shopify-section-{{ section.id }} .agendamento-textarea:focus {
+    outline: none;
+    border-color: {{ settings.global_primary_color | default: '#0058BB' }};
+    box-shadow: 0 0 0 3px rgba(0, 88, 187, 0.12);
+  }
+
+  #shopify-section-{{ section.id }} .hidden {
+    display: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-custom-toggle {
+    margin-top: 0.2rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-error {
+    margin: 0.15rem 0 0;
+    color: {{ settings.global_danger_color | default: '#EF4444' }};
+    font-size: 0.86rem;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .summary-title {
+    margin: 0;
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.8rem;
+    color: {{ settings.global_text_muted_color | default: '#4B5563' }};
+    font-size: 0.92rem;
+  }
+
+  #shopify-section-{{ section.id }} .summary-row strong {
+    color: {{ settings.global_text_primary_color | default: '#1A1C1C' }};
+  }
+
+  #shopify-section-{{ section.id }} .summary-row-total {
+    margin-top: 0.95rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid {{ settings.global_border_color | default: '#E5E7EB' }};
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .summary-actions {
+    margin-top: 0.95rem;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn {
+    min-height: 44px;
+    border-radius: {{ agen_confirm_btn_radius }}px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    text-decoration: none;
+    font-size: {{ agen_confirm_btn_text_size }}px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn-primary {
+    background: {{ agen_confirm_btn_bg }};
+    color: {{ agen_confirm_btn_text }};
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn-primary:hover {
+    background: {{ agen_confirm_btn_bg_hover }};
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn-secondary {
+    background: {{ agen_back_btn_bg }};
+    color: {{ agen_back_btn_text }};
+    border-color: {{ agen_back_btn_border }};
+    border-radius: {{ agen_back_btn_radius }}px;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn-secondary:hover {
+    background: {{ agen_back_btn_bg_hover }};
+  }
+
+  @keyframes agendamento-btn-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn.is-loading {
+    opacity: 0.72;
+    pointer-events: none;
+    cursor: default;
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .agendamento-btn.is-loading::after {
+    content: '';
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: agendamento-btn-spin 0.6s linear infinite;
+    margin-left: 7px;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 980px) {
+    #shopify-section-{{ section.id }} .agendamento-page {
+      padding: 2.2rem 0 2.6rem;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-layout {
+      grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+      gap: 1rem;
+    }
+
+    #shopify-section-{{ section.id }} .agendamento-card,
+    #shopify-section-{{ section.id }} .agendamento-summary {
+      padding: 1.2rem;
+    }
+  }
+</style>
+
+<section class="agendamento-page">
+  <div class="agendamento-page-width">
+    <div class="agendamento-layout">
+      <article class="agendamento-card">
+        <h1 class="agendamento-title font-semibold">Agendamento de entrega</h1>
+        <p class="agendamento-subtitle">Escolha uma data sugerida ou personalize antes de finalizar.</p>
+
+        <div class="agendamento-resumo">
+          <strong>Itens no carrinho:</strong> {{ cart.item_count }}
+        </div>
+
+        <p class="agendamento-rules">
+          <strong>Janela de agendamento:</strong>
+          minimo de {{ min_lead_days }} dia(s) e maximo de {{ max_lead_days }} dia(s) apos a compra.
+        </p>
+
+        <form
+          id="AgendamentoForm"
+          class="agendamento-form"
+          data-min-lead-days="{{ min_lead_days }}"
+          data-max-lead-days="{{ max_lead_days }}"
+          data-delivery-monday="{{ section.settings.delivery_monday | json }}"
+          data-delivery-tuesday="{{ section.settings.delivery_tuesday | json }}"
+          data-delivery-wednesday="{{ section.settings.delivery_wednesday | json }}"
+          data-delivery-thursday="{{ section.settings.delivery_thursday | json }}"
+          data-delivery-friday="{{ section.settings.delivery_friday | json }}"
+          data-delivery-saturday="{{ section.settings.delivery_saturday | json }}"
+          data-delivery-sunday="{{ section.settings.delivery_sunday | json }}"
+          data-block-public-holidays="{{ section.settings.block_public_holidays | json }}"
+          data-holiday-country-code="{{ section.settings.holiday_country_code | default: 'BR' | upcase | escape }}"
+          data-block-manual-holidays="{{ section.settings.block_manual_holidays | json }}"
+          data-manual-holiday-dates="{{ section.settings.manual_holiday_dates | strip | escape }}"
+        >
+          <input type="hidden" id="delivery_date_selected" value="{{ cart.attributes['Agendamento'] | escape }}">
+
+          <div>
+            <p class="agendamento-picker-label">Datas de entrega sugeridas</p>
+            <div class="delivery-cards" data-delivery-cards></div>
+            <button type="button" class="agendamento-btn agendamento-btn-secondary agendamento-custom-toggle" data-custom-date-toggle>Escolher personalizado</button>
+          </div>
+
+          <div class="agendamento-field hidden" data-custom-date-wrap>
+            <label class="agendamento-label" for="delivery_date">Data personalizada</label>
+            <input class="agendamento-input" id="delivery_date" type="date" inputmode="none" autocomplete="off">
+          </div>
+
+          <div class="agendamento-field">
+            <label class="agendamento-label" for="delivery_shift">Turno de entrega</label>
+            <select class="agendamento-select" id="delivery_shift">
+              <option value="">Selecione</option>
+              <option value="Manhã" {% if cart.attributes['Turno de entrega'] == 'Manhã' %}selected{% endif %}>Manhã</option>
+              <option value="Tarde" {% if cart.attributes['Turno de entrega'] == 'Tarde' %}selected{% endif %}>Tarde</option>
+              <option value="Noite" {% if cart.attributes['Turno de entrega'] == 'Noite' %}selected{% endif %}>Noite</option>
+            </select>
+          </div>
+
+          <div class="agendamento-field">
+            <label class="agendamento-label" for="delivery_note">Observação de entrega</label>
+            <textarea class="agendamento-textarea" id="delivery_note" rows="4">{{ cart.attributes['Observação de entrega'] | default: cart.attributes['Observacao de entrega'] | escape }}</textarea>
+          </div>
+
+          <p id="agendamento-error" class="agendamento-error hidden"></p>
+        </form>
+      </article>
+
+      <aside class="agendamento-summary" aria-label="Resumo do pedido">
+        <h2 class="summary-title font-semibold">Resumo do pedido</h2>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong>{{ cart.items_subtotal_price | money }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Frete</span>
+          <span>Calculado no checkout</span>
+        </div>
+        <div class="summary-row summary-row-total">
+          <span>Total</span>
+          <strong>{{ cart.total_price | money }}</strong>
+        </div>
+
+        <div class="summary-actions">
+          <button class="agendamento-btn agendamento-btn-primary" type="submit" form="AgendamentoForm" data-agendamento-submit>Finalizar pedido</button>
+          <a class="agendamento-btn agendamento-btn-secondary" href="{{ routes.all_products_collection_url }}">Continuar comprando</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('AgendamentoForm');
+    const dateInput = document.getElementById('delivery_date');
+    const dateSelectedInput = document.getElementById('delivery_date_selected');
+    const shiftInput = document.getElementById('delivery_shift');
+    const noteInput = document.getElementById('delivery_note');
+    const errorBox = document.getElementById('agendamento-error');
+    const customDateWrap = form ? form.querySelector('[data-custom-date-wrap]') : null;
+    const customDateToggle = form ? form.querySelector('[data-custom-date-toggle]') : null;
+    const deliveryCardsRoot = form ? form.querySelector('[data-delivery-cards]') : null;
+
+    if (!form || !dateInput || !dateSelectedInput || !shiftInput || !noteInput || !errorBox || !customDateWrap || !customDateToggle || !deliveryCardsRoot) return;
+
+    const toBoolean = (value) => String(value) === 'true';
+    const minLeadDays = Math.max(0, Number.parseInt(form.dataset.minLeadDays || '0', 10) || 0);
+    const maxLeadDaysRaw = Number.parseInt(form.dataset.maxLeadDays || '0', 10) || 0;
+    const maxLeadDays = Math.max(minLeadDays, maxLeadDaysRaw);
+    const blockPublicHolidays = toBoolean(form.dataset.blockPublicHolidays);
+    const blockManualHolidays = toBoolean(form.dataset.blockManualHolidays);
+    const holidayCountryCode = (form.dataset.holidayCountryCode || 'BR').trim().toUpperCase();
+    const manualHolidayDatesRaw = (form.dataset.manualHolidayDates || '').trim();
+
+    const weekdayEnabled = {
+      0: toBoolean(form.dataset.deliverySunday),
+      1: toBoolean(form.dataset.deliveryMonday),
+      2: toBoolean(form.dataset.deliveryTuesday),
+      3: toBoolean(form.dataset.deliveryWednesday),
+      4: toBoolean(form.dataset.deliveryThursday),
+      5: toBoolean(form.dataset.deliveryFriday),
+      6: toBoolean(form.dataset.deliverySaturday)
+    };
+
+    const hasAtLeastOneWeekdayEnabled = Object.values(weekdayEnabled).some(Boolean);
+    const holidayCache = new Map();
+    const manualHolidaySet = new Set(
+      manualHolidayDatesRaw
+        .split(/\r?\n|,|;/)
+        .map((entry) => entry.trim())
+        .filter((entry) => /^\d{4}-\d{2}-\d{2}$/.test(entry))
+    );
+
+    let suggestedDates = [];
+    let customMode = false;
+
+    const formatDateISO = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    const parseDateISO = (value) => {
+      const [year, month, day] = String(value).split('-').map(Number);
+      if (!year || !month || !day) return null;
+      return new Date(year, month - 1, day);
+    };
+
+    const addDays = (date, days) => {
+      const next = new Date(date);
+      next.setDate(next.getDate() + days);
+      return next;
+    };
+
+    const isDateWithinWindow = (date, minDate, maxDate) => date >= minDate && date <= maxDate;
+    const isWeekdayAllowed = (date) => !!weekdayEnabled[date.getDay()];
+
+    const formatDateCard = (date) => new Intl.DateTimeFormat('pt-BR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: '2-digit'
+    }).format(date);
+
+    const fetchHolidaysByYear = async (year) => {
+      const cacheKey = `${holidayCountryCode}-${year}`;
+      if (holidayCache.has(cacheKey)) return holidayCache.get(cacheKey);
+
+      const endpoint = `https://date.nager.at/api/v3/PublicHolidays/${year}/${holidayCountryCode}`;
+      const response = await fetch(endpoint);
+      if (!response.ok) throw new Error('Falha ao carregar feriados.');
+
+      const payload = await response.json();
+      const holidaySet = new Set((payload || []).map((holiday) => holiday.date));
+      holidayCache.set(cacheKey, holidaySet);
+      return holidaySet;
+    };
+
+    const isPublicHoliday = async (date) => {
+      const iso = formatDateISO(date);
+      const holidays = await fetchHolidaysByYear(date.getFullYear());
+      return holidays.has(iso);
+    };
+
+    const isManualHoliday = (date) => manualHolidaySet.has(formatDateISO(date));
+
+    const isBlockedHoliday = async (date) => {
+      if (blockManualHolidays && isManualHoliday(date)) return true;
+      if (!blockPublicHolidays) return false;
+      return isPublicHoliday(date);
+    };
+
+    const today = new Date();
+    const minDateObj = addDays(today, minLeadDays);
+    const maxDateObj = addDays(today, maxLeadDays);
+
+    dateInput.setAttribute('min', formatDateISO(minDateObj));
+    dateInput.setAttribute('max', formatDateISO(maxDateObj));
+
+    const blockedDateInputKeys = new Set([
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '/', '.',
+      'Backspace', 'Delete'
+    ]);
+
+    dateInput.addEventListener('keydown', (event) => {
+      if (blockedDateInputKeys.has(event.key)) {
+        event.preventDefault();
+      }
+    });
+
+    dateInput.addEventListener('paste', (event) => {
+      event.preventDefault();
+    });
+
+    dateInput.addEventListener('drop', (event) => {
+      event.preventDefault();
+    });
+
+    const validateDeliveryDate = async (deliveryDate) => {
+      if (!deliveryDate) {
+        return { valid: false, message: 'Selecione uma data de entrega sugerida ou personalizada.' };
+      }
+
+      const chosenDateOnly = parseDateISO(deliveryDate);
+      if (!chosenDateOnly) {
+        return { valid: false, message: 'Data invalida.' };
+      }
+
+      if (!isDateWithinWindow(chosenDateOnly, minDateObj, maxDateObj)) {
+        return {
+          valid: false,
+          message: `A data deve estar entre ${formatDateISO(minDateObj)} e ${formatDateISO(maxDateObj)}.`
+        };
+      }
+
+      if (!isWeekdayAllowed(chosenDateOnly)) {
+        return { valid: false, message: 'Este dia da semana não está habilitado para entrega.' };
+      }
+
+      if (blockPublicHolidays || blockManualHolidays) {
+        try {
+          const holiday = await isBlockedHoliday(chosenDateOnly);
+          if (holiday) {
+            return { valid: false, message: 'Não permitimos agendamento em feriados configurados.' };
+          }
+        } catch (error) {
+          return { valid: false, message: 'Não foi possível validar os feriados agora. Tente novamente em instantes.' };
+        }
+      }
+
+      return { valid: true };
+    };
+
+    dateInput.addEventListener('change', async () => {
+      const selectedValue = (dateInput.value || '').trim();
+      if (!selectedValue) {
+        setError('');
+        return;
+      }
+
+      const validation = await validateDeliveryDate(selectedValue);
+      if (!validation.valid) {
+        dateInput.value = '';
+        setError(validation.message);
+        return;
+      }
+
+      // Sincroniza o input hidden quando a data customizada é válida
+      dateSelectedInput.value = selectedValue;
+      setError('');
+    });
+
+    const setError = (message) => {
+      if (!message) {
+        errorBox.textContent = '';
+        errorBox.classList.add('hidden');
+        return;
+      }
+      errorBox.textContent = message;
+      errorBox.classList.remove('hidden');
+    };
+
+    const setCustomMode = (enabled) => {
+      customMode = enabled;
+      customDateWrap.classList.toggle('hidden', !enabled);
+      customDateToggle.textContent = enabled ? 'Voltar para datas sugeridas' : 'Escolher personalizado';
+    };
+
+    const renderSuggestedCards = (dates, selectedIso) => {
+      deliveryCardsRoot.innerHTML = dates.map((dateIso) => {
+        const dateObj = parseDateISO(dateIso);
+        const label = dateObj ? formatDateCard(dateObj) : dateIso;
+        const checked = dateIso === selectedIso;
+        return `
+          <label class="delivery-card ${checked ? 'is-selected' : ''}" data-delivery-card>
+            <input type="radio" name="delivery_date_option" value="${dateIso}" ${checked ? 'checked' : ''}>
+            <p class="delivery-card-title">Entrega em ${dateIso}</p>
+            <p class="delivery-card-subtitle">${label}</p>
+          </label>
+        `;
+      }).join('');
+
+      deliveryCardsRoot.querySelectorAll('input[name="delivery_date_option"]').forEach((radio) => {
+        radio.addEventListener('change', () => {
+          dateSelectedInput.value = radio.value;
+          setCustomMode(false);
+          deliveryCardsRoot.querySelectorAll('[data-delivery-card]').forEach((card) => {
+            card.classList.toggle('is-selected', card.contains(radio));
+          });
+          setError('');
+        });
+      });
+    };
+
+    const collectSuggestedDates = async (limit) => {
+      const dates = [];
+      let cursor = new Date(minDateObj);
+
+      while (cursor <= maxDateObj && dates.length < limit) {
+        if (isWeekdayAllowed(cursor)) {
+          const blocked = await isBlockedHoliday(cursor);
+          if (!blocked) {
+            dates.push(formatDateISO(cursor));
+          }
+        }
+        cursor = addDays(cursor, 1);
+      }
+
+      return dates;
+    };
+
+    customDateToggle.addEventListener('click', () => {
+      setCustomMode(!customMode);
+      if (customMode) {
+        dateInput.focus();
+      }
+      setError('');
+    });
+
+    (async function initDeliveryOptions() {
+      if (!hasAtLeastOneWeekdayEnabled) {
+        setError('Nenhum dia da semana esta habilitado para entrega. Ajuste isso no editor do tema.');
+        dateInput.disabled = true;
+        shiftInput.disabled = true;
+        noteInput.disabled = true;
+        customDateToggle.disabled = true;
+        return;
+      }
+
+      try {
+        suggestedDates = await collectSuggestedDates(3);
+      } catch (error) {
+        setError('Não foi possível carregar as datas sugeridas agora.');
+        setCustomMode(true);
+        return;
+      }
+
+      const savedDate = (dateSelectedInput.value || '').trim();
+      const hasSavedDateInSuggestions = suggestedDates.includes(savedDate);
+      let selectedDate = '';
+
+      if (hasSavedDateInSuggestions) {
+        selectedDate = savedDate;
+      } else if (suggestedDates.length >= 2) {
+        selectedDate = suggestedDates[1];
+      } else if (suggestedDates.length === 1) {
+        selectedDate = suggestedDates[0];
+      }
+
+      if (suggestedDates.length > 0) {
+        renderSuggestedCards(suggestedDates, selectedDate);
+      } else {
+        deliveryCardsRoot.innerHTML = '<p class="delivery-card-subtitle">Sem datas sugeridas no momento para as regras atuais.</p>';
+      }
+
+      if (savedDate && !hasSavedDateInSuggestions) {
+        // Valida o savedDate antes de carregá-lo no modo customizado;
+        // se as configurações mudaram (ex: domingo desabilitado), o valor salvo pode ser inválido.
+        let savedDateIsValid = false;
+        try {
+          const savedValidation = await validateDeliveryDate(savedDate);
+          savedDateIsValid = savedValidation.valid;
+        } catch (_) {
+          savedDateIsValid = false;
+        }
+
+        if (savedDateIsValid) {
+          setCustomMode(true);
+          dateInput.value = savedDate;
+        } else {
+          // Data salva inválida — descarta e usa a primeira sugestão
+          dateSelectedInput.value = selectedDate;
+          setCustomMode(false);
+        }
+      } else {
+        dateSelectedInput.value = selectedDate;
+        setCustomMode(false);
+      }
+    })();
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      setError('');
+
+      const submitBtns = document.querySelectorAll('[data-agendamento-submit]');
+      const setSubmitLoading = (loading) => {
+        submitBtns.forEach((btn) => {
+          if (loading) {
+            btn.classList.add('is-loading');
+            btn.disabled = true;
+            btn.dataset.origText = btn.dataset.origText || btn.textContent.trim();
+            btn.textContent = 'Processando...';
+          } else {
+            btn.classList.remove('is-loading');
+            btn.disabled = false;
+            btn.textContent = btn.dataset.origText || 'Finalizar pedido';
+          }
+        });
+      };
+
+      const selectedFromCards = (form.querySelector('input[name="delivery_date_option"]:checked') || {}).value || '';
+      const deliveryDate = (customMode ? dateInput.value : selectedFromCards || dateSelectedInput.value || '').trim();
+      const deliveryShift = shiftInput.value.trim();
+      const deliveryNote = noteInput.value.trim();
+
+      const validation = await validateDeliveryDate(deliveryDate);
+      if (!validation.valid) {
+        setError(validation.message);
+        if (customMode) dateInput.focus();
+        return;
+      }
+
+      setSubmitLoading(true);
+
+      try {
+        const response = await fetch(window.Shopify.routes.root + 'cart/update.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            attributes: {
+              Agendamento: deliveryDate,
+              'Turno de entrega': deliveryShift,
+              'Observação de entrega': deliveryNote
+            }
+          })
+        });
+
+        if (!response.ok) throw new Error('Falha ao salvar o agendamento.');
+        window.location.href = '{{ routes.checkout_url }}';
+      } catch (error) {
+        setSubmitLoading(false);
+        setError('Não foi possível salvar o agendamento. Tente novamente.');
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Pagina de agendamento",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Janela de datas"
+    },
+    {
+      "type": "range",
+      "id": "min_lead_days",
+      "label": "Dias minimos apos a compra",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "max_lead_days",
+      "label": "Dias maximos apos a compra",
+      "min": 1,
+      "max": 60,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Dias da semana com entrega"
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_monday",
+      "label": "Segunda-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_tuesday",
+      "label": "Terça-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_wednesday",
+      "label": "Quarta-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_thursday",
+      "label": "Quinta-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_friday",
+      "label": "Sexta-feira",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_saturday",
+      "label": "Sábado",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "delivery_sunday",
+      "label": "Domingo",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Feriados"
+    },
+    {
+      "type": "checkbox",
+      "id": "block_public_holidays",
+      "label": "Bloquear feriados públicos",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "holiday_country_code",
+      "label": "Código do país para API de feriados (ISO-3166)",
+      "default": "BR",
+      "info": "Exemplo: BR para Brasil. API pública: Nager.Date"
+    },
+    {
+      "type": "checkbox",
+      "id": "block_manual_holidays",
+      "label": "Bloquear feriados manuais",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "manual_holiday_dates",
+      "label": "Datas manuais de feriados bloqueadas",
+      "default": "2026-01-01\n2026-12-25",
+      "info": "Use uma data por linha no formato YYYY-MM-DD. Exemplo: 2026-04-21"
+    },
+    { "type": "header", "content": "Botao confirmar agendamento" },
+    { "type": "color", "id": "confirm_btn_bg", "label": "Confirmar: fundo", "default": "#0058BB" },
+    { "type": "color", "id": "confirm_btn_bg_hover", "label": "Confirmar: fundo hover", "default": "#004A9D" },
+    { "type": "color", "id": "confirm_btn_text", "label": "Confirmar: texto", "default": "#ffffff" },
+    { "type": "range", "id": "confirm_btn_radius", "label": "Confirmar: arredondamento", "min": 0, "max": 20, "step": 1, "default": 10, "unit": "px" },
+    { "type": "range", "id": "confirm_btn_text_size", "label": "Confirmar: tamanho do texto", "min": 12, "max": 20, "step": 1, "default": 14, "unit": "px" },
+    { "type": "header", "content": "Botao voltar / navegar" },
+    { "type": "color", "id": "back_btn_bg", "label": "Voltar: fundo", "default": "#ffffff" },
+    { "type": "color", "id": "back_btn_bg_hover", "label": "Voltar: fundo hover", "default": "#F7F7F7" },
+    { "type": "color", "id": "back_btn_text", "label": "Voltar: texto", "default": "#1A1C1C" },
+    { "type": "color", "id": "back_btn_border", "label": "Voltar: borda", "default": "#E5E7EB" },
+    { "type": "range", "id": "back_btn_radius", "label": "Voltar: arredondamento", "min": 0, "max": 20, "step": 1, "default": 10, "unit": "px" }
+  ]
+}
+{% endschema %}

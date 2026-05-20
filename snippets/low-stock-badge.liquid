@@ -1,0 +1,22 @@
+{% liquid
+  assign ls_enabled = settings.global_low_stock_badge_enabled | default: true
+  assign ls_min = settings.global_low_stock_badge_min | default: 1 | plus: 0
+  assign ls_max = settings.global_low_stock_badge_max | default: 10 | plus: 0
+  assign ls_bg = settings.global_low_stock_badge_bg | default: '#F97316'
+  assign ls_color = settings.global_low_stock_badge_text | default: '#ffffff'
+  assign ls_opacity = settings.global_low_stock_badge_opacity | default: 85 | times: 1.0 | divided_by: 100
+  assign ls_qty = 0
+  if ls_enabled and ls_product != blank and ls_product.available
+    for v in ls_product.variants
+      if v.inventory_management == 'shopify' and v.inventory_quantity > 0
+        assign ls_qty = ls_qty | plus: v.inventory_quantity
+      endif
+    endfor
+  endif
+%}
+{% if ls_enabled and ls_qty >= ls_min and ls_qty <= ls_max and ls_product.available %}
+  {%- assign ls_display_qty = ls_product.id | modulo: 5 | plus: 1 -%}
+  <div class="absolute bottom-3 left-3 flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg shadow-md leading-none pointer-events-none backdrop-blur-sm" style="background-color: {{ ls_bg }}; color: {{ ls_color }}; opacity: {{ ls_opacity }};">
+    <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">local_fire_department</span> ÚLTIMAS {{ ls_display_qty }}
+  </div>
+{% endif %}

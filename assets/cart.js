@@ -29,6 +29,11 @@
       if (this._subtotalEl) this._subtotalEl.textContent = formatMoneyFromCents(cart.items_subtotal_price);
       if (this._totalEl) this._totalEl.textContent = formatMoneyFromCents(cart.total_price);
       if (this._totalMobileEl) this._totalMobileEl.textContent = formatMoneyFromCents(cart.total_price);
+      const installmentsEl = this._root.querySelector('[data-cart-installments]');
+      if (installmentsEl) {
+        const count = parseInt(installmentsEl.getAttribute('data-installments-count'), 10) || 1;
+        installmentsEl.textContent = formatMoneyFromCents(Math.ceil(cart.total_price / count));
+      }
 
       const itemMap = new Map(cart.items.map((item) => [item.key, item]));
       this._root.querySelectorAll('[data-cart-item-key]').forEach((card) => {

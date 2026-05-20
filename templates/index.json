@@ -5,52 +5,182 @@
       "blocks": {
         "banner_w8BFTy": {
           "type": "banner",
+          "disabled": true,
           "settings": {
-            "title": "Banner principal",
-            "image_desktop": "shopify://shop_images/1920x600.png",
+            "title": "Lucrozero",
+            "image_desktop": "shopify://shop_images/1920x600_84b78660-cd39-4059-96ba-4b0a876af86f.png",
             "link": "shopify://collections/promocoes",
-            "alt_text": "Banner promocional"
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
+          }
+        },
+        "banner_ngfcBq": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "title": "Combos Dia das Mãesv1",
+            "image_desktop": "shopify://shop_images/1920x600_f3aa9872-0111-48fa-86f8-dfe109c16161.png",
+            "image_mobile": "shopify://shop_images/1080x400_1.png",
+            "link": "shopify://collections/promocoes",
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
+          }
+        },
+        "banner_trarrp": {
+          "type": "banner",
+          "settings": {
+            "title": "Copa",
+            "image_desktop": "shopify://shop_images/desktop_2.png",
+            "image_mobile": "shopify://shop_images/mobile.png",
+            "link": "shopify://collections/promocoes",
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
+          }
+        },
+        "banner_VRnKpT": {
+          "type": "banner",
+          "settings": {
+            "title": "Combos Dia das Mãesv2",
+            "image_desktop": "shopify://shop_images/banner_dia_das_maes_72b25f96-f4ea-47e9-bb12-6586d2cd1c56.png",
+            "image_mobile": "shopify://shop_images/banner_telefone.png",
+            "link": "shopify://collections/combos-dia-das-maes",
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
+          }
+        },
+        "banner_9AyAGt": {
+          "type": "banner",
+          "settings": {
+            "title": "Combos",
+            "image_desktop": "shopify://shop_images/1920x600_eeccb8d4-e653-46ef-b852-c0db1fa1ecaf.png",
+            "image_mobile": "shopify://shop_images/1080x400_7f271924-2b30-4e2e-b2cd-c00a7bf77197.png",
+            "link": "shopify://products/cabideiro-de-parede-industrial-canela-preto-fosco-copy",
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
+          }
+        },
+        "banner_mK4kLd": {
+          "type": "banner",
+          "settings": {
+            "title": "Ofertas",
+            "image_desktop": "shopify://shop_images/BANNER_2.png",
+            "link": "shopify://collections/promocoes",
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
           }
         },
         "banner_GABFrX": {
           "type": "banner",
+          "disabled": true,
           "settings": {
             "title": "Banner principal",
-            "image_desktop": "shopify://shop_images/Vantagens_2.png",
+            "image_desktop": "shopify://shop_images/banner-vantagens.png",
             "link": "shopify://pages/montagem-e-instalacao",
-            "alt_text": "Banner promocional"
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
           }
         },
         "banner_BhBLba": {
           "type": "banner",
+          "disabled": true,
           "settings": {
             "title": "Banner principal",
             "image_desktop": "shopify://shop_images/localizacao_maxx_site_a4c58277-110a-4ca5-98ea-a4cbd2db26fa_1.jpg",
             "link": "shopify://pages/contact",
-            "alt_text": "Banner promocional"
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
           }
         },
         "banner_BrifxQ": {
           "type": "banner",
+          "disabled": true,
           "settings": {
             "title": "Banner principal",
-            "image_desktop": "shopify://shop_images/Site_9.png",
+            "image_desktop": "shopify://shop_images/Site_9.webp",
             "link": "https://www.instagram.com/maxmoveis_oficial/",
-            "alt_text": "Banner promocional"
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
           }
         },
         "banner_YwA7kA": {
           "type": "banner",
+          "disabled": true,
           "settings": {
             "title": "Banner principal",
             "image_desktop": "shopify://shop_images/SAC_1.png",
             "link": "shopify://pages/contact",
-            "alt_text": "Banner promocional"
+            "alt_text": "Banner promocional",
+            "overlay_title": "",
+            "overlay_subtitle": "",
+            "cta_label": "",
+            "overlay_position": "left",
+            "overlay_text_color": "#ffffff",
+            "cta_btn_bg": "#ffffff",
+            "cta_btn_text": "#1a1c1c"
           }
         }
       },
       "block_order": [
         "banner_w8BFTy",
+        "banner_ngfcBq",
+        "banner_trarrp",
+        "banner_VRnKpT",
+        "banner_9AyAGt",
+        "banner_mK4kLd",
         "banner_GABFrX",
         "banner_BhBLba",
         "banner_BrifxQ",
@@ -66,29 +196,13 @@
         "desktop_height": 600,
         "mobile_height": 160,
         "autoplay": true,
-        "autoplay_seconds": 6,
+        "autoplay_seconds": 4,
         "show_arrows": true,
         "arrow_bg_color": "rgba(0,0,0,0)",
         "arrow_icon_color": "#1f2937",
         "show_dots": true,
         "dot_inactive_color": "rgba(0,0,0,0)",
         "dot_active_color": "rgba(0,0,0,0)"
-      }
-    },
-    "banner_strip_KTMQQc": {
-      "type": "banner-strip",
-      "disabled": true,
-      "name": "Banner Faixa",
-      "settings": {
-        "image_desktop": "shopify://shop_images/banner-faixa.png",
-        "image_fit": "cover",
-        "link": "",
-        "aria_label": "Banner",
-        "layout_width": "full",
-        "height_mobile": 15,
-        "height_desktop": 50,
-        "border_radius": 0,
-        "bg_color": "#ffffff"
       }
     },
     "home_categories": {
@@ -152,6 +266,7 @@
         },
         "category_WjtmGC": {
           "type": "category",
+          "disabled": true,
           "settings": {
             "title": "Mesas",
             "collection": "mesa",
@@ -160,6 +275,7 @@
         },
         "category_EjciJ3": {
           "type": "category",
+          "disabled": true,
           "settings": {
             "title": "Aéreos",
             "collection": "aereo",
@@ -168,6 +284,7 @@
         },
         "category_ECTYcj": {
           "type": "category",
+          "disabled": true,
           "settings": {
             "title": "Sofá",
             "collection": "sofa",
@@ -177,6 +294,7 @@
         },
         "category_XDr8Dc": {
           "type": "category",
+          "disabled": true,
           "settings": {
             "title": "Colchões",
             "collection": "colchoes",
@@ -198,6 +316,7 @@
         "category_ECTYcj",
         "category_XDr8Dc"
       ],
+      "disabled": true,
       "settings": {
         "title": "Navegue por categorias",
         "view_all_url": "shopify://collections",
@@ -218,11 +337,11 @@
         "category_hover_border_color": "#0058bb",
         "category_hover_title_color": "#0058bb",
         "title_align": "center",
-        "item_width_desktop": 128,
+        "item_width_desktop": 160,
         "item_height_desktop": 128,
         "item_width_mobile": 104,
-        "item_height_mobile": 104,
-        "item_gap": 8,
+        "item_height_mobile": 100,
+        "item_gap": 40,
         "title_size": 14,
         "title_box_height": 16,
         "image_fit": "cover",
@@ -233,13 +352,50 @@
         "corner_radius": 24
       }
     },
+    "banner_strip_KTMQQc": {
+      "type": "banner-strip",
+      "disabled": true,
+      "name": "Banner Faixa",
+      "settings": {
+        "image_desktop": "shopify://shop_images/banner-faixa.png",
+        "image_fit": "cover",
+        "link": "",
+        "aria_label": "Banner",
+        "layout_width": "full",
+        "height_mobile": 15,
+        "height_desktop": 50,
+        "border_radius": 0,
+        "bg_color": "#ffffff"
+      }
+    },
+    "featured_collection_MUiYgN": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "🏆⚽ Copa de Ofertas Maxxx Moveis ⚽🏆",
+        "collection": "promocoes",
+        "limit": 8,
+        "button_label": "Ver todas as ofertas",
+        "show_carrousel_arrows": true
+      }
+    },
+    "featured_collection_WTiYAA": {
+      "type": "featured-collection",
+      "disabled": true,
+      "settings": {
+        "title": "Dia das Mães Maxxx Moveis 💖",
+        "collection": "combos-dia-das-maes",
+        "limit": 8,
+        "button_label": "Ver todas as ofertas",
+        "show_carrousel_arrows": true
+      }
+    },
     "flash_offers": {
       "type": "flash-offers",
       "settings": {
         "title": "OFERTAS RELÂMPAGO!",
         "text": "Aproveite descontos de até",
         "discount": "60% OFF",
-        "timer_label": "CORRE QUE ACABA EM:",
+        "timer_label": "A OFERTA ACABA EM:",
         "countdown_mode": "end_at",
         "countdown_end_at": "2026-12-31 23:59",
         "countdown_duration_minutes": 15,
@@ -252,13 +408,13 @@
         "minutes_label": "Minutos",
         "seconds_label": "Segundos",
         "button_label": "VER OFERTAS",
-        "button_link": "shopify://collections/aparadores-e-buffets",
+        "button_link": "shopify://collections/promocoes",
         "bg_color": "#0058bb",
         "bg_image_fit": "cover",
         "bg_image_position": "center center",
         "overlay_color": "#00000026",
         "min_height_desktop": 260,
-        "min_height_mobile": 320,
+        "min_height_mobile": 220,
         "title_color": "#ffffff",
         "text_color": "#fff4ea",
         "discount_color": "#ffffff",
@@ -290,7 +446,7 @@
           "type": "collection_tab",
           "settings": {
             "label": "Lançamentos",
-            "collection": "aparadores-e-buffets"
+            "collection": "lancamentos"
           }
         },
         "tab_2": {
@@ -366,7 +522,7 @@
         "title": "Sófas",
         "collection": "banqueta",
         "limit": 8,
-        "button_label": "Ver todos",
+        "button_label": "Ver todas as ofertas",
         "show_carrousel_arrows": true
       }
     },
@@ -377,7 +533,7 @@
         "title": "Cozinha",
         "collection": "cozinha",
         "limit": 8,
-        "button_label": "Ver todos",
+        "button_label": "Ver todas as ofertas",
         "show_carrousel_arrows": true
       }
     },
@@ -425,6 +581,7 @@
         "promo_tbwpCa",
         "promo_48X6fL"
       ],
+      "disabled": true,
       "settings": {
         "tile_min_height_mobile": 200,
         "tile_max_height_mobile": 0,
@@ -479,7 +636,7 @@
         "title": "Quarda Roupas",
         "collection": "armarios",
         "limit": 8,
-        "button_label": "Ver todos",
+        "button_label": "Ver todas as ofertas",
         "show_carrousel_arrows": true
       }
     },
@@ -800,6 +957,7 @@
         },
         "social_link_kDaAzp": {
           "type": "social_link",
+          "disabled": true,
           "settings": {
             "social_image": "shopify://shop_images/Design_sem_nome_1.png",
             "image_width_mobile": 140,
@@ -845,7 +1003,7 @@
             "store_image": "shopify://shop_images/marica_centro_5f5c06cc-8773-4e93-8ecd-2a693d87c8df.jpg",
             "store_badge": "",
             "store_address": "R. Ribeiro de Almeida, 131 - Centro, Maricá - RJ, 24900-885",
-            "store_hours": "Seg–Sáb 08h–20h  |  Dom 08h–13h",
+            "store_hours": "Seg–Sáb 08h–20h",
             "store_phone": "(21) 99899-5199",
             "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Maric%C3%A1+Centro/@-22.918347,-42.8176435,17z/data=!3m1!4b1!4m6!3m5!1s0x99edca0b087c3b:0xf46e1a958e99e4b4!8m2!3d-22.918347!4d-42.8176435!16s%2Fg%2F11y7d7nzrb?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
           }
@@ -866,7 +1024,7 @@
           "type": "store",
           "settings": {
             "store_name": "Niterói - Centro",
-            "store_image": "shopify://shop_images/niteroi_centro.jpg",
+            "store_image": "shopify://shop_images/ChatGPT_Image_11_de_mai._de_2026_15_07_43.png",
             "store_badge": "",
             "store_address": "R. São Pedro, 35 - Centro, Niterói - RJ, 24020-054",
             "store_hours": "Seg–Sex 08h–19h  |  Sáb 08h–17h",
@@ -893,7 +1051,7 @@
             "store_image": "shopify://shop_images/santa_luzia.jpg",
             "store_badge": "",
             "store_address": "Av. Santa Luzia, 96 - Santa Luzia, São Gonçalo - RJ, 24722-315",
-            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–18h  |  Dom 08h–13h",
+            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–18h",
             "store_phone": "(21) 97191-6748",
             "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Santa+Luzia/@-22.8010458,-42.9822775,17z/data=!3m1!4b1!4m6!3m5!1s0x9990d516fd4e25:0x596c77b38f9cbeff!8m2!3d-22.8010458!4d-42.9822775!16s%2Fg%2F11c1s_7x_z?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
           }
@@ -905,7 +1063,7 @@
             "store_image": "shopify://shop_images/pacheco.jpg",
             "store_badge": "",
             "store_address": "Estr. do Pacheco, 1060 - Loja 05 - Pacheco, São Gonçalo - RJ, 24732-570",
-            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–15h  |  Dom 08h–13h",
+            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–15h",
             "store_phone": "(21) 97240-3368",
             "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Pacheco/@-22.8248349,-42.9685773,17z/data=!3m1!4b1!4m6!3m5!1s0x999117b5d4937b:0x74936fcebf87b754!8m2!3d-22.8248349!4d-42.9685773!16s%2Fg%2F11g6xwm0dr?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
           }
@@ -941,7 +1099,7 @@
             "store_image": "shopify://shop_images/cantagalo.jpg",
             "store_badge": "",
             "store_address": "Estr. Francisco da Cruz Nunes, 431 - Itaipu, Niterói - RJ, 24310-340",
-            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–15h  |  Dom 09h–13h",
+            "store_hours": "Seg–Sex 08h–20h  |  Sáb 08h–15h",
             "store_phone": "(21) 99555-6884",
             "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Cantagalo/@-22.9102721,-43.0509625,17z/data=!3m1!4b1!4m6!3m5!1s0x9985b7d370e50b:0x841f8311f1d8b8b8!8m2!3d-22.9102721!4d-43.0509625!16s%2Fg%2F1ptz5m2xh?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
           }
@@ -964,8 +1122,8 @@
             "store_name": "Bandeirantes",
             "store_image": "shopify://shop_images/bandeirantes.jpg",
             "store_badge": "",
-            "store_address": "Estr. Raul Veiga, 2351 - Lj-02 - Amendoeira, São Gonçalo - RJ, 24730-060",
-            "store_hours": "Seg–Sáb 08h–19h  |  Dom 09h–13h",
+            "store_address": "Estr. Raul Veiga, 2071 - Lj-02 - Amendoeira, São Gonçalo - RJ, 24730-060",
+            "store_hours": "Seg–Sáb 08h–19h",
             "store_phone": "(21) 99995-8764",
             "cta_url": "https://www.google.com/maps/place/Maxxx+M%C3%B3veis+%7C+Pra%C3%A7a+do+Bandeirantes/@-22.826674,-42.9883514,17z/data=!4m6!3m5!1s0x99915dbf5ad437:0x5459bca14bb575e1!8m2!3d-22.8260976!4d-42.9849!16s%2Fg%2F11svggqy3g?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D"
           }
@@ -1131,8 +1289,10 @@
   },
   "order": [
     "home_hero",
-    "banner_strip_KTMQQc",
     "home_categories",
+    "banner_strip_KTMQQc",
+    "featured_collection_MUiYgN",
+    "featured_collection_WTiYAA",
     "flash_offers",
     "collection_tabs_carousel",
     "featured_collection",

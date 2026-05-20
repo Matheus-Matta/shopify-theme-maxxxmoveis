@@ -129,6 +129,9 @@
       endif
     endfor
     assign plp_results_count = plp_collection_filtered_total
+    if collection.products_count > plp_results_count
+      assign plp_results_count = collection.products_count
+    endif
   endif
 
   assign card_width_mobile_min_raw = section.settings.card_width_mobile_min | strip
@@ -1340,6 +1343,7 @@
                         {% if product.featured_image %}
                           <div class="gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ product.featured_image | image_url: width: 900 }}');" aria-label="{{ product.title | escape }}"></div>
                         {% endif %}
+                        {%- render 'low-stock-badge', ls_product: product -%}
                         <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-id="{{ product.id }}" data-product-gid="gid://shopify/Product/{{ product.id }}" data-product-handle="{{ product.handle }}">
                           <span class="material-symbols-outlined text-xl">favorite</span>
                         </button>
@@ -1431,11 +1435,33 @@
                   </button>
                 {% endif %}
 
+                {% assign search_tail_start = search_total_pages | minus: 3 %}
                 {% for search_page in (1..search_total_pages) %}
-                  {% if search_page == search_current_page %}
-                    <span class="plp-pagination-link is-active">{{ search_page }}</span>
-                  {% else %}
-                    <button class="plp-pagination-link" type="button" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ search_query_base }}{% if search_page > 1 %}{% if search_query_base == blank %}?{% else %}&{% endif %}page={{ search_page }}{% endif %}">{{ search_page }}</button>
+                  {% liquid
+                    assign search_page_distance = search_page | minus: search_current_page
+                    if search_page_distance < 0
+                      assign search_page_distance = search_page_distance | times: -1
+                    endif
+
+                    assign search_show_page = false
+                    if search_total_pages <= 7
+                      assign search_show_page = true
+                    elsif search_page == 1 or search_page == search_total_pages
+                      assign search_show_page = true
+                    elsif search_page_distance <= 1
+                      assign search_show_page = true
+                    elsif search_current_page <= 3 and search_page <= 4
+                      assign search_show_page = true
+                    elsif search_current_page >= search_tail_start and search_page >= search_tail_start
+                      assign search_show_page = true
+                    endif
+                  %}
+                  {% if search_show_page %}
+                    {% if search_page == search_current_page %}
+                      <span class="plp-pagination-link is-active">{{ search_page }}</span>
+                    {% else %}
+                      <button class="plp-pagination-link" type="button" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ search_query_base }}{% if search_page > 1 %}{% if search_query_base == blank %}?{% else %}&{% endif %}page={{ search_page }}{% endif %}">{{ search_page }}</button>
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
 
@@ -1449,24 +1475,10 @@
             {% endif %}
           </div>
         {% else %}
-          {% paginate collection.products by 1 %}
-            {% assign collection_current_page = paginate.current_page %}
-          {% endpaginate %}
-
+          {% paginate collection.products by products_per_page %}
           {% liquid
-            if collection_current_page == blank or collection_current_page < 1
-              assign collection_current_page = 1
-            endif
-
-            assign collection_total_pages_filtered = plp_collection_filtered_total | divided_by: products_per_page
-            assign collection_total_remainder_filtered = plp_collection_filtered_total | modulo: products_per_page
-            if collection_total_remainder_filtered > 0
-              assign collection_total_pages_filtered = collection_total_pages_filtered | plus: 1
-            endif
-
-            assign collection_start_index = products_per_page | times: collection_current_page | minus: products_per_page
-            assign collection_end_index = collection_start_index | plus: products_per_page
-
+            assign collection_current_page = paginate.current_page
+            assign collection_total_pages_filtered = paginate.pages
             assign collection_query_base = ''
             assign collection_query_string = request.query_string | default: ''
             if collection_query_string != blank
@@ -1475,7 +1487,7 @@
                 assign collection_query_part_clean = collection_query_part | strip
                 if collection_query_part_clean != blank
                   assign collection_query_part_key = collection_query_part_clean | split: '=' | first | downcase
-                  unless collection_query_part_key == 'page'
+                  unless collection_query_part_key == 'page' or collection_query_part_key == 'plp_page' or collection_query_part_key == 'section_id'
                     if collection_query_base == blank
                       assign collection_query_base = '?' | append: collection_query_part_clean
                     else
@@ -1489,7 +1501,6 @@
 
           <div class="plp-listing-grid">
             {% assign collection_rendered_products = 0 %}
-            {% assign collection_filtered_index = 0 %}
             {% for product in collection.products %}
               {% liquid
                 assign meets_min_inventory = true
@@ -1507,14 +1518,6 @@
               {% unless meets_min_inventory %}
                 {% continue %}
               {% endunless %}
-
-              {% assign collection_filtered_index = collection_filtered_index | plus: 1 %}
-              {% if collection_filtered_index <= collection_start_index %}
-                {% continue %}
-              {% endif %}
-              {% if collection_filtered_index > collection_end_index %}
-                {% break %}
-              {% endif %}
 
               {% assign collection_rendered_products = collection_rendered_products | plus: 1 %}
               {%- liquid
@@ -1581,6 +1584,7 @@
                     {% if product.featured_image %}
                       <div class="gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image: url('{{ product.featured_image | image_url: width: 900 }}');" aria-label="{{ product.title | escape }}"></div>
                     {% endif %}
+                    {%- render 'low-stock-badge', ls_product: product -%}
                     <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-id="{{ product.id }}" data-product-gid="gid://shopify/Product/{{ product.id }}" data-product-handle="{{ product.handle }}">
                       <span class="material-symbols-outlined text-xl">favorite</span>
                     </button>
@@ -1652,11 +1656,33 @@
                   </button>
                 {% endif %}
 
+                {% assign collection_tail_start = collection_total_pages_filtered | minus: 3 %}
                 {% for collection_page in (1..collection_total_pages_filtered) %}
-                  {% if collection_page == collection_current_page %}
-                    <span class="plp-pagination-link is-active">{{ collection_page }}</span>
-                  {% else %}
-                    <button class="plp-pagination-link" type="button" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ collection_query_base }}{% if collection_page > 1 %}{% if collection_query_base == blank %}?{% else %}&{% endif %}page={{ collection_page }}{% endif %}">{{ collection_page }}</button>
+                  {% liquid
+                    assign collection_page_distance = collection_page | minus: collection_current_page
+                    if collection_page_distance < 0
+                      assign collection_page_distance = collection_page_distance | times: -1
+                    endif
+
+                    assign collection_show_page = false
+                    if collection_total_pages_filtered <= 7
+                      assign collection_show_page = true
+                    elsif collection_page == 1 or collection_page == collection_total_pages_filtered
+                      assign collection_show_page = true
+                    elsif collection_page_distance <= 1
+                      assign collection_show_page = true
+                    elsif collection_current_page <= 3 and collection_page <= 4
+                      assign collection_show_page = true
+                    elsif collection_current_page >= collection_tail_start and collection_page >= collection_tail_start
+                      assign collection_show_page = true
+                    endif
+                  %}
+                  {% if collection_show_page %}
+                    {% if collection_page == collection_current_page %}
+                      <span class="plp-pagination-link is-active">{{ collection_page }}</span>
+                    {% else %}
+                      <button class="plp-pagination-link" type="button" onclick="plpGoTo(this)" data-page-url="{{ plp_base_url }}{{ collection_query_base }}{% if collection_page > 1 %}{% if collection_query_base == blank %}?{% else %}&{% endif %}page={{ collection_page }}{% endif %}">{{ collection_page }}</button>
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
 
@@ -1669,30 +1695,9 @@
               </nav>
             {% endif %}
           </div>
+          {% endpaginate %}
         {% endif %}
       </section>
-
-          {% liquid
-            assign collection_total_pages_filtered = plp_collection_filtered_total | divided_by: products_per_page
-            assign collection_total_remainder_filtered = plp_collection_filtered_total | modulo: products_per_page
-            if collection_total_remainder_filtered > 0
-              assign collection_total_pages_filtered = collection_total_pages_filtered | plus: 1
-            endif
-          %}
-
-          {% if collection_current_page > collection_total_pages_filtered and collection_total_pages_filtered > 0 %}
-            <script>
-              (function() {
-                const url = new URL(window.location.href);
-                if ({{ collection_total_pages_filtered }} > 1) {
-                  url.searchParams.set('page', '{{ collection_total_pages_filtered }}');
-                } else {
-                  url.searchParams.delete('page');
-                }
-                window.location.replace(url.toString());
-              })();
-            </script>
-          {% endif %}
     </div>
   </div>
 </section>
@@ -1758,10 +1763,29 @@
 
 <script>
   window.PLPConfig = {
-    sectionId:    '{{ section.id }}',
-    skeletonCount: {{ section.settings.products_per_page | default: 12 }},
-    isSearchPage:  {{ plp_is_search | json }},
-    searchTerm:    {{ plp_search_terms | json }}
+    sectionId:            '{{ section.id }}',
+    skeletonCount:        {{ section.settings.products_per_page | default: 12 }},
+    isSearchPage:         {{ plp_is_search | json }},
+    searchTerm:           {{ plp_search_terms | json }},
+    storefrontToken:      {{ settings.storefront_access_token | default: '' | json }},
+    storefrontApiVersion: {{ settings.storefront_api_version | default: '2025-01' | json }},
+    shopDomain:           {{ shop.permanent_domain | json }},
+    collectionHandle:     {{ collection.handle | default: '' | json }},
+    currentTags:          {{ current_tags | json }},
+    currentSort:          {{ current_sort | default: 'manual' | json }},
+    perPage:              {{ products_per_page | default: 12 }},
+    installmentsCount:    {{ global_installments_count | default: 10 }},
+    mediaBg:              {{ plp_media_bg | json }},
+    showRatings:          {{ plp_show_ratings | json }},
+    showBuyButton:        {{ plp_show_buy_button | json }},
+    showDiscountBadge:    {{ plp_show_discount_badge | json }},
+    buyLabel:             {{ plp_buy_label | json }},
+    lowStockEnabled:      {{ settings.global_low_stock_badge_enabled | default: true | json }},
+    lowStockMin:          {{ settings.global_low_stock_badge_min | default: 1 | json }},
+    lowStockMax:          {{ settings.global_low_stock_badge_max | default: 10 | json }},
+    lowStockBadgeBg:      {{ settings.global_low_stock_badge_bg | default: '#F97316' | json }},
+    lowStockBadgeText:    {{ settings.global_low_stock_badge_text | default: '#ffffff' | json }},
+    lowStockBadgeOpacity: {{ settings.global_low_stock_badge_opacity | default: 85 | json }}
   };
 </script>
 <script src="{{ 'plp.js' | asset_url }}" defer></script>

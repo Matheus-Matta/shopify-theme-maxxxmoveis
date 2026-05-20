@@ -1,0 +1,38 @@
+{%- liquid
+  assign dcb_radius      = settings.global_button_primary_radius | default: 12
+  assign dcb_label_text  = settings.dcb_label | default: 'Cupom de desconto'
+  assign dcb_placeholder = settings.dcb_placeholder | default: 'Digite seu cupom'
+  assign dcb_apply_text  = settings.dcb_apply_label | default: 'Aplicar'
+  assign dcb_remove_text = settings.dcb_remove_label | default: 'Remover'
+  assign dcb_show_icon   = settings.dcb_show_icon
+  if dcb_show_icon == blank
+    assign dcb_show_icon = true
+  endif
+-%}
+
+<div class="dcb-wrap" data-discount-box
+  style="--dcb-radius:{{ dcb_radius }}px;"
+  {%- if variant_id %} data-variant-id="{{ variant_id }}"{%- endif -%}
+  {%- if product_price %} data-product-price="{{ product_price }}"{%- endif -%}
+>
+  <p class="dcb-label">
+    {%- if dcb_show_icon -%}
+    <span class="material-symbols-outlined dcb-label-icon" aria-hidden="true">local_offer</span>
+    {%- endif -%}
+    {{ dcb_label_text }}
+  </p>
+  <div class="dcb-group">
+    <input
+      class="dcb-input"
+      type="text"
+      placeholder="{{ dcb_placeholder }}"
+      autocomplete="off"
+      autocapitalize="characters"
+      data-discount-input
+    />
+    <button class="dcb-btn dcb-btn--apply" type="button" data-discount-apply aria-label="{{ dcb_apply_text }}">{{ dcb_apply_text }}</button>
+    <button class="dcb-btn dcb-btn--remove" type="button" data-discount-remove aria-label="{{ dcb_remove_text }}" style="display:none;">{{ dcb_remove_text }}</button>
+  </div>
+  <p class="dcb-message" data-discount-message style="display:none;" role="status" aria-live="polite"></p>
+  <p class="dcb-preview" data-discount-preview style="display:none;" aria-live="polite"></p>
+</div>

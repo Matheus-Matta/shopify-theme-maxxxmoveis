@@ -1,0 +1,17 @@
+# Ignora arquivos do tema Shopify no deploy do Vercel
+# O Vercel só precisa da pasta /api
+
+assets/
+config/
+layout/
+locales/
+scripts/
+sections/
+snippets/
+templates/
+input.css
+tailwind.config.js
+*.liquid
+*.json.liquid
+README.md
+LICENSE

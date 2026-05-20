@@ -129,6 +129,12 @@
     color: {{ footer_link_hover_color }};
   }
 
+  @media (max-width: 749px) {
+    #shopify-section-{{ section.id }} .footer-shell {
+      padding-bottom: calc(9rem + env(safe-area-inset-bottom));
+    }
+  }
+
   @media (min-width: 768px) {
     #shopify-section-{{ section.id }} .footer-title {
       font-size: {{ footer_title_size_desktop }}px;

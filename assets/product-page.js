@@ -4,7 +4,7 @@
   if (!window.ThemeUtils) return;
 
   const { buildStoreUrl, escapeHtml, formatMoneyFromCents } = window.ThemeUtils;
-  const formatMoneyBRL = (cents) => 'R$ ' + formatMoneyFromCents(cents);
+  const formatMoneyBRL = (cents) => formatMoneyFromCents(cents);
 
   // ── Main init ─────────────────────────────────────────────────────────────────
   function initProductPage(sectionRoot, cfg) {
@@ -12,35 +12,35 @@
     sectionRoot.dataset.ppBound = 'true';
 
     cfg = cfg || window.ProductConfig || {};
-    const installmentsCount  = Math.max(1, Number(cfg.installmentsCount) || 10);
-    const compareAtMaxCents  = Number(cfg.compareAtMaxCents) || 0;
-    const stickyBuyLabel     = String(cfg.buyBtnLabel || 'COMPRAR AGORA');
-    const cartUrl            = String(cfg.cartUrl || '/cart');
-    const shippingMessages   = cfg.shippingMessages || {};
+    const installmentsCount = Math.max(1, Number(cfg.installmentsCount) || 10);
+    const compareAtMaxCents = Number(cfg.compareAtMaxCents) || 0;
+    const stickyBuyLabel = String(cfg.buyBtnLabel || 'COMPRAR AGORA');
+    const cartUrl = String(cfg.cartUrl || '/cart');
+    const shippingMessages = cfg.shippingMessages || {};
 
     // ── DOM refs ────────────────────────────────────────────────────────────────
-    const mainImage           = sectionRoot.querySelector('[data-main-image]');
-    const thumbs              = Array.from(sectionRoot.querySelectorAll('[data-product-thumb]'));
-    const productInfo         = sectionRoot.querySelector('#product-info');
-    const mobileTrack         = sectionRoot.querySelector('[data-mobile-media-track]');
-    const mobileCurrent       = sectionRoot.querySelector('[data-mobile-media-count-current]');
-    const mobileDots          = Array.from(sectionRoot.querySelectorAll('[data-mobile-dot]'));
-    const mobileThumbs        = Array.from(sectionRoot.querySelectorAll('[data-mobile-thumb]'));
-    const mobileSlides        = Array.from(sectionRoot.querySelectorAll('[data-mobile-slide]'));
-    const mobilePdpRoot       = sectionRoot.querySelector('[data-mobile-pdp-root]');
-    const shippingCalcRoots   = Array.from(sectionRoot.querySelectorAll('[data-shipping-calc]'));
-    const openLightboxButton  = sectionRoot.querySelector('[data-open-lightbox]');
-    const lightbox            = sectionRoot.querySelector('[data-lightbox]');
-    const lightboxImageEl     = sectionRoot.querySelector('[data-lightbox-image]');
-    const lightboxClose       = sectionRoot.querySelector('[data-lightbox-close]');
-    const lightboxZoomInBtns  = Array.from(sectionRoot.querySelectorAll('[data-lightbox-zoom-in]'));
+    const mainImage = sectionRoot.querySelector('[data-main-image]');
+    const thumbs = Array.from(sectionRoot.querySelectorAll('[data-product-thumb]'));
+    const productInfo = sectionRoot.querySelector('#product-info');
+    const mobileTrack = sectionRoot.querySelector('[data-mobile-media-track]');
+    const mobileCurrent = sectionRoot.querySelector('[data-mobile-media-count-current]');
+    const mobileDots = Array.from(sectionRoot.querySelectorAll('[data-mobile-dot]'));
+    const mobileThumbs = Array.from(sectionRoot.querySelectorAll('[data-mobile-thumb]'));
+    const mobileSlides = Array.from(sectionRoot.querySelectorAll('[data-mobile-slide]'));
+    const mobilePdpRoot = sectionRoot.querySelector('[data-mobile-pdp-root]');
+    const shippingCalcRoots = Array.from(sectionRoot.querySelectorAll('[data-shipping-calc]'));
+    const openLightboxButton = sectionRoot.querySelector('[data-open-lightbox]');
+    const lightbox = sectionRoot.querySelector('[data-lightbox]');
+    const lightboxImageEl = sectionRoot.querySelector('[data-lightbox-image]');
+    const lightboxClose = sectionRoot.querySelector('[data-lightbox-close]');
+    const lightboxZoomInBtns = Array.from(sectionRoot.querySelectorAll('[data-lightbox-zoom-in]'));
     const lightboxZoomOutBtns = Array.from(sectionRoot.querySelectorAll('[data-lightbox-zoom-out]'));
     const lightboxZoomResetBtns = Array.from(sectionRoot.querySelectorAll('[data-lightbox-zoom-reset]'));
-    const lightboxPrevBtns    = Array.from(sectionRoot.querySelectorAll('[data-lightbox-prev]'));
-    const lightboxNextBtns    = Array.from(sectionRoot.querySelectorAll('[data-lightbox-next]'));
-    const lightboxZoomLevel   = sectionRoot.querySelector('[data-lightbox-zoom-level]');
-    const lightboxCounter     = sectionRoot.querySelector('[data-lightbox-counter]');
-    const productForms        = Array.from(sectionRoot.querySelectorAll('[data-product-form]'));
+    const lightboxPrevBtns = Array.from(sectionRoot.querySelectorAll('[data-lightbox-prev]'));
+    const lightboxNextBtns = Array.from(sectionRoot.querySelectorAll('[data-lightbox-next]'));
+    const lightboxZoomLevel = sectionRoot.querySelector('[data-lightbox-zoom-level]');
+    const lightboxCounter = sectionRoot.querySelector('[data-lightbox-counter]');
+    const productForms = Array.from(sectionRoot.querySelectorAll('[data-product-form]'));
 
     const _ppInitAt = Date.now();
     productForms.forEach(f => f.setAttribute('target', 'pp-form-sink'));
@@ -56,19 +56,19 @@
           const d = await r.json();
           document.dispatchEvent(new CustomEvent('cart:updated', { detail: { itemCount: Number(d.item_count) } }));
         }
-      } catch (_) {}
+      } catch (_) { }
       Array.from(sectionRoot.querySelectorAll('[data-action-add-cart]')).forEach(btn => {
-        const iconEl   = btn.querySelector('.material-symbols-outlined');
-        const labelEl  = btn.querySelector('span:last-child');
-        const prvIcon  = iconEl  ? iconEl.textContent  : null;
+        const iconEl = btn.querySelector('.material-symbols-outlined');
+        const labelEl = btn.querySelector('span:last-child');
+        const prvIcon = iconEl ? iconEl.textContent : null;
         const prvLabel = labelEl ? (btn.dataset.prvLabel || labelEl.textContent) : null;
         btn.disabled = false;
         btn.classList.add('is-cart-added');
-        if (iconEl)  iconEl.textContent  = 'check';
+        if (iconEl) iconEl.textContent = 'check';
         if (labelEl) labelEl.textContent = 'Adicionado!';
         window.setTimeout(() => {
           btn.classList.remove('is-cart-added');
-          if (iconEl  && prvIcon)  iconEl.textContent  = prvIcon;
+          if (iconEl && prvIcon) iconEl.textContent = prvIcon;
           if (labelEl && prvLabel) labelEl.textContent = prvLabel;
           delete btn.dataset.prvLabel;
         }, 1200);
@@ -100,28 +100,28 @@
       });
     });
 
-    const soldOutBadges       = Array.from(sectionRoot.querySelectorAll('[data-soldout-badge]'));
-    const variantsJsonEl      = sectionRoot.querySelector('[data-product-variants-json]');
-    const mobilePriceMajor    = sectionRoot.querySelector('[data-mobile-price-major]');
-    const mobilePriceMinor    = sectionRoot.querySelector('[data-mobile-price-minor]');
-    const mobileCompare       = sectionRoot.querySelector('[data-mobile-compare]');
-    const mobileDiscountRow   = sectionRoot.querySelector('[data-mobile-discount-row]');
-    const mobileDiscount      = sectionRoot.querySelector('[data-mobile-discount]');
-    const mobileInstallment   = sectionRoot.querySelector('[data-mobile-installment]');
-    const stickyBuyButton     = sectionRoot.querySelector('[data-sticky-buy-button]');
-    const stickyPrice         = sectionRoot.querySelector('[data-sticky-price]');
-    const stickyCompareRow    = sectionRoot.querySelector('[data-sticky-compare-row]');
-    const stickyCompare       = sectionRoot.querySelector('[data-sticky-compare]');
-    const stickyInstallment   = sectionRoot.querySelector('[data-sticky-installment]');
-    const stickyBuyBar        = sectionRoot.querySelector('[data-sticky-buy-bar]');
-    const desktopPrice        = sectionRoot.querySelector('[data-desktop-price]');
-    const desktopCompareRow   = sectionRoot.querySelector('[data-desktop-compare-row]');
-    const desktopCompare      = sectionRoot.querySelector('[data-desktop-compare]');
-    const desktopDiscount     = sectionRoot.querySelector('[data-desktop-discount]');
+    const soldOutBadges = Array.from(sectionRoot.querySelectorAll('[data-soldout-badge]'));
+    const variantsJsonEl = sectionRoot.querySelector('[data-product-variants-json]');
+    const mobilePriceMajor = sectionRoot.querySelector('[data-mobile-price-major]');
+    const mobilePriceMinor = sectionRoot.querySelector('[data-mobile-price-minor]');
+    const mobileCompare = sectionRoot.querySelector('[data-mobile-compare]');
+    const mobileDiscountRow = sectionRoot.querySelector('[data-mobile-discount-row]');
+    const mobileDiscount = sectionRoot.querySelector('[data-mobile-discount]');
+    const mobileInstallment = sectionRoot.querySelector('[data-mobile-installment]');
+    const stickyBuyButton = sectionRoot.querySelector('[data-sticky-buy-button]');
+    const stickyPrice = sectionRoot.querySelector('[data-sticky-price]');
+    const stickyCompareRow = sectionRoot.querySelector('[data-sticky-compare-row]');
+    const stickyCompare = sectionRoot.querySelector('[data-sticky-compare]');
+    const stickyInstallment = sectionRoot.querySelector('[data-sticky-installment]');
+    const stickyBuyBar = sectionRoot.querySelector('[data-sticky-buy-bar]');
+    const desktopPrice = sectionRoot.querySelector('[data-desktop-price]');
+    const desktopCompareRow = sectionRoot.querySelector('[data-desktop-compare-row]');
+    const desktopCompare = sectionRoot.querySelector('[data-desktop-compare]');
+    const desktopDiscount = sectionRoot.querySelector('[data-desktop-discount]');
     const variantOptionButtons = Array.from(sectionRoot.querySelectorAll('[data-variant-option]'));
-    const optionCurrentEls    = Array.from(sectionRoot.querySelectorAll('[data-option-current]'));
-    const variantSkuRows      = Array.from(sectionRoot.querySelectorAll('[data-variant-sku-row]'));
-    const variantSkuEls       = Array.from(sectionRoot.querySelectorAll('[data-variant-sku]'));
+    const optionCurrentEls = Array.from(sectionRoot.querySelectorAll('[data-option-current]'));
+    const variantSkuRows = Array.from(sectionRoot.querySelectorAll('[data-variant-sku-row]'));
+    const variantSkuEls = Array.from(sectionRoot.querySelectorAll('[data-variant-sku]'));
 
     const variants = variantsJsonEl ? (JSON.parse(variantsJsonEl.textContent || '[]')) : [];
     const defaultVariantId = String(cfg.defaultVariantId || '');
@@ -330,6 +330,15 @@
       sectionRoot.querySelectorAll('[data-action-buy-cart]').forEach(btn => {
         btn.disabled = !variant.available;
       });
+      // Sync sticky add/buy-now buttons availability
+      sectionRoot.querySelectorAll('[data-sticky-add-cart]').forEach(btn => {
+        btn.disabled = !variant.available;
+      });
+      // Sync discount box variant_id so PDP coupon calc uses correct variant
+      sectionRoot.querySelectorAll('[data-discount-box][data-variant-id]').forEach(box => {
+        box.setAttribute('data-variant-id', String(variant.id));
+        box.setAttribute('data-product-price', String(variant.price || 0));
+      });
 
       soldOutBadges.forEach((el) => { el.style.display = variant.available ? 'none' : 'block'; });
 
@@ -374,7 +383,7 @@
 
       if (mobileInstallment) {
         const inst = formatMoneyFromCents(Math.round(variantPrice / installmentsCount));
-        mobileInstallment.textContent = 'ou ate ' + installmentsCount + 'x R$ ' + inst + ' sem juros';
+        mobileInstallment.textContent = 'ou ate ' + installmentsCount + 'x ' + inst + ' sem juros';
       }
 
       if (stickyPrice) {
@@ -382,7 +391,7 @@
         stickyPrice.style.color = hasDiscount ? 'var(--color-promo-final-price)' : '';
       }
       if (stickyInstallment) {
-        stickyInstallment.textContent = installmentsCount + 'x de ' + formatMoneyBRL(Math.round(variantPrice / installmentsCount));
+        stickyInstallment.textContent = 'ou ' + installmentsCount + 'x de ' + formatMoneyBRL(Math.round(variantPrice / installmentsCount)) + ' sem juros';
       }
       if (stickyCompare && hasDiscount) stickyCompare.textContent = formatMoneyBRL(compareAtPrice);
       if (stickyCompareRow) stickyCompareRow.style.display = hasDiscount ? '' : 'none';
@@ -402,14 +411,44 @@
 
       const featuredMediaId = variant.featured_media && variant.featured_media.id ? String(variant.featured_media.id) : '';
       const featuredImageId = variant.featured_image && variant.featured_image.id ? String(variant.featured_image.id) : '';
+      const featuredImageSrc = variant.featured_image && variant.featured_image.src ? String(variant.featured_image.src) : '';
       let desktopMediaUpdated = false;
 
-      if (featuredMediaId && thumbs.length > 0) {
+      // Tentativa 1: featured_image.id → data-image-id (thumbs agora iteram product.images, IDs batem)
+      if (featuredImageId && thumbs.length > 0) {
+        const t = thumbs.find((th) => String(th.getAttribute('data-image-id') || '') === featuredImageId);
+        if (t) { t.click(); desktopMediaUpdated = true; }
+      }
+
+      // Tentativa 2: featured_media.id → data-media-id (legado, caso exista o atributo)
+      if (!desktopMediaUpdated && featuredMediaId && thumbs.length > 0) {
         const t = thumbs.find((th) => String(th.getAttribute('data-media-id') || '') === featuredMediaId);
         if (t) { t.click(); desktopMediaUpdated = true; }
       }
 
-      if (!desktopMediaUpdated) {
+      // Tentativa 3: normalização de URL da imagem da variante vs data-media-url dos thumbs
+      if (!desktopMediaUpdated && featuredImageSrc && thumbs.length > 0) {
+        const normSrc = normalizeImageUrl(featuredImageSrc);
+        if (normSrc) {
+          const t = thumbs.find((th) => {
+            const url = th.getAttribute('data-media-url') || '';
+            return url && normalizeImageUrl(url) === normSrc;
+          });
+          if (t) { t.click(); desktopMediaUpdated = true; }
+        }
+      }
+
+      // Tentativa 4: força a imagem principal diretamente pela src da variante
+      // (útil quando a foto foi deletada/re-adicionada e o ID ficou stale, mas a URL ainda resolve)
+      if (!desktopMediaUpdated && featuredImageSrc && mainImage) {
+        mainImage.style.setProperty('background-image', 'url("' + featuredImageSrc + '")');
+        mainImage.setAttribute('data-main-image-url', featuredImageSrc);
+        currentDesktopImageUrl = featuredImageSrc;
+        desktopMediaUpdated = true;
+      }
+
+      // Fallback: volta para imagem inicial apenas quando variante não tem imagem associada
+      if (!desktopMediaUpdated && !featuredImageId && !featuredMediaId && !featuredImageSrc) {
         if (initialDesktopThumb) {
           initialDesktopThumb.click();
         } else if (mainImage && initialDesktopImageUrl) {
@@ -420,57 +459,76 @@
       }
 
       if (mobileTrack) {
-        if (featuredImageId && mobileSlides.length > 0) {
-          const slideIdx = mobileSlides.findIndex((s) => String(s.getAttribute('data-image-id') || '') === featuredImageId);
-          if (slideIdx >= 0) {
-            mobileTrack.scrollTo({ left: slideIdx * (mobileTrack.clientWidth || 1), behavior: 'smooth' });
-          } else {
-            mobileTrack.scrollTo({ left: 0, behavior: 'smooth' });
+        let mobileScrolled = false;
+        if (mobileSlides.length > 0) {
+          // Tentativa 1 mobile: busca por data-image-id
+          if (featuredImageId) {
+            const slideIdx = mobileSlides.findIndex((s) => String(s.getAttribute('data-image-id') || '') === featuredImageId);
+            if (slideIdx >= 0) {
+              mobileTrack.scrollTo({ left: slideIdx * (mobileTrack.clientWidth || 1), behavior: 'smooth' });
+              mobileScrolled = true;
+            }
           }
-        } else {
+          // Tentativa 2 mobile: busca por URL da imagem
+          if (!mobileScrolled && featuredImageSrc) {
+            const normSrc = normalizeImageUrl(featuredImageSrc);
+            if (normSrc) {
+              const slideIdx = mobileSlides.findIndex((s) => {
+                const img = s.querySelector('img');
+                const src = img ? (img.currentSrc || img.src || img.getAttribute('src') || '') : '';
+                return src && normalizeImageUrl(src) === normSrc;
+              });
+              if (slideIdx >= 0) {
+                mobileTrack.scrollTo({ left: slideIdx * (mobileTrack.clientWidth || 1), behavior: 'smooth' });
+                mobileScrolled = true;
+              }
+            }
+          }
+        }
+        // Fallback mobile: só vai para slide 0 se a variante não tem imagem associada
+        if (!mobileScrolled && !featuredImageId && !featuredMediaId && !featuredImageSrc) {
           mobileTrack.scrollTo({ left: 0, behavior: 'smooth' });
         }
       }
+
+      // Notifica o discount-code.js sobre a troca de variante
+      document.dispatchEvent(new CustomEvent('mx:variant:changed', {
+        detail: { variantId: String(variant.id), price: Number(variant.price || 0) }
+      }));
     };
 
     const findMatchingVariant = () => {
-      if (!variants.length) return null;
       return variants.find((v) => {
         const opts = [v.option1 || '', v.option2 || '', v.option3 || ''];
         return selectedOptions.every((sel, i) => !sel || String(opts[i]) === String(sel));
       }) || null;
     };
 
-    // ── Shipping calculator ──────────────────────────────────────────────────────
+    // ── Shipping calculator (Storefront API + ViaCEP) ───────────────────────────
     if (shippingCalcRoots.length > 0) {
-      const formatZipInput = (value) => {
-        const d = String(value || '').replace(/\D+/g, '').slice(0, 8);
+      const storefrontToken = String(cfg.storefrontToken || '');
+      const shopDomain = String(cfg.shopDomain || window.location.hostname);
+      const apiVersion = String(cfg.storefrontApiVersion || '2025-01');
+      const storefrontGqlUrl = 'https://' + shopDomain + '/api/' + apiVersion + '/graphql.json';
+
+      const LOG = (...a) => console.log('[ShippingCalc]', ...a);
+      const WARN = (...a) => console.warn('[ShippingCalc]', ...a);
+
+      // Format decimal amount (from Storefront API) as BRL currency
+      const fmtBRL = (amount) => {
+        const n = Number(amount);
+        if (!Number.isFinite(n)) return String(amount || '');
+        return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      };
+
+      // CEP input masking: 00000-000
+      const formatZipInput = (v) => {
+        const d = String(v || '').replace(/\D+/g, '').slice(0, 8);
         return d.length <= 5 ? d : d.slice(0, 5) + '-' + d.slice(5);
       };
 
-      const normalizeProvince = (v) => {
-        const c = String(v || '').trim();
-        if (!c) return '';
-        const l = c.toLowerCase();
-        return (l === 'auto' || l === 'none' || l === '-') ? '' : c;
-      };
-
-      const normalizeCountry = (v) => {
-        const c = String(v || '').trim();
-        if (!c) return 'Brazil';
-        const l = c.toLowerCase();
-        return (l === 'br' || l === 'bra' || l === 'brasil') ? 'Brazil' : c;
-      };
-
-      const buildShippingParams = (zip, country, province) => {
-        const p = new URLSearchParams();
-        p.append('shipping_address[zip]', zip);
-        if (country) p.append('shipping_address[country]', country);
-        if (province) p.append('shipping_address[province]', province);
-        return p;
-      };
-
-      const setShippingFeedback = (el, message, isError) => {
+      // Show/hide inline feedback message
+      const setFeedback = (el, message, isError) => {
         if (!el) return;
         const msg = String(message || '').trim();
         el.textContent = msg;
@@ -478,140 +536,291 @@
         el.classList.toggle('is-error', Boolean(isError && msg));
       };
 
-      const getShippingRateMeta = (rate) => {
-        if (!rate || typeof rate !== 'object') return '';
-        if (rate.delivery_date) return 'Entrega em ' + String(rate.delivery_date);
-        if (Array.isArray(rate.delivery_range) && rate.delivery_range.length >= 2) {
-          return 'Prazo: ' + rate.delivery_range[0] + ' a ' + rate.delivery_range[1];
-        }
-        if (Array.isArray(rate.delivery_days) && rate.delivery_days.length === 1) {
-          return 'Prazo: ' + rate.delivery_days[0] + ' dia' + (Number(rate.delivery_days[0]) === 1 ? '' : 's');
-        }
-        if (Array.isArray(rate.delivery_days) && rate.delivery_days.length >= 2) {
-          return 'Prazo: ' + rate.delivery_days[0] + ' a ' + rate.delivery_days[rate.delivery_days.length - 1] + ' dias';
-        }
-        return '';
-      };
-
-      const renderShippingRates = (el, rates) => {
+      // Render list of { name, price (decimal BRL), meta? } objects
+      const renderRates = (el, rates) => {
         if (!el) return;
-        const valid = Array.isArray(rates)
-          ? rates.filter((r) => {
-              const name = String((r && (r.presentment_name || r.name || '')) || '').trim();
-              const price = Number(r && r.price);
-              return Boolean(name) && Number.isFinite(price);
-            })
-          : [];
-        if (!valid.length) { el.innerHTML = ''; el.hidden = true; return; }
-        const sorted = [...valid].sort((a, b) => Number(a.price) - Number(b.price));
-        el.innerHTML = sorted.map((r) =>
-          '<div class="pp-shipping-calc-rate">' +
-          '<div class="pp-shipping-calc-rate-main">' +
-          '<span class="pp-shipping-calc-rate-name">' + escapeHtml(r.presentment_name || r.name || 'Entrega') + '</span>' +
-          (getShippingRateMeta(r)
-            ? '<span class="pp-shipping-calc-rate-meta">' + escapeHtml(getShippingRateMeta(r)) + '</span>'
-            : '') +
-          (r.phone_required
-            ? '<span class="pp-shipping-calc-rate-meta">Requer telefone</span>'
-            : '') +
-          '</div>' +
-          '<span class="pp-shipping-calc-rate-price">' + escapeHtml(formatRateMoney(r.price)) + '</span>' +
-          '</div>'
-        ).join('');
+        if (!Array.isArray(rates) || !rates.length) { el.innerHTML = ''; el.hidden = true; return; }
+        const sorted = [...rates].sort((a, b) => Number(a.price) - Number(b.price));
+        el.innerHTML = sorted.map((r) => {
+          const isFree = Number(r.price) === 0;
+          const priceLabel = isFree ? 'Grátis' : fmtBRL(r.price);
+          return (
+            '<div class="pp-shipping-calc-rate">' +
+            '<div class="pp-shipping-calc-rate-left">' +
+            '<span class="material-symbols-outlined pp-shipping-calc-rate-icon" style="font-variation-settings:\'FILL\' 1;">local_shipping</span>' +
+            '<div class="pp-shipping-calc-rate-main">' +
+            '<span class="pp-shipping-calc-rate-name">' + escapeHtml(r.name || 'Entrega') + '</span>' +
+            (r.meta ? '<span class="pp-shipping-calc-rate-meta">' + escapeHtml(r.meta) + '</span>' : '') +
+            '</div>' +
+            '</div>' +
+            '<span class="pp-shipping-calc-rate-price' + (isFree ? ' is-free' : '') + '">' + escapeHtml(priceLabel) + '</span>' +
+            '</div>'
+          );
+        }).join('');
         el.hidden = false;
+        LOG('Rendered', sorted.length, 'rate(s).');
       };
 
-      const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
-
-      const cartHasItems = async () => {
-        const res = await fetch(buildStoreUrl('cart.js'), {
-          headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        if (!res.ok) throw new Error('cart_check_failed');
+      // ── Step 1: Lookup CEP via ViaCEP ────────────────────────────────────────
+      const lookupCep = async (zip) => {
+        const url = 'https://viacep.com.br/ws/' + zip + '/json/';
+        LOG('Step 1/4 — ViaCEP lookup:', url);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('viacep_http_' + res.status);
         const data = await res.json();
-        return Number(data && data.item_count) > 0;
+        LOG('ViaCEP response:', data);
+        if (data.erro) throw new Error('cep_not_found');
+        const address1 = [data.logradouro, data.complemento].filter(Boolean).join(', ') || '0';
+        return {
+          address1: address1,
+          city: data.localidade || '',
+          provinceCode: (data.uf || 'SP').toUpperCase(),
+          zip: zip
+        };
       };
 
-      const fetchShippingRates = async (zip, country, province) => {
-        const params = buildShippingParams(zip, country, province);
-        const query = params.toString();
-        const prepRes = await fetch(buildStoreUrl('cart/prepare_shipping_rates.json') + '?' + query, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        });
-        if (!prepRes.ok) throw new Error(prepRes.status === 422 ? 'prepare_422' : 'prepare_failed');
+      // ── Parse multipart/mixed body (@defer incremental delivery) ─────────────
+      const parseMultipart = (text, boundary) => {
+        const parts = [];
+        const sep = '--' + boundary;
+        const segments = text.split(sep);
+        LOG('Parsing multipart | boundary:', boundary, '| raw segments:', segments.length);
+        for (const seg of segments) {
+          if (!seg.trim() || seg.trim() === '--') continue;
+          const i4 = seg.indexOf('\r\n\r\n');
+          const i2 = seg.indexOf('\n\n');
+          const split = i4 !== -1 ? i4 + 4 : (i2 !== -1 ? i2 + 2 : -1);
+          if (split === -1) continue;
+          const body = seg.slice(split).replace(/--\s*$/, '').trim();
+          if (!body) continue;
+          try {
+            const parsed = JSON.parse(body);
+            LOG('Multipart chunk:', JSON.stringify(parsed).slice(0, 500));
+            parts.push(parsed);
+          } catch (e) { WARN('Failed to parse multipart chunk:', body.slice(0, 200), e); }
+        }
+        return parts;
+      };
 
-        for (let i = 0; i < 20; i++) {
-          await wait(500);
-          const asyncRes = await fetch(buildStoreUrl('cart/async_shipping_rates.json') + '?' + query, {
-            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-          });
-          if (asyncRes.status === 202) continue;
-          if (!asyncRes.ok) continue;
-          const asyncData = await asyncRes.json();
-          if (Array.isArray(asyncData && asyncData.shipping_rates)) return asyncData.shipping_rates;
-          if (asyncData == null) continue;
+      // ── GraphQL request to Storefront API ────────────────────────────────────
+      const gqlRequest = async (query, variables, useDefer) => {
+        const headers = {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': storefrontToken
+        };
+        if (useDefer) {
+          headers['Accept'] = 'multipart/mixed; boundary=graphql; deferSpec=20220824, application/json';
+        }
+        LOG('GQL →', storefrontGqlUrl, '| defer:', !!useDefer, '| vars:', JSON.stringify(variables));
+        const res = await fetch(storefrontGqlUrl, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ query: query, variables: variables })
+        });
+        LOG('GQL status:', res.status, '| content-type:', res.headers.get('content-type'));
+        if (!res.ok) {
+          const errBody = await res.text();
+          WARN('GQL error body:', errBody.slice(0, 400));
+          throw new Error('gql_http_' + res.status);
+        }
+        const ct = res.headers.get('content-type') || '';
+        if (ct.includes('multipart/mixed')) {
+          const text = await res.text();
+          const bm = ct.match(/boundary=([^;,\s"]+)/);
+          return parseMultipart(text, bm ? bm[1] : 'graphql');
+        }
+        const json = await res.json();
+        LOG('GQL JSON response:', JSON.stringify(json).slice(0, 600));
+        if (json && json.errors && json.errors.length) WARN('GQL errors:', json.errors);
+        return [json];
+      };
+
+      // ── Step 2: Create temporary cart with current variant ───────────────────
+      const createTempCart = async (variantGid) => {
+        LOG('Step 2/4 — cartCreate | variant GID:', variantGid);
+        const mutation = 'mutation CartCreate($lines:[CartLineInput!]!){cartCreate(input:{lines:$lines}){cart{id}userErrors{field message code}}}';
+        const parts = await gqlRequest(mutation, { lines: [{ merchandiseId: variantGid, quantity: 1 }] }, false);
+        const result = parts[0] && parts[0].data && parts[0].data.cartCreate;
+        if (!result) throw new Error('cart_create_empty_response');
+        if (result.userErrors && result.userErrors.length) {
+          WARN('cartCreate userErrors:', result.userErrors);
+          throw new Error('cart_create_error: ' + result.userErrors.map(function (e) { return e.message; }).join(', '));
+        }
+        const cartId = result.cart && result.cart.id;
+        if (!cartId) throw new Error('cart_create_no_id');
+        LOG('Temp cart created:', cartId);
+        return cartId;
+      };
+
+      // ── Step 3: Add delivery address via cartDeliveryAddressesAdd ────────────
+      const addDeliveryAddress = async (cartId, addr) => {
+        LOG('Step 3/4 — cartDeliveryAddressesAdd | cartId:', cartId, '| addr:', addr);
+        const mutation = [
+          'mutation CartDeliveryAddressesAdd($id:ID!,$addresses:[CartSelectableAddressInput!]!){',
+          'cartDeliveryAddressesAdd(cartId:$id,addresses:$addresses){',
+          'userErrors{field message code}',
+          'cart{id delivery{addresses{id selected}}}',
+          '}}'
+        ].join('');
+        const parts = await gqlRequest(mutation, {
+          id: cartId,
+          addresses: [{
+            selected: true,
+            address: {
+              deliveryAddress: {
+                address1: addr.address1,
+                city: addr.city,
+                provinceCode: addr.provinceCode,
+                countryCode: 'BR',
+                zip: addr.zip
+              }
+            }
+          }]
+        }, false);
+        const result = parts[0] && parts[0].data && parts[0].data.cartDeliveryAddressesAdd;
+        if (result && result.userErrors && result.userErrors.length) {
+          WARN('cartDeliveryAddressesAdd userErrors:', result.userErrors);
+        }
+        LOG('Delivery address result:', JSON.stringify(result).slice(0, 300));
+        return result;
+      };
+
+      // ── Step 4: Query deliveryGroups with carrier rates (@defer) ─────────────
+      const fetchDeliveryOptions = async (cartId) => {
+        LOG('Step 4/4 — fetchDeliveryOptions | cartId:', cartId);
+        const query = [
+          'query CartShipping($cartId:ID!){',
+          'cart(id:$cartId){id cost{subtotalAmount{amount currencyCode}}...DeliveryGroups @defer}',
+          '}',
+          'fragment DeliveryGroups on Cart{',
+          'deliveryGroups(first:10,withCarrierRates:true){',
+          'edges{node{id deliveryOptions{handle title estimatedCost{amount currencyCode}}}}',
+          '}}'
+        ].join('');
+        const parts = await gqlRequest(query, { cartId: cartId }, true);
+        LOG('Delivery options response — total parts:', parts.length);
+
+        // Merge: standard JSON response or incremental delivery (@defer) parts
+        let groups = null;
+        for (var pi = 0; pi < parts.length; pi++) {
+          var p = parts[pi];
+          // Standard (no @defer): data.cart.deliveryGroups
+          if (p && p.data && p.data.cart && p.data.cart.deliveryGroups) {
+            groups = p.data.cart.deliveryGroups;
+            LOG('deliveryGroups (direct):', JSON.stringify(groups).slice(0, 600));
+          }
+          // Incremental delivery spec: incremental[n].data.deliveryGroups
+          if (p && Array.isArray(p.incremental)) {
+            for (var ii = 0; ii < p.incremental.length; ii++) {
+              var inc = p.incremental[ii];
+              if (inc && inc.data && inc.data.deliveryGroups) {
+                groups = inc.data.deliveryGroups;
+                LOG('deliveryGroups (incremental path):', JSON.stringify(groups).slice(0, 600));
+              }
+            }
+          }
         }
 
-        const fallRes = await fetch(buildStoreUrl('cart/shipping_rates.json') + '?' + query, {
-          headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        if (!fallRes.ok) throw new Error('rates_failed');
-        const fallData = await fallRes.json();
-        if (Array.isArray(fallData && fallData.shipping_rates)) return fallData.shipping_rates;
-        throw new Error('no_rates');
+        if (!groups || !Array.isArray(groups.edges)) {
+          WARN('No deliveryGroups found. Full parts dump:', JSON.stringify(parts).slice(0, 1000));
+          return [];
+        }
+
+        var options = [];
+        for (var ei = 0; ei < groups.edges.length; ei++) {
+          var node = groups.edges[ei] && groups.edges[ei].node;
+          if (!node || !Array.isArray(node.deliveryOptions)) continue;
+          for (var oi = 0; oi < node.deliveryOptions.length; oi++) {
+            var opt = node.deliveryOptions[oi];
+            if (!opt || !opt.title) continue;
+            options.push({
+              name: opt.title,
+              price: Number((opt.estimatedCost && opt.estimatedCost.amount) || 0),
+              handle: opt.handle,
+              groupId: node.id
+            });
+          }
+        }
+        LOG('Extracted delivery options:', options);
+        return options;
       };
 
-      shippingCalcRoots.forEach((calcRoot) => {
-        const inputEl    = calcRoot.querySelector('[data-shipping-cep]');
-        const submitEl   = calcRoot.querySelector('[data-shipping-submit]');
+      // Get currently chosen variant ID from product form hidden input
+      const getCurrentVariantId = () => {
+        for (var fi = 0; fi < productForms.length; fi++) {
+          var idInput = productForms[fi].querySelector('input[name="id"]');
+          if (idInput && idInput.value) return idInput.value.trim();
+        }
+        return String(cfg.defaultVariantId || '');
+      };
+
+      // ── Bind each shipping calc block ────────────────────────────────────────
+      shippingCalcRoots.forEach(function (calcRoot) {
+        const inputEl = calcRoot.querySelector('[data-shipping-cep]');
+        const submitEl = calcRoot.querySelector('[data-shipping-submit]');
         const feedbackEl = calcRoot.querySelector('[data-shipping-feedback]');
-        const ratesEl    = calcRoot.querySelector('[data-shipping-rates]');
-        const country    = normalizeCountry(calcRoot.getAttribute('data-shipping-country'));
-        const province   = normalizeProvince(calcRoot.getAttribute('data-shipping-province'));
+        const ratesEl = calcRoot.querySelector('[data-shipping-rates]');
         if (!inputEl || !submitEl) return;
 
-        inputEl.addEventListener('input', () => { inputEl.value = formatZipInput(inputEl.value); });
-        inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); submitEl.click(); } });
+        inputEl.addEventListener('input', function () { inputEl.value = formatZipInput(inputEl.value); });
+        inputEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submitEl.click(); } });
 
-        submitEl.addEventListener('click', async () => {
+        submitEl.addEventListener('click', async function () {
           const zip = String(inputEl.value || '').replace(/\D+/g, '');
+          LOG('=== Shipping calc triggered | zip:', zip);
+
           if (zip.length !== 8) {
-            renderShippingRates(ratesEl, []);
-            setShippingFeedback(feedbackEl, shippingMessages.invalidZip, true);
+            renderRates(ratesEl, []);
+            setFeedback(feedbackEl, shippingMessages.invalidZip, true);
             inputEl.focus();
             return;
           }
 
-          const defaultLabel  = submitEl.getAttribute('data-label-default') || 'Ok';
-          const loadingLabel  = submitEl.getAttribute('data-label-loading') || 'Calculando...';
+          if (!storefrontToken) {
+            WARN('storefrontToken not set in theme settings.');
+            setFeedback(feedbackEl, 'Storefront API token não configurado nas configurações do tema.', true);
+            return;
+          }
+
+          const defaultLabel = submitEl.getAttribute('data-label-default') || 'Ok';
+          const loadingLabel = submitEl.getAttribute('data-label-loading') || 'Calculando...';
           submitEl.disabled = true;
           submitEl.textContent = loadingLabel;
-          renderShippingRates(ratesEl, []);
-          setShippingFeedback(feedbackEl, '', false);
+          renderRates(ratesEl, []);
+          setFeedback(feedbackEl, '', false);
 
           try {
-            const rates = await fetchShippingRates(zip, country, province);
-            if (!rates.length) {
-              setShippingFeedback(feedbackEl, shippingMessages.noRates, true);
+            // 1) Resolve full address from CEP
+            const addr = await lookupCep(zip);
+
+            // 2) Create temp Storefront cart with current variant
+            const rawId = getCurrentVariantId();
+            if (!rawId) throw new Error('no_variant_id');
+            const variantGid = rawId.startsWith('gid://') ? rawId : 'gid://shopify/ProductVariant/' + rawId;
+            const cartId = await createTempCart(variantGid);
+
+            // 3) Add delivery address to temp cart
+            await addDeliveryAddress(cartId, addr);
+
+            // 4) Fetch carrier delivery options
+            const options = await fetchDeliveryOptions(cartId);
+
+            if (!options.length) {
+              setFeedback(feedbackEl, shippingMessages.noRates, true);
             } else {
-              renderShippingRates(ratesEl, rates);
-              setShippingFeedback(feedbackEl, '', false);
+              renderRates(ratesEl, options);
+              setFeedback(feedbackEl, '', false);
             }
+            LOG('=== Shipping calc complete ===');
           } catch (err) {
-            const msg = String(err && err.message || '').toLowerCase();
-            if (msg.includes('empty_cart')) {
-              setShippingFeedback(feedbackEl, shippingMessages.emptyCart, true);
-            } else if (msg.includes('prepare_422')) {
-              let hasItems = false;
-              try { hasItems = await cartHasItems(); } catch (_) { hasItems = false; }
-              setShippingFeedback(feedbackEl, hasItems ? shippingMessages.noRates : shippingMessages.emptyCart, true);
+            WARN('Shipping error:', err);
+            const msg = String((err && err.message) || '').toLowerCase();
+            if (msg.includes('cep_not_found') || msg.includes('viacep')) {
+              setFeedback(feedbackEl, shippingMessages.invalidZip, true);
+            } else if (msg.includes('no_variant_id')) {
+              setFeedback(feedbackEl, 'Selecione uma variante do produto antes de calcular.', true);
             } else {
-              const isEmptyErr = msg.includes('empty') || msg.includes('cart');
-              setShippingFeedback(feedbackEl, isEmptyErr ? shippingMessages.emptyCart : shippingMessages.genericError, true);
+              setFeedback(feedbackEl, shippingMessages.genericError, true);
             }
           } finally {
             submitEl.disabled = false;
@@ -664,39 +873,132 @@
       const initial = findMatchingVariant();
       if (initial) syncVariantInForms(initial);
     } else {
-      const initial = findMatchingVariant();
+      // Produto sem opções de variante (variante única ou default)
+      const initial = variants.find((v) => String(v.id) === defaultVariantId) || findMatchingVariant();
       if (initial) syncVariantInForms(initial);
-    }
-
-    if (defaultVariantId) {
-      const dv = variants.find((v) => String(v.id) === defaultVariantId) || null;
-      if (dv) syncVariantInForms(dv);
     }
 
     // ── Sticky buy button ────────────────────────────────────────────────────────
     if (stickyBuyButton) {
-      stickyBuyButton.addEventListener('click', () => {
+      stickyBuyButton.addEventListener('click', async () => {
         if (stickyBuyButton.disabled) return;
         const canonicalForm = productForms[0];
         if (!canonicalForm) return;
-        const returnTo = canonicalForm.querySelector('[data-return-to]');
-        if (returnTo) returnTo.value = cartUrl;
-        canonicalForm.dataset.submitMode = 'buy';
-        const buyBtn = canonicalForm.querySelector('[data-action-buy-cart]');
-        if (buyBtn) { buyBtn.click(); return; }
-        canonicalForm.submit();
+
+        // Desabilita botão durante adição
+        stickyBuyButton.disabled = true;
+        const prevText = stickyBuyButton.textContent;
+        stickyBuyButton.textContent = 'Adicionando...';
+
+        try {
+          const formData = new FormData(canonicalForm);
+          formData.delete('return_to');
+
+          // Sincroniza qty do sticky no formData
+          const stickyQtyVal = sectionRoot.querySelector('[data-sticky-qty-input]');
+          if (stickyQtyVal) formData.set('quantity', stickyQtyVal.value || '1');
+
+          const response = await fetch(buildStoreUrl('cart/add.js'), {
+            method: 'POST',
+            headers: { Accept: 'application/json' },
+            body: formData,
+          });
+          if (!response.ok) throw new Error('add_failed');
+          await onCartAdded();
+          window.location.href = cartUrl;
+        } catch (_) {
+          stickyBuyButton.textContent = prevText;
+          stickyBuyButton.disabled = false;
+        }
       });
+    }
+
+    // ── Sticky buy-now + add-cart + qty ─────────────────────────────────────────
+    {
+      const stickyAddBtn = sectionRoot.querySelector('[data-sticky-add-cart]');
+      const stickyQtyIn = sectionRoot.querySelector('[data-sticky-qty-input]');
+      const stickyQtyMore = sectionRoot.querySelector('[data-sticky-qty-increase]');
+      const stickyQtyLess = sectionRoot.querySelector('[data-sticky-qty-decrease]');
+      const canonicalQty = sectionRoot.querySelector('[name="quantity"][data-qty-input]') || sectionRoot.querySelector('[data-qty-input]');
+
+      const syncStickyQty = (val) => {
+        const v = Math.max(1, Number(val) || 1);
+        if (stickyQtyIn) stickyQtyIn.value = String(v);
+        if (canonicalQty) canonicalQty.value = String(v);
+      };
+
+      if (stickyQtyIn) {
+        stickyQtyIn.addEventListener('input', () => { stickyQtyIn.value = stickyQtyIn.value.replace(/\D+/g, ''); });
+        stickyQtyIn.addEventListener('blur', () => syncStickyQty(stickyQtyIn.value));
+        stickyQtyIn.addEventListener('focus', () => stickyQtyIn.select());
+      }
+      if (stickyQtyMore) stickyQtyMore.addEventListener('click', () => syncStickyQty((Number(stickyQtyIn?.value) || 1) + 1));
+      if (stickyQtyLess) stickyQtyLess.addEventListener('click', () => syncStickyQty((Number(stickyQtyIn?.value) || 1) - 1));
+
+      if (stickyAddBtn) {
+        stickyAddBtn.addEventListener('click', async () => {
+          if (stickyAddBtn.disabled) return;
+
+          const canonicalForm = productForms[0];
+          if (!canonicalForm) return;
+
+          // Feedback visual imediato
+          const iconEl = stickyAddBtn.querySelector('.material-symbols-outlined');
+          const labelEl = stickyAddBtn.querySelector('span:last-child');
+          const prvIcon = iconEl ? iconEl.textContent : null;
+          const prvLabel = labelEl ? labelEl.textContent : null;
+          stickyAddBtn.disabled = true;
+          if (iconEl) iconEl.textContent = 'hourglass_top';
+          if (labelEl) labelEl.textContent = 'Adicionando...';
+
+          try {
+            const formData = new FormData(canonicalForm);
+            formData.delete('return_to');
+            if (stickyQtyIn) formData.set('quantity', stickyQtyIn.value || '1');
+
+            const response = await fetch(buildStoreUrl('cart/add.js'), {
+              method: 'POST',
+              headers: { Accept: 'application/json' },
+              body: formData,
+            });
+            if (!response.ok) throw new Error('add_failed');
+
+            // Efeito de sucesso
+            if (iconEl) iconEl.textContent = 'check';
+            if (labelEl) labelEl.textContent = 'Adicionado!';
+            stickyAddBtn.classList.add('is-cart-added');
+            await onCartAdded();
+
+            // Reset qty para 1
+            syncStickyQty(1);
+
+            window.setTimeout(() => {
+              stickyAddBtn.disabled = false;
+              stickyAddBtn.classList.remove('is-cart-added');
+              if (iconEl && prvIcon) iconEl.textContent = prvIcon;
+              if (labelEl && prvLabel) labelEl.textContent = prvLabel;
+            }, 1200);
+          } catch (_) {
+            stickyAddBtn.disabled = false;
+            if (iconEl && prvIcon) iconEl.textContent = prvIcon;
+            if (labelEl && prvLabel) labelEl.textContent = 'Tentar novamente';
+            window.setTimeout(() => {
+              if (labelEl && prvLabel) labelEl.textContent = prvLabel;
+            }, 2000);
+          }
+        });
+      }
     }
 
     // ── Product form qty + submit ────────────────────────────────────────────────
     productForms.forEach((formEl) => {
-      // Ignorar elementos dentro de [data-product-form-mobile] — eles são tratados pelo bloco de sync mobile
-      const notInMobile = (sel) => Array.from(formEl.querySelectorAll(sel)).find(el => !el.closest('[data-product-form-mobile]'));
+      // Ignorar elementos dentro de [data-mobile-pdp-root] — eles são tratados pelo sticky/mobile
+      const notInMobile = (sel) => Array.from(formEl.querySelectorAll(sel)).find(el => !el.closest('[data-mobile-pdp-root]'));
       // Preferir input com name="quantity" para garantir que FormData o capture
-      const qtyInput     = notInMobile('[name="quantity"][data-qty-input]') || notInMobile('[data-qty-input]');
-      const qtyIncrease  = notInMobile('[data-qty-increase]');
-      const qtyDecrease  = notInMobile('[data-qty-decrease]');
-      const addCartBtn   = formEl.querySelector('[data-action-add-cart]');
+      const qtyInput = notInMobile('[name="quantity"][data-qty-input]') || notInMobile('[data-qty-input]');
+      const qtyIncrease = notInMobile('[data-qty-increase]');
+      const qtyDecrease = notInMobile('[data-qty-decrease]');
+      const addCartBtn = formEl.querySelector('[data-action-add-cart]');
 
       const syncQty = (next) => {
         const val = Math.max(1, Number(next) || 1);
@@ -721,7 +1023,7 @@
       formEl.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const submitter  = event.submitter;
+        const submitter = event.submitter;
         const clickedBtn = submitter ?? addCartBtn;
         if (!clickedBtn || clickedBtn.disabled) return;
 
@@ -751,7 +1053,7 @@
     });
     // ── Easify: move container de opções para o slot visível (mobile/desktop) ─
     const tpoSlotDesktop = sectionRoot.querySelector('[data-tpo-slot="desktop"]');
-    const tpoSlotMobile  = sectionRoot.querySelector('[data-tpo-slot="mobile"]');
+    const tpoSlotMobile = sectionRoot.querySelector('[data-tpo-slot="mobile"]');
     if (tpoSlotDesktop && tpoSlotMobile) {
       const mqMobile = window.matchMedia('(max-width: 1023px)');
       const moveTpo = () => {
@@ -767,9 +1069,9 @@
     // ── Mobile qty sync (fora do form canônico) ──────────────────────────────
     const mobileFormButtons = mobilePdpRoot?.querySelector('[data-product-form-mobile]');
     if (mobileFormButtons) {
-      const canonicalForm     = productForms[0];
+      const canonicalForm = productForms[0];
       const canonicalQtyInput = sectionRoot.querySelector('[name="quantity"][data-qty-input]');
-      const mobileQtyInput    = mobileFormButtons.querySelector('[data-qty-input]');
+      const mobileQtyInput = mobileFormButtons.querySelector('[data-qty-input]');
       const mobileQtyIncrease = mobileFormButtons.querySelector('[data-qty-increase]');
       const mobileQtyDecrease = mobileFormButtons.querySelector('[data-qty-decrease]');
 
@@ -782,7 +1084,7 @@
       if (mobileQtyInput) {
         mobileQtyInput.addEventListener('input', () => { mobileQtyInput.value = mobileQtyInput.value.replace(/\D+/g, ''); });
         mobileQtyInput.addEventListener('blur', () => syncMobileQty(mobileQtyInput.value));
-        mobileQtyInput.addEventListener('keydown', (e) => { if (['e','E','+','-','.',','].includes(e.key)) e.preventDefault(); });
+        mobileQtyInput.addEventListener('keydown', (e) => { if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault(); });
         mobileQtyInput.addEventListener('focus', () => mobileQtyInput.select());
       }
 
@@ -815,7 +1117,7 @@
 
       const updateStickyBarVisibility = () => {
         const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-        stickyBuyBar.classList.toggle('is-visible', !isDesktop && window.scrollY > 220);
+        stickyBuyBar.classList.toggle('is-visible', !isDesktop);
         updateFooterStickyGap();
       };
 
@@ -850,20 +1152,20 @@
     }
 
     // ── Social proof counters ────────────────────────────────────────────────────
-    const soldCountEls         = Array.from(sectionRoot.querySelectorAll('[data-sold-count]'));
-    const soldLabelEls         = Array.from(sectionRoot.querySelectorAll('[data-sold-label]'));
-    const liveViewersEls       = Array.from(sectionRoot.querySelectorAll('[data-live-viewers]'));
-    const liveViewersLabelEls  = Array.from(sectionRoot.querySelectorAll('[data-live-viewers-label]'));
+    const soldCountEls = Array.from(sectionRoot.querySelectorAll('[data-sold-count]'));
+    const soldLabelEls = Array.from(sectionRoot.querySelectorAll('[data-sold-label]'));
+    const liveViewersEls = Array.from(sectionRoot.querySelectorAll('[data-live-viewers]'));
+    const liveViewersLabelEls = Array.from(sectionRoot.querySelectorAll('[data-live-viewers-label]'));
 
     if (soldCountEls.length > 0 && liveViewersEls.length > 0) {
-      const SP_KEY        = 'maxxx-social-proof:v1';
+      const SP_KEY = 'maxxx-social-proof:v1';
       const SP_LEGACY_PFX = 'maxxx-social-proof-';
-      const SP_MAX        = 18;
-      const productKey    = String(cfg.productId || '');
-      const todayKey      = new Date().toISOString().slice(0, 10);
-      const soldSeed      = Number(cfg.soldSeed) || 18;
-      const liveSeed      = Number(cfg.liveSeed) || 12;
-      const randomInt     = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const SP_MAX = 18;
+      const productKey = String(cfg.productId || '');
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const soldSeed = Number(cfg.soldSeed) || 18;
+      const liveSeed = Number(cfg.liveSeed) || 12;
+      const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
       const readStore = () => {
         try {
@@ -885,7 +1187,7 @@
       const writeStore = (store) => {
         try {
           if (window.localStorage) window.localStorage.setItem(SP_KEY, JSON.stringify(pruneStore(store)));
-        } catch (_) {}
+        } catch (_) { }
       };
 
       const cleanupLegacy = () => {
@@ -895,7 +1197,7 @@
             const k = window.localStorage.key(i);
             if (k && k.startsWith(SP_LEGACY_PFX)) window.localStorage.removeItem(k);
           }
-        } catch (_) {}
+        } catch (_) { }
       };
 
       let state = { sold: soldSeed, live: liveSeed, day: todayKey };
@@ -904,7 +1206,7 @@
       if (stored && typeof stored === 'object') {
         state.sold = Number(stored.sold) || soldSeed;
         state.live = Number(stored.live) || liveSeed;
-        state.day  = stored.day || todayKey;
+        state.day = stored.day || todayKey;
       } else {
         try {
           const legacyRaw = window.localStorage && window.localStorage.getItem(SP_LEGACY_PFX + productKey);
@@ -913,15 +1215,15 @@
             if (parsed && typeof parsed === 'object') {
               state.sold = Number(parsed.sold) || soldSeed;
               state.live = Number(parsed.live) || liveSeed;
-              state.day  = parsed.day || todayKey;
+              state.day = parsed.day || todayKey;
             }
           }
-        } catch (_) {}
+        } catch (_) { }
       }
 
       if (state.day !== todayKey) {
         state.sold = clamp(soldSeed + randomInt(-3, 3), 1, 160);
-        state.day  = todayKey;
+        state.day = todayKey;
       }
 
       const liveDelta = Math.max(1, Math.round(state.live * 0.3));
@@ -1012,7 +1314,7 @@
         if (!lbIsPanning) return;
         endPanning();
         if (e && typeof lightboxImageEl.releasePointerCapture === 'function') {
-          try { lightboxImageEl.releasePointerCapture(e.pointerId); } catch (_) {}
+          try { lightboxImageEl.releasePointerCapture(e.pointerId); } catch (_) { }
         }
       };
 

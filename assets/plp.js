@@ -14,6 +14,8 @@
     const CLIENT_PRICE_MIN_PARAM = '_price_min';
     const CLIENT_PRICE_MAX_PARAM = '_price_max';
     const CLIENT_IN_STOCK_PARAM  = '_in_stock';
+    const SERVER_PAGE_PARAM      = 'page';
+    const UNUSED_PAGE_PARAM      = 'plp_page';
 
     const CLIENT_FILTER_DEBOUNCE_MS = 250;
     const SUBMIT_DEBOUNCE_MS        = 500;
@@ -24,6 +26,266 @@
     let isLoading        = false;
 
     const productsColumn = sectionRoot.querySelector('.plp-products-column');
+
+    // ─── Storefront API — fetch-all + client-side pagination ─────────────────
+    const SF_TOKEN     = cfg.storefrontToken || '';
+    const SF_VERSION   = cfg.storefrontApiVersion || '2025-01';
+    const SF_DOMAIN    = cfg.shopDomain || window.location.hostname;
+    const SF_URL       = 'https://' + SF_DOMAIN + '/api/' + SF_VERSION + '/graphql.json';
+    const COL_HANDLE   = cfg.collectionHandle || '';
+    const COL_TAGS     = Array.isArray(cfg.currentTags) ? cfg.currentTags : [];
+    const PER_PAGE     = Number(cfg.perPage) || 12;
+    const INSTALLMENTS = Number(cfg.installmentsCount) || 10;
+    const MEDIA_BG     = cfg.mediaBg || '#F7F7F7';
+    const SHOW_RATINGS = !!cfg.showRatings;
+    const SHOW_BUY     = !!cfg.showBuyButton;
+    const SHOW_DISC    = !!cfg.showDiscountBadge;
+    const BUY_LABEL    = cfg.buyLabel || 'COMPRAR';
+    const LS_ENABLED   = !!cfg.lowStockEnabled;
+    const LS_MIN       = Number(cfg.lowStockMin) || 1;
+    const LS_MAX       = Number(cfg.lowStockMax) || 10;
+    const LS_BG        = cfg.lowStockBadgeBg || '#F97316';
+    const LS_TEXT      = cfg.lowStockBadgeText || '#ffffff';
+    const LS_OPACITY   = Number(cfg.lowStockBadgeOpacity || 85) / 100;
+
+    const SF_ACTIVE = !cfg.isSearchPage && !!SF_TOKEN && !!COL_HANDLE;
+
+    // Cache da lista completa filtrada. null = ainda não buscou.
+    let sfAllProducts  = null;
+    let sfFetchPromise = null;
+    let sfCurrentPage  = parseInt(new URLSearchParams(window.location.search).get('page') || '1', 10) || 1;
+
+    const SORT_KEY_MAP = {
+      'manual':             { sortKey: 'MANUAL',       reverse: false },
+      'best-selling':       { sortKey: 'BEST_SELLING', reverse: false },
+      'title-ascending':    { sortKey: 'TITLE',        reverse: false },
+      'title-descending':   { sortKey: 'TITLE',        reverse: true  },
+      'price-ascending':    { sortKey: 'PRICE',        reverse: false },
+      'price-descending':   { sortKey: 'PRICE',        reverse: true  },
+      'created-descending': { sortKey: 'CREATED',      reverse: true  },
+      'created-ascending':  { sortKey: 'CREATED',      reverse: false },
+    };
+
+    const getSortParams = () => {
+      const s = new URLSearchParams(window.location.search).get('sort_by') || cfg.currentSort || 'manual';
+      return SORT_KEY_MAP[s] || SORT_KEY_MAP['manual'];
+    };
+
+    const SF_QUERY = `
+      query PlpAll($handle:String!,$first:Int!,$after:String,$sortKey:ProductCollectionSortKeys!,$reverse:Boolean!,$filters:[ProductFilter!]!) {
+        collection(handle:$handle) {
+          products(first:$first,after:$after,sortKey:$sortKey,reverse:$reverse,filters:$filters) {
+            pageInfo { hasNextPage endCursor }
+            edges { node {
+              id handle title availableForSale totalInventory productType tags
+              featuredImage { url(transform:{maxWidth:900,crop:CENTER}) }
+              priceRange      { minVariantPrice { amount } }
+              compareAtPriceRange { minVariantPrice { amount } }
+              ratingValue: metafield(namespace:"custom",key:"rating_value") { value }
+              reviewCount: metafield(namespace:"custom",key:"review_count")  { value }
+            } }
+          }
+        }
+      }`;
+
+    // Busca uma página da API (até 250 por chamada)
+    const sfFetchPage = async (cursor, limit) => {
+      const { sortKey, reverse } = getSortParams();
+      const filters = [{ available: true }, ...COL_TAGS.map((t) => ({ tag: t }))];
+      const resp = await fetch(SF_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': SF_TOKEN },
+        body: JSON.stringify({ query: SF_QUERY, variables: { handle: COL_HANDLE, first: limit || 250, after: cursor || null, sortKey, reverse, filters } }),
+      });
+      if (!resp.ok) throw new Error('SF ' + resp.status);
+      const json = await resp.json();
+      if (json.errors) throw new Error(JSON.stringify(json.errors));
+      const conn = json?.data?.collection?.products;
+      if (!conn) throw new Error('No products');
+      return { nodes: conn.edges.map((e) => e.node), pageInfo: conn.pageInfo };
+    };
+
+    // Busca TODOS os produtos e filtra os de estoque zero
+    const fetchAllFiltered = () => {
+      if (sfAllProducts !== null) return Promise.resolve(sfAllProducts);
+      if (sfFetchPromise) return sfFetchPromise;
+
+      sfFetchPromise = (async () => {
+        const all = [];
+        let cursor = null;
+        let hasMore = true;
+        while (hasMore) {
+          const { nodes, pageInfo } = await sfFetchPage(cursor, 250);
+          all.push(...nodes);
+          hasMore = pageInfo.hasNextPage;
+          cursor  = pageInfo.endCursor;
+        }
+        // Remove itens sem estoque
+        sfAllProducts = all.filter((p) => {
+          if (!p.availableForSale) return false;
+          const inv = p.totalInventory;
+          if (inv === null || inv === undefined) return true; // sem rastreamento → manter
+          return inv > 0;
+        });
+        return sfAllProducts;
+      })();
+
+      return sfFetchPromise;
+    };
+
+    const fmtBrl = (n) => new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(n) || 0);
+    const esc    = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    const getBadge = (tags) => {
+      const MAP = [['TOP OFERTA',''],['FRETE GRÁTIS','bg-[#16A34A] text-white'],['MAIS BUSCADO','bg-[#1A1C1C] text-white'],['QUERIDINHO',''],['5% CASHBACK','bg-[#16A34A] text-white'],['OFERTA DO DIA','bg-[#16A34A] text-white']];
+      for (const [tag, cls] of MAP) if ((tags || []).includes(tag)) return { text: tag, cls };
+      return null;
+    };
+
+    const starsHtml = (rating) => {
+      const r = Math.min(5, Math.max(1, Math.round(Number(rating) || 5)));
+      return Array.from({ length: 5 }, (_, i) =>
+        `<span class="material-symbols-outlined text-sm"${i < r ? " style=\"font-variation-settings:'FILL' 1;\"" : ''}>star</span>`
+      ).join('');
+    };
+
+    const renderCard = (p) => {
+      const price   = parseFloat(p.priceRange?.minVariantPrice?.amount || '0');
+      const cmpRaw  = parseFloat(p.compareAtPriceRange?.minVariantPrice?.amount || '0');
+      const cmp     = cmpRaw > price ? cmpRaw : 0;
+      const hasDsc  = cmp > 0;
+      const dscPct  = hasDsc ? Math.round((cmp - price) / cmp * 100) : 0;
+      const inst    = price / INSTALLMENTS;
+      const inv     = Number(p.totalInventory) || 0;
+      const isAvail = p.availableForSale ? 1 : 0;
+      const rating  = Number(p.ratingValue?.value || 5);
+      const reviews = Number(p.reviewCount?.value || 0);
+      const badge   = getBadge(p.tags);
+      const promo   = hasDsc ? ' style="color:var(--color-promo-final-price)"' : '';
+      const url     = '/collections/' + COL_HANDLE + '/products/' + p.handle;
+      const numId   = parseInt((p.id || '').split('/').pop() || '0', 10);
+
+      const lsHtml = (LS_ENABLED && isAvail && inv >= LS_MIN && inv <= LS_MAX)
+        ? `<div class="absolute bottom-3 left-3 flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg shadow-md leading-none pointer-events-none backdrop-blur-sm" style="background-color:${LS_BG};color:${LS_TEXT};opacity:${LS_OPACITY}"><span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">local_fire_department</span> ÚLTIMAS ${numId % 5 + 1}</div>`
+        : '';
+
+      const badgeHtml = badge
+        ? `<div class="absolute top-3 left-3"><div class="${badge.cls || 'bg-primary text-white'} text-[10px] font-bold px-2 py-1 rounded shadow-sm">${esc(badge.text)}</div></div>`
+        : '';
+
+      const imgHtml = p.featuredImage?.url
+        ? `<div class="gc-product-image group-hover:scale-105 transition-transform duration-500" style="background-image:url('${esc(p.featuredImage.url)}');" aria-label="${esc(p.title)}"></div>`
+        : '';
+
+      const ratingsHtml = SHOW_RATINGS
+        ? `<div class="flex items-center gap-1"><div class="flex plp-card-rating">${starsHtml(rating)}</div>${reviews > 0 ? `<span class="plp-card-meta">(${reviews})</span>` : ''}</div>`
+        : '';
+
+      const cmpHtml  = hasDsc ? `<span class="plp-card-meta line-through" style="color:var(--color-promo-old-price)">R$ ${fmtBrl(cmp)}</span>` : '';
+      const discHtml = (SHOW_DISC && hasDsc) ? `<span class="plp-card-discount">-${dscPct}%</span>` : '';
+      const buyHtml  = SHOW_BUY ? `<a class="plp-card-buy py-3 mt-3 font-bold text-center" href="${url}">${esc(BUY_LABEL)}</a>` : '';
+      const priceBlk = SHOW_BUY ? ' mt-auto' : '';
+      const category = esc(p.productType || '');
+
+      return `<div class="plp-product-item" data-product-price="${Math.round(price * 100)}" data-product-available="${isAvail}" data-product-colors="">
+        <article class="plp-card gc-product-card group" data-card-url="${url}" role="link" tabindex="0" aria-label="Abrir produto ${esc(p.title)}">
+          <div class="plp-card-media gc-product-media-frame relative" style="background-color:${esc(MEDIA_BG)};">${imgHtml}${lsHtml}${badgeHtml}
+            <button class="favorite-btn absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#DC2626] shadow-lg" type="button" aria-label="Favoritar" data-product-handle="${esc(p.handle)}"><span class="material-symbols-outlined text-xl">favorite</span></button>
+          </div>
+          <div class="plp-card-content gc-product-card-content">
+            <h3 class="plp-card-title font-medium">${esc(p.title)}</h3>
+            ${category ? `<p class="plp-card-meta">${category}</p>` : ''}
+            ${ratingsHtml}
+            <div class="${priceBlk}">${cmpHtml}
+              <div class="plp-card-price-row"><div class="flex items-baseline gap-1">
+                <span class="plp-card-meta font-bold italic"${promo}>R$</span>
+                <span class="plp-card-price font-black"${promo}>${fmtBrl(price)}</span>
+              </div>${discHtml}</div>
+              <span class="plp-card-meta">${INSTALLMENTS}x de R$ ${fmtBrl(inst)} sem juros</span>
+            </div>
+            ${buyHtml}
+          </div>
+        </article></div>`;
+    };
+
+    // Paginação com total exato (baseado na lista filtrada)
+    const renderPagination = (currentPage, totalPages) => {
+      if (totalPages <= 1) return '';
+      const params = new URLSearchParams(window.location.search);
+      params.delete('page');
+      const base = window.location.pathname;
+      const qs   = params.toString();
+      const pageUrl = (p) => base + (qs ? '?' + qs + '&page=' + p : p > 1 ? '?page=' + p : '');
+
+      let html = '<nav class="mt-10 md:mt-12 flex items-center justify-center gap-2" aria-label="Paginacao da colecao">';
+
+      if (currentPage > 1) {
+        html += `<button class="plp-pagination-link" type="button" aria-label="Pagina anterior" onclick="plpGoTo(this)" data-page-url="${pageUrl(currentPage - 1)}" data-api-page="${currentPage - 1}"><span class="material-symbols-outlined">chevron_left</span></button>`;
+      }
+
+      const pages = new Set([1, totalPages]);
+      for (let p = Math.max(1, currentPage - 2); p <= Math.min(totalPages, currentPage + 2); p++) pages.add(p);
+      let prev = 0;
+      for (const p of [...pages].sort((a, b) => a - b)) {
+        if (p - prev > 1) html += '<span class="plp-pagination-link" style="pointer-events:none">…</span>';
+        html += p === currentPage
+          ? `<span class="plp-pagination-link is-active">${p}</span>`
+          : `<button class="plp-pagination-link" type="button" onclick="plpGoTo(this)" data-page-url="${pageUrl(p)}" data-api-page="${p}">${p}</button>`;
+        prev = p;
+      }
+
+      if (currentPage < totalPages) {
+        html += `<button class="plp-pagination-link" type="button" aria-label="Proxima pagina" onclick="plpGoTo(this)" data-page-url="${pageUrl(currentPage + 1)}" data-api-page="${currentPage + 1}"><span class="material-symbols-outlined">chevron_right</span></button>`;
+      }
+
+      return html + '</nav>';
+    };
+
+    // Renderiza uma página a partir da lista completa filtrada
+    const renderPage = (pageNum, filtered) => {
+      const totalPages = Math.ceil(filtered.length / PER_PAGE);
+      const safePage   = Math.max(1, Math.min(pageNum, totalPages || 1));
+      const start      = (safePage - 1) * PER_PAGE;
+      const pageItems  = filtered.slice(start, start + PER_PAGE);
+
+      const oldGrid = sectionRoot.querySelector('.plp-listing-grid');
+      if (oldGrid) oldGrid.innerHTML = pageItems.length ? pageItems.map(renderCard).join('') : '<p class="plp-filter-help">Nenhum produto disponivel.</p>';
+
+      const oldPag = sectionRoot.querySelector('[data-plp-pagination-wrap]');
+      if (oldPag) oldPag.innerHTML = renderPagination(safePage, totalPages);
+
+      // Atualiza o contador de produtos no subtítulo
+      const subtitle = sectionRoot.querySelector('.plp-subtitle');
+      if (subtitle) subtitle.textContent = filtered.length + ' produtos encontrados';
+
+      sfCurrentPage = safePage;
+    };
+
+    // Navega para uma página usando a lista em cache
+    const goToPageViaAPI = async (targetPage) => {
+      if (!SF_ACTIVE || targetPage < 1) return false;
+      showLoading();
+      try {
+        const filtered = await fetchAllFiltered();
+        renderPage(targetPage, filtered);
+
+        const params = new URLSearchParams(window.location.search);
+        if (sfCurrentPage === 1) params.delete('page'); else params.set('page', String(sfCurrentPage));
+        const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+        history.pushState({ plpPage: true, apiPage: sfCurrentPage }, '', newUrl);
+
+        hideLoading();
+        bindCardClicks();
+        applyClientFilters();
+        if (productsColumn) window.scrollTo({ top: Math.max(0, productsColumn.getBoundingClientRect().top + window.scrollY - 100), behavior: 'smooth' });
+        return true;
+      } catch (err) {
+        console.warn('[PLP SF]', err.message);
+        hideLoading();
+        return false;
+      }
+    };
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Lazy-create loading overlay
     let loadingOverlay = null;
@@ -68,10 +330,11 @@
       }
 
       if (overridePage != null && overridePage > 1) {
-        params.set('page', String(overridePage));
+        params.set(SERVER_PAGE_PARAM, String(overridePage));
       } else {
-        params.delete('page');
+        params.delete(SERVER_PAGE_PARAM);
       }
+      params.delete(UNUSED_PAGE_PARAM);
 
       // Preserve client-side filter params from current URL
       const currentParams = new URLSearchParams(window.location.search);
@@ -138,15 +401,25 @@
         });
     };
 
+    const resetSfCache = () => {
+      sfAllProducts  = null;
+      sfFetchPromise = null;
+      sfCurrentPage  = 1;
+    };
+
     // Debounced AJAX submit
     const scheduleFilterSubmit = (delay) => {
       const ms = delay != null ? delay : SUBMIT_DEBOUNCE_MS;
       window.clearTimeout(submitDebounceTimer);
-      submitDebounceTimer = window.setTimeout(() => doAjaxFilter(buildFetchURL(null), true), ms);
+      submitDebounceTimer = window.setTimeout(() => {
+        if (SF_ACTIVE) resetSfCache();
+        doAjaxFilter(buildFetchURL(null), true);
+      }, ms);
     };
 
     const submitNow = () => {
       window.clearTimeout(submitDebounceTimer);
+      if (SF_ACTIVE) resetSfCache();
       doAjaxFilter(buildFetchURL(null), true);
     };
 
@@ -255,9 +528,22 @@
     bindCardClicks();
 
     // Pagination — global handler for buttons without href
-    window.plpGoTo = function (btn) {
+    window.plpGoTo = async function (btn) {
       const url = btn && btn.getAttribute('data-page-url');
       if (!url) return;
+
+      if (SF_ACTIVE) {
+        const apiPageAttr = btn.getAttribute('data-api-page');
+        const targetPage  = apiPageAttr
+          ? parseInt(apiPageAttr, 10)
+          : (parseInt(new URLSearchParams(url.includes('?') ? url.split('?')[1] : '').get('page') || '1', 10) || 1);
+        if (targetPage > 0) {
+          const ok = await goToPageViaAPI(targetPage);
+          if (ok) return;
+        }
+      }
+
+      // Fallback: Shopify AJAX section render (search pages or API failure)
       const linkURL      = new URL(url, window.location.origin);
       const currentParams = new URLSearchParams(window.location.search);
       [CLIENT_COLOR_PARAM, CLIENT_PRICE_MIN_PARAM, CLIENT_PRICE_MAX_PARAM, CLIENT_IN_STOCK_PARAM].forEach((key) => {
@@ -269,7 +555,11 @@
     };
 
     // Browser back/forward
-    window.addEventListener('popstate', () => {
+    window.addEventListener('popstate', (event) => {
+      if (SF_ACTIVE && event.state && event.state.apiPage) {
+        goToPageViaAPI(event.state.apiPage);
+        return;
+      }
       doAjaxFilter(window.location.pathname + window.location.search, false);
     });
 
@@ -411,6 +701,15 @@
     }
 
     applyClientFilters();
+
+    // Carrega todos os produtos via API, filtra estoque zero e renderiza a página correta
+    if (SF_ACTIVE) {
+      fetchAllFiltered().then((filtered) => {
+        renderPage(sfCurrentPage, filtered);
+        bindCardClicks();
+        applyClientFilters();
+      }).catch((err) => console.warn('[PLP SF]', err.message));
+    }
 
     // Search ranking (client-side, runs once on page load)
     const isSearchPage  = Boolean(cfg.isSearchPage);
