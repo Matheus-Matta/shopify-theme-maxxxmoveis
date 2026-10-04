@@ -86,6 +86,16 @@
             "@type": "Brand",
             "name": {{ product.vendor | json }}
           },
+          {%- assign ld_review_count = product.metafields.custom.review_count | default: 0 | plus: 0 -%}
+          {%- if ld_review_count > 0 -%}
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": {{ product.metafields.custom.rating_value | default: 0 | plus: 0 }},
+            "reviewCount": {{ ld_review_count }},
+            "bestRating": 5,
+            "worstRating": 1
+          },
+          {%- endif -%}
           "offers": {
             "@type": "Offer",
             "url": {{ shop.url | append: product.url | json }},

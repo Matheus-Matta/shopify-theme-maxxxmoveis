@@ -1,0 +1,505 @@
+{%- comment -%}
+  Avaliações de produto.
+
+  Fonte: o StarHub modera as avaliações e publica as aprovadas na Shopify como
+  metaobjects `avaliacao_produto`, ligados ao produto pelo metafield `custom.reviews`.
+  O envio vai direto para o StarHub com um token HMAC gerado aqui no Liquid: o hub
+  confia no customer.id porque só quem tem o segredo (shop.metafields.custom.reviews_secret)
+  consegue assinar. Contrato completo em docs/avaliacoes.md.
+{%- endcomment -%}
+{%- liquid
+  assign rv_list = product.metafields.custom.reviews.value
+  assign rv_per_page = section.settings.reviews_per_page | default: 6
+  assign rv_count = 0
+  assign rv_sum = 0
+  assign rv_c1 = 0
+  assign rv_c2 = 0
+  assign rv_c3 = 0
+  assign rv_c4 = 0
+  assign rv_c5 = 0
+
+  for review in rv_list
+    # O hub só publica aprovadas; o filtro protege contra uma edição manual no Admin.
+    assign rv_status = review.status.value | default: 'aprovada' | downcase
+    if rv_status != 'aprovada' and rv_status != 'approved'
+      continue
+    endif
+    assign rv_n = review.rating.value | default: 0 | plus: 0
+    if rv_n < 1 or rv_n > 5
+      continue
+    endif
+    assign rv_count = rv_count | plus: 1
+    assign rv_sum = rv_sum | plus: rv_n
+    case rv_n
+      when 1
+        assign rv_c1 = rv_c1 | plus: 1
+      when 2
+        assign rv_c2 = rv_c2 | plus: 1
+      when 3
+        assign rv_c3 = rv_c3 | plus: 1
+      when 4
+        assign rv_c4 = rv_c4 | plus: 1
+      when 5
+        assign rv_c5 = rv_c5 | plus: 1
+    endcase
+  endfor
+
+  # Modo demonstração: só para ver o layout, sem hub e sem metaobjects. As
+  # avaliações reais, quando existirem, continuam tendo prioridade.
+  assign rv_demo = section.settings.demo_mode
+  assign rv_use_demo = false
+  if rv_demo and rv_count == 0
+    assign rv_use_demo = true
+    assign rv_count = 5
+    assign rv_sum = 22
+    assign rv_c5 = 3
+    assign rv_c4 = 1
+    assign rv_c3 = 1
+    assign rv_imgs = product.images
+  endif
+
+  assign rv_avg = 0
+  assign rv_avg_round = 0
+  if rv_count > 0
+    assign rv_avg = rv_sum | times: 1.0 | divided_by: rv_count | round: 1
+    assign rv_avg_round = rv_avg | round
+  endif
+
+  assign rv_api_url = section.settings.api_url | strip
+  assign rv_secret = shop.metafields.custom.reviews_secret.value | strip
+  assign rv_ready = false
+  if rv_api_url != blank and rv_secret != blank
+    assign rv_ready = true
+  endif
+  assign rv_max_mb = section.settings.max_photo_mb | default: 10
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --rv-star: {{ section.settings.star_color | default: '#F4B400' }};
+    --rv-star-empty: var(--color-border-strong, #D1D5DB);
+    --rv-radius: var(--radius-md, 0.75rem);
+  }
+  #shopify-section-{{ section.id }} .rv-title {
+    color: {{ section.settings.title_color }};
+    font-size: {{ section.settings.title_size }}px;
+  }
+  /* Cabeçalho + botão que abre o formulário em modal (só celular/tablet) */
+  #shopify-section-{{ section.id }} .rv-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  #shopify-section-{{ section.id }} .rv-open { width: auto; min-height: 40px; padding: 8px 16px; font-size: 13px; }
+
+  /* Celular: o formulário vira um painel que sobe de baixo da tela.
+     Acima da barra fixa de compra do celular (.pp-mobile-sticky-buy, 2147482900). */
+  #shopify-section-{{ section.id }} .rv-aside {
+    position: fixed; z-index: 2147482960;
+    overflow-y: auto; overscroll-behavior: contain; visibility: hidden;
+  }
+  #shopify-section-{{ section.id }} .rv-aside.is-open { visibility: visible; }
+  #shopify-section-{{ section.id }} .rv-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  #shopify-section-{{ section.id }} .rv-sheet-close {
+    display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: 0 0 auto;
+    border: 0; border-radius: 999px; background: var(--color-bg-hover, #F3F4F6); color: var(--color-title); cursor: pointer;
+  }
+  #shopify-section-{{ section.id }} .rv-sheet-close:hover { background: var(--color-border); }
+  #shopify-section-{{ section.id }} .rv-backdrop {
+    position: fixed; inset: 0; z-index: 2147482950; display: none;
+    background: var(--color-overlay, rgba(0, 0, 0, 0.4));
+  }
+  #shopify-section-{{ section.id }} .rv-backdrop.is-open { display: block; }
+
+  @media (max-width: 1023px) {
+    #shopify-section-{{ section.id }} .rv-aside {
+      left: 0; right: 0; bottom: 0; max-height: 90vh; max-height: 90dvh;
+      transform: translateY(100%);
+      transition: transform 240ms ease, visibility 0s linear 240ms;
+    }
+    #shopify-section-{{ section.id }} .rv-aside.is-open { transform: none; transition: transform 240ms ease; }
+    #shopify-section-{{ section.id }} .rv-aside > .rv-box {
+      --gc-card-radius-local: 20px 20px 0 0; border-bottom: 0;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+  /* Desktop: formulário fixo na coluna ao lado da lista; botão e modal só no celular. */
+  @media (min-width: 1024px) {
+    #shopify-section-{{ section.id }} .rv-body {
+      display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 40px; align-items: start;
+    }
+    #shopify-section-{{ section.id }} .rv-aside {
+      position: sticky; top: 24px; z-index: auto; visibility: visible; overflow: visible;
+    }
+    #shopify-section-{{ section.id }} .rv-open,
+    #shopify-section-{{ section.id }} .rv-sheet-close,
+    #shopify-section-{{ section.id }} .rv-backdrop { display: none !important; }
+  }
+
+  /* Estrelas */
+  #shopify-section-{{ section.id }} .rv-stars { display: inline-flex; color: var(--rv-star-empty); line-height: 1; }
+  #shopify-section-{{ section.id }} .rv-stars .material-symbols-outlined { font-size: 22px; }
+  #shopify-section-{{ section.id }} .rv-stars--sm .material-symbols-outlined { font-size: 16px; }
+  #shopify-section-{{ section.id }} .rv-stars .is-filled { color: var(--rv-star); font-variation-settings: 'FILL' 1; }
+
+  /* Resumo */
+  #shopify-section-{{ section.id }} .rv-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; padding: 20px; }
+  #shopify-section-{{ section.id }} .rv-summary__score { display: flex; flex-direction: column; gap: 4px; }
+  #shopify-section-{{ section.id }} .rv-summary__avg { font-size: 40px; font-weight: 700; line-height: 1; color: var(--color-title); }
+  #shopify-section-{{ section.id }} .rv-summary__count { font-size: 14px; color: var(--color-text-muted); }
+  #shopify-section-{{ section.id }} .rv-bars { flex: 1 1 220px; display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  #shopify-section-{{ section.id }} .rv-bars li { display: grid; grid-template-columns: 28px 1fr 28px; align-items: center; gap: 8px; font-size: 13px; color: var(--color-text-muted); }
+  #shopify-section-{{ section.id }} .rv-bars__track { height: 8px; border-radius: 999px; background: var(--color-bg-hover, #F3F4F6); overflow: hidden; }
+  #shopify-section-{{ section.id }} .rv-bars__fill { display: block; height: 100%; border-radius: inherit; background: var(--rv-star); }
+
+  /* Lista */
+  #shopify-section-{{ section.id }} .rv-list { display: grid; gap: 16px; margin-top: 16px; }
+  #shopify-section-{{ section.id }} .rv-item { padding: 20px; display: grid; gap: 12px; }
+  #shopify-section-{{ section.id }} .rv-item[hidden] { display: none; }
+  #shopify-section-{{ section.id }} .rv-item__head { display: flex; gap: 12px; align-items: flex-start; }
+  #shopify-section-{{ section.id }} .rv-avatar {
+    flex: 0 0 auto; width: 44px; height: 44px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--color-primary-soft, #EAF3FF); color: var(--color-primary); font-weight: 700; font-size: 18px;
+  }
+  #shopify-section-{{ section.id }} .rv-item__who { display: grid; gap: 2px; min-width: 0; }
+  #shopify-section-{{ section.id }} .rv-item__name { margin: 0; font-weight: 700; color: var(--color-title); }
+  #shopify-section-{{ section.id }} .rv-item__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  #shopify-section-{{ section.id }} .rv-item__date { font-size: 12px; color: var(--color-text-muted); }
+  #shopify-section-{{ section.id }} .rv-item__verified { margin: 0; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--color-success); }
+  #shopify-section-{{ section.id }} .rv-item__verified .material-symbols-outlined { font-size: 16px; font-variation-settings: 'FILL' 1; }
+  #shopify-section-{{ section.id }} .rv-item__text { margin: 0; color: var(--color-text); line-height: 1.6; overflow-wrap: anywhere; }
+  #shopify-section-{{ section.id }} .rv-item__photos { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  #shopify-section-{{ section.id }} .rv-thumb {
+    display: block; width: 80px; height: 80px; padding: 0; border: 1px solid var(--color-border); border-radius: 12px;
+    overflow: hidden; background: var(--color-bg-soft); cursor: zoom-in; transition: border-color var(--transition-fast, 160ms ease);
+  }
+  #shopify-section-{{ section.id }} .rv-thumb:hover { border-color: var(--color-primary); }
+  #shopify-section-{{ section.id }} .rv-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #shopify-section-{{ section.id }} .rv-more { margin-top: 16px; }
+  #shopify-section-{{ section.id }} .rv-empty { padding: 24px 20px; text-align: center; color: var(--color-text-muted); }
+  #shopify-section-{{ section.id }} .rv-empty strong { display: block; color: var(--color-title); margin-bottom: 4px; }
+
+  /* Formulário */
+  #shopify-section-{{ section.id }} .rv-form [hidden] { display: none !important; }
+  #shopify-section-{{ section.id }} .rv-box { padding: 20px; display: grid; gap: 16px; }
+  #shopify-section-{{ section.id }} .rv-box__title { margin: 0; font-size: 18px; font-weight: 700; color: var(--color-title); }
+  #shopify-section-{{ section.id }} .rv-box__text { margin: 0; font-size: 14px; color: var(--color-text-muted); line-height: 1.5; }
+  #shopify-section-{{ section.id }} .rv-field { display: grid; gap: 8px; border: 0; padding: 0; margin: 0; min-width: 0; }
+  #shopify-section-{{ section.id }} .rv-label { font-size: 14px; font-weight: 600; color: var(--color-title); padding: 0; }
+  #shopify-section-{{ section.id }} .rv-hint { font-size: 12px; color: var(--color-text-muted); }
+  #shopify-section-{{ section.id }} .rv-rating-input { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: 2px; }
+  #shopify-section-{{ section.id }} .rv-rating-input input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  #shopify-section-{{ section.id }} .rv-rating-input label { cursor: pointer; color: var(--rv-star-empty); line-height: 1; padding: 2px; border-radius: 6px; }
+  #shopify-section-{{ section.id }} .rv-rating-input label .material-symbols-outlined { font-size: 34px; transition: transform var(--transition-fast, 160ms ease); }
+  #shopify-section-{{ section.id }} .rv-rating-input label:hover ~ label,
+  #shopify-section-{{ section.id }} .rv-rating-input label:hover,
+  #shopify-section-{{ section.id }} .rv-rating-input input:checked ~ label { color: var(--rv-star); }
+  #shopify-section-{{ section.id }} .rv-rating-input label:hover .material-symbols-outlined,
+  #shopify-section-{{ section.id }} .rv-rating-input label:hover ~ label .material-symbols-outlined,
+  #shopify-section-{{ section.id }} .rv-rating-input input:checked ~ label .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+  #shopify-section-{{ section.id }} .rv-rating-input input:focus-visible + label { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }
+  #shopify-section-{{ section.id }} .rv-rating-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  #shopify-section-{{ section.id }} .rv-rating-text { font-size: 14px; font-weight: 600; color: var(--color-text-muted); }
+  #shopify-section-{{ section.id }} .rv-textarea {
+    width: 100%; min-height: 128px; resize: vertical; padding: 12px 14px; font: inherit; font-size: 15px;
+    background: var(--color-input-bg); color: var(--color-input-text);
+    border: 1px solid var(--color-input-border); border-radius: var(--rv-radius);
+    transition: border-color var(--transition-fast, 160ms ease);
+  }
+  #shopify-section-{{ section.id }} .rv-textarea::placeholder { color: var(--color-input-placeholder); }
+  #shopify-section-{{ section.id }} .rv-textarea:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
+  #shopify-section-{{ section.id }} .rv-counter { justify-self: end; font-size: 12px; color: var(--color-text-muted); }
+
+  /* Uploader */
+  #shopify-section-{{ section.id }} .rv-uploader { display: flex; flex-wrap: wrap; gap: 8px; }
+  #shopify-section-{{ section.id }} .rv-slot {
+    position: relative; width: 80px; height: 80px; border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--color-border); background: var(--color-bg-soft);
+  }
+  #shopify-section-{{ section.id }} .rv-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #shopify-section-{{ section.id }} .rv-slot__replace { position: absolute; inset: 0; border: 0; padding: 0; background: transparent; cursor: pointer; }
+  #shopify-section-{{ section.id }} .rv-slot__remove {
+    position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border: 0; border-radius: 999px; padding: 0;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    background: rgba(17, 24, 39, 0.72); color: #fff;
+  }
+  #shopify-section-{{ section.id }} .rv-slot__remove .material-symbols-outlined { font-size: 16px; }
+  #shopify-section-{{ section.id }} .rv-slot.is-busy::after {
+    content: ''; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.6);
+  }
+  #shopify-section-{{ section.id }} .rv-add {
+    width: 80px; height: 80px; border-radius: 12px; cursor: pointer; padding: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    border: 1px dashed var(--color-border-strong); background: var(--color-bg); color: var(--color-primary);
+    font-size: 11px; font-weight: 600; transition: border-color var(--transition-fast, 160ms ease), background var(--transition-fast, 160ms ease);
+  }
+  #shopify-section-{{ section.id }} .rv-add:hover { border-color: var(--color-primary); background: var(--color-primary-soft); }
+  #shopify-section-{{ section.id }} .rv-add .material-symbols-outlined { font-size: 24px; }
+
+  #shopify-section-{{ section.id }} .rv-error { margin: 0; font-size: 13px; color: var(--color-danger); }
+  #shopify-section-{{ section.id }} .rv-error:empty { display: none; }
+  #shopify-section-{{ section.id }} .rv-privacy { margin: 0; font-size: 12px; line-height: 1.5; color: var(--color-text-muted); }
+
+  #shopify-section-{{ section.id }} .rv-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+    min-height: 48px; padding: 12px 20px; border: 0; border-radius: var(--rv-radius); cursor: pointer;
+    background: var(--color-button-primary-bg); color: var(--color-button-primary-text);
+    font-size: 14px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; text-decoration: none;
+    transition: background var(--transition-fast, 160ms ease);
+  }
+  #shopify-section-{{ section.id }} .rv-btn:hover { background: var(--color-button-primary-bg-hover); }
+  #shopify-section-{{ section.id }} .rv-btn:active { background: var(--color-button-primary-bg-active); }
+  #shopify-section-{{ section.id }} .rv-btn[disabled] { opacity: 0.7; cursor: progress; }
+  #shopify-section-{{ section.id }} .rv-btn--ghost {
+    width: auto; background: var(--color-button-secondary-bg); color: var(--color-button-secondary-text);
+    border: 1px solid var(--color-button-secondary-border);
+  }
+  #shopify-section-{{ section.id }} .rv-btn--ghost:hover { background: var(--color-button-secondary-bg-hover); }
+
+  #shopify-section-{{ section.id }} .rv-done { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 8px 0; }
+  #shopify-section-{{ section.id }} .rv-done .material-symbols-outlined { font-size: 40px; color: var(--color-success); font-variation-settings: 'FILL' 1; }
+
+  /* Lightbox */
+  .rv-lightbox { padding: 0; border: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; }
+  .rv-lightbox::backdrop { background: rgba(0, 0, 0, 0.88); }
+  .rv-lightbox__inner { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 56px 16px; }
+  .rv-lightbox__img { width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+  .rv-lightbox__btn {
+    position: absolute; width: 44px; height: 44px; border: 0; border-radius: 999px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.14); color: #fff;
+  }
+  .rv-lightbox__btn:hover { background: rgba(255, 255, 255, 0.26); }
+  .rv-lightbox__btn[hidden] { display: none; }
+  .rv-lightbox__close { top: 12px; right: 12px; }
+  .rv-lightbox__prev { left: 12px; top: 50%; transform: translateY(-50%); }
+  .rv-lightbox__next { right: 12px; top: 50%; transform: translateY(-50%); }
+  .rv-lightbox__count { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 13px; }
+</style>
+
+<section id="avaliacoes" class="section-layout-py" style="background-color: var(--color-surface, #fff);" data-rv-root data-rv-ready="{{ rv_ready }}">
+  <div class="max-w-none mx-auto section-layout-px" style="max-width: {{ settings.global_layout_max_width | default: 1440 }}px;">
+    <div class="border-t border-surface-container pt-6">
+      <div class="rv-head">
+        <h2 class="rv-title font-bold font-headline" style="margin: 0;">{{ section.settings.title | escape }}</h2>
+        <button type="button" class="rv-btn rv-open" aria-controls="rv-sheet-{{ section.id }}" aria-expanded="false" data-rv-open>
+          <span class="material-symbols-outlined" aria-hidden="true">rate_review</span>
+          Avaliar
+        </button>
+      </div>
+
+      <div class="rv-body">
+        <div>
+          {%- if rv_count > 0 -%}
+            <div class="rv-summary gc-unified-card">
+              <div class="rv-summary__score">
+                <span class="rv-summary__avg">{{ rv_avg | replace: '.', ',' }}</span>
+                <span class="rv-stars" role="img" aria-label="Média {{ rv_avg | replace: '.', ',' }} de 5">
+                  {%- for i in (1..5) -%}
+                    <span class="material-symbols-outlined{% if i <= rv_avg_round %} is-filled{% endif %}">star</span>
+                  {%- endfor -%}
+                </span>
+                <span class="rv-summary__count">{{ rv_count }} {% if rv_count == 1 %}avaliação{% else %}avaliações{% endif %}</span>
+              </div>
+              <ul class="rv-bars" aria-label="Distribuição das notas">
+                {%- for star in (1..5) reversed -%}
+                  {%- liquid
+                    case star
+                      when 5
+                        assign rv_bar = rv_c5
+                      when 4
+                        assign rv_bar = rv_c4
+                      when 3
+                        assign rv_bar = rv_c3
+                      when 2
+                        assign rv_bar = rv_c2
+                      else
+                        assign rv_bar = rv_c1
+                    endcase
+                    assign rv_pct = rv_bar | times: 100 | divided_by: rv_count
+                  -%}
+                  <li>
+                    <span>{{ star }}★</span>
+                    <span class="rv-bars__track"><span class="rv-bars__fill" style="width: {{ rv_pct }}%;"></span></span>
+                    <span>{{ rv_bar }}</span>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+
+            <div class="rv-list">
+              {%- if rv_use_demo -%}
+                {%- liquid
+                  assign rv_demo_hidden = false
+                  if rv_per_page < 5
+                    assign rv_demo_hidden = true
+                  endif
+                  render 'product-review-item', name: 'Matheus S.', rating: 5, date: '2026-09-28', verified: true, photos: rv_imgs, text: 'Produto excelente! Chegou muito bem embalado, antes do prazo, e o acabamento é ótimo. A cor é exatamente como nas fotos. A montagem foi simples e as instruções são claras.'
+                  render 'product-review-item', name: 'Juliana R.', rating: 5, date: '2026-09-21', verified: true, photos: rv_imgs, text: 'Muito bonito e firme. Ficou perfeito na sala.'
+                  render 'product-review-item', name: 'Carlos M.', rating: 4, date: '2026-09-15', verified: false, text: 'Gostei bastante, qualidade boa pelo preço. Só achei que a entrega poderia ser um pouco mais rápida.'
+                  render 'product-review-item', name: 'Fernanda L.', rating: 5, date: '2026-09-02', verified: true, text: 'Segunda compra na loja e de novo superou as expectativas. Recomendo!'
+                  render 'product-review-item', name: 'Roberto A.', rating: 3, date: '2026-08-27', verified: false, hidden: rv_demo_hidden, text: 'O produto é bom, mas uma das peças veio com um pequeno risco. O atendimento resolveu rápido.'
+                -%}
+              {%- endif -%}
+              {%- assign rv_shown = 0 -%}
+              {%- for review in rv_list -%}
+                {%- liquid
+                  assign rv_status = review.status.value | default: 'aprovada' | downcase
+                  if rv_status != 'aprovada' and rv_status != 'approved'
+                    continue
+                  endif
+                  assign rv_n = review.rating.value | default: 0 | plus: 0
+                  if rv_n < 1 or rv_n > 5
+                    continue
+                  endif
+                  assign rv_hidden = false
+                  if rv_shown >= rv_per_page
+                    assign rv_hidden = true
+                  endif
+                  assign rv_shown = rv_shown | plus: 1
+                -%}
+                {%- render 'product-review-item', review: review, hidden: rv_hidden -%}
+              {%- endfor -%}
+            </div>
+
+            {%- if rv_count > rv_per_page -%}
+              <div class="rv-more">
+                <button type="button" class="rv-btn rv-btn--ghost" data-rv-more data-rv-step="{{ rv_per_page }}">Ver mais avaliações</button>
+              </div>
+            {%- endif -%}
+          {%- else -%}
+            <div class="rv-empty gc-unified-card">
+              <strong>Este produto ainda não possui avaliações.</strong>
+              Seja o primeiro a avaliar.
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="rv-backdrop" data-rv-backdrop></div>
+        <aside class="rv-aside" id="rv-sheet-{{ section.id }}" aria-labelledby="rv-sheet-title-{{ section.id }}" data-rv-sheet>
+          <div class="rv-box gc-unified-card">
+            <div class="rv-sheet-head">
+              <h3 class="rv-box__title" id="rv-sheet-title-{{ section.id }}">Avalie este produto</h3>
+              <button type="button" class="rv-sheet-close" aria-label="Fechar" data-rv-close>
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+              </button>
+            </div>
+
+            {%- if rv_demo -%}
+              {%- assign rv_payload = '' -%}
+              {%- assign rv_sig = '' -%}
+            {%- elsif customer == blank -%}
+              <p class="rv-box__text">Entre na sua conta para deixar uma avaliação.</p>
+              {%- liquid
+                # Contas novas usam return_to e a URL de login já vem com "?locale=...";
+                # contas clássicas usam return_url. Mandar os dois cobre as duas.
+                assign rv_return = product.url | append: '#avaliar' | url_encode
+                assign rv_sep = '?'
+                if routes.account_login_url contains '?'
+                  assign rv_sep = '&'
+                endif
+                assign rv_login_url = routes.account_login_url | append: rv_sep | append: 'return_to=' | append: rv_return | append: '&return_url=' | append: rv_return
+              -%}
+              <a class="rv-btn" href="{{ rv_login_url }}">Entrar</a>
+            {%- elsif rv_ready == false -%}
+              <p class="rv-box__text">As avaliações estão temporariamente indisponíveis.</p>
+              {%- if request.design_mode -%}
+                <p class="rv-error">Configure a URL da API nesta section e o metafield da loja custom.reviews_secret.</p>
+              {%- endif -%}
+            {%- else -%}
+              {%- liquid
+                assign rv_ts = 'now' | date: '%s'
+                capture rv_payload
+                  echo customer.id | append: ':' | append: product.id | append: ':' | append: rv_ts
+                endcapture
+                assign rv_sig = rv_payload | hmac_sha256: rv_secret
+              -%}
+            {%- endif -%}
+            {%- if rv_demo or customer != blank and rv_ready -%}
+              <form
+                class="rv-form"
+                novalidate
+                data-rv-form
+                data-api-url="{{ rv_api_url | escape }}"
+                data-max-mb="{{ rv_max_mb }}"
+                {% if rv_demo %}data-demo="true"{% endif %}
+                data-storage-key="rv-sent:{{ product.id }}:{{ customer.id }}"
+              >
+                <input type="hidden" name="payload" value="{{ rv_payload }}">
+                <input type="hidden" name="sig" value="{{ rv_sig }}">
+                <input type="hidden" name="product_handle" value="{{ product.handle | escape }}">
+
+                <div class="rv-box" style="padding: 0;" data-rv-fields>
+                  <fieldset class="rv-field">
+                    <legend class="rv-label">Sua nota *</legend>
+                    <div class="rv-rating-row">
+                      <div class="rv-rating-input">
+                        {%- for i in (1..5) reversed -%}
+                          <input type="radio" id="rv-{{ section.id }}-n{{ i }}" name="nota" value="{{ i }}">
+                          <label for="rv-{{ section.id }}-n{{ i }}" aria-label="{{ i }} de 5"><span class="material-symbols-outlined" aria-hidden="true">star</span></label>
+                        {%- endfor -%}
+                      </div>
+                      <span class="rv-rating-text" data-rv-rating-text aria-live="polite"></span>
+                    </div>
+                  </fieldset>
+
+                  <div class="rv-field">
+                    <label class="rv-label" for="rv-{{ section.id }}-comentario">Conte sua experiência *</label>
+                    <textarea class="rv-textarea" id="rv-{{ section.id }}-comentario" name="comentario" minlength="10" maxlength="1500" placeholder="O que achou do produto, da entrega e do acabamento?" data-rv-comment></textarea>
+                    <span class="rv-counter" data-rv-counter>0/1500</span>
+                  </div>
+
+                  <div class="rv-field">
+                    <span class="rv-label">Adicionar fotos <span class="rv-hint">(opcional, até 3)</span></span>
+                    <div class="rv-uploader" data-rv-uploader></div>
+                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,.heic,.heif" multiple hidden data-rv-file>
+                  </div>
+
+                  <p class="rv-error" role="alert" data-rv-error></p>
+
+                  <p class="rv-privacy">Ao enviar sua avaliação, seu comentário, nome público e fotos poderão ser exibidos na página do produto após aprovação. Não publicamos e-mail, telefone nem dados da sua conta.</p>
+
+                  <button type="submit" class="rv-btn" data-rv-submit>Enviar avaliação</button>
+                </div>
+
+                <div class="rv-done" hidden data-rv-done>
+                  <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+                  <p class="rv-box__title" data-rv-done-title>Obrigado pela sua avaliação!</p>
+                  <p class="rv-box__text" data-rv-done-text>Ela será analisada antes de ser publicada.</p>
+                </div>
+              </form>
+            {%- endif -%}
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="rv-lightbox" aria-label="Fotos da avaliação" data-rv-lightbox>
+    <div class="rv-lightbox__inner">
+      <img class="rv-lightbox__img" alt="" width="1600" height="1600" data-rv-lightbox-img>
+      <button type="button" class="rv-lightbox__btn rv-lightbox__close" aria-label="Fechar" data-rv-lightbox-close><span class="material-symbols-outlined">close</span></button>
+      <button type="button" class="rv-lightbox__btn rv-lightbox__prev" aria-label="Foto anterior" data-rv-lightbox-prev><span class="material-symbols-outlined">chevron_left</span></button>
+      <button type="button" class="rv-lightbox__btn rv-lightbox__next" aria-label="Próxima foto" data-rv-lightbox-next><span class="material-symbols-outlined">chevron_right</span></button>
+      <span class="rv-lightbox__count" data-rv-lightbox-count></span>
+    </div>
+  </dialog>
+</section>
+
+<script src="{{ 'product-reviews.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Avaliações do produto",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Titulo", "default": "Avaliações" },
+    { "type": "range", "id": "title_size", "label": "Tamanho do titulo", "min": 18, "max": 44, "step": 1, "default": 30, "unit": "px" },
+    { "type": "color", "id": "title_color", "label": "Cor do titulo", "default": "#0058BB" },
+    { "type": "color", "id": "star_color", "label": "Cor das estrelas", "default": "#F4B400" },
+    { "type": "range", "id": "reviews_per_page", "label": "Avaliações por página", "min": 2, "max": 20, "step": 1, "default": 6 },
+    { "type": "checkbox", "id": "demo_mode", "label": "Modo demonstração", "info": "Mostra avaliações de exemplo (se o produto não tiver reais) e libera o formulário sem login e sem API; o envio é só simulado. Desligue antes de publicar.", "default": false },
+    { "type": "header", "content": "Envio" },
+    { "type": "text", "id": "api_url", "label": "URL da API de avaliações (StarHub)", "info": "Ex.: https://hub.seudominio.com.br/integracoes/shopify/avaliacoes/1/ (1 = id da loja no StarHub). O segredo de assinatura fica no metafield da loja custom.reviews_secret." },
+    { "type": "range", "id": "max_photo_mb", "label": "Tamanho máximo por foto", "min": 1, "max": 10, "step": 1, "default": 10, "unit": "MB" }
+  ],
+  "presets": [
+    { "name": "Avaliações do produto" }
+  ]
+}
+{% endschema %}

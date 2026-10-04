@@ -113,11 +113,25 @@
         "badge_padding_y": 6,
         "badge_gap": 8
       }
+    },
+    "reviews": {
+      "type": "product-reviews",
+      "settings": {
+        "title": "Avaliações",
+        "title_size": 30,
+        "title_color": "#0058bb",
+        "star_color": "#f4b400",
+        "reviews_per_page": 6,
+        "demo_mode": false,
+        "api_url": "https://j4b52cnr-8000.brs.devtunnels.ms/integracoes/shopify/avaliacoes/1/",
+        "max_photo_mb": 10
+      }
     }
   },
   "order": [
     "main",
     "recommended",
-    "description"
+    "description",
+    "reviews"
   ]
 }

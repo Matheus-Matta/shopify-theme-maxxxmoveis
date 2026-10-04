@@ -1,0 +1,67 @@
+{%- comment -%}
+  Card de uma avaliação aprovada (metaobject avaliacao_produto).
+  Params: review (metaobject), hidden (bool: além da primeira página).
+  Sem review (modo demonstração): name, rating, text, date, verified, photos.
+{%- endcomment -%}
+{%- liquid
+  if review
+    assign rv_name = review.author.value | default: 'Cliente' | strip
+    assign rv_rating = review.rating.value | default: 0 | plus: 0
+    assign rv_photos = review.photos.value
+    assign rv_text = review.body.value
+    assign rv_date = review.date.value
+    assign rv_verified = review.verified.value
+  else
+    assign rv_name = name | default: 'Cliente'
+    assign rv_rating = rating | default: 5 | plus: 0
+    assign rv_photos = photos
+    assign rv_text = text
+    assign rv_date = date
+    assign rv_verified = verified
+  endif
+  assign rv_initial = rv_name | slice: 0 | upcase
+  assign rv_photo_alt = 'Foto da avaliação de ' | append: rv_name
+-%}
+<article class="rv-item gc-unified-card" data-rv-item {% if hidden %}hidden{% endif %}>
+  <header class="rv-item__head">
+    <div class="rv-avatar" aria-hidden="true">{{ rv_initial }}</div>
+    <div class="rv-item__who">
+      <p class="rv-item__name">{{ rv_name | escape }}</p>
+      <div class="rv-item__meta">
+        <span class="rv-stars rv-stars--sm" role="img" aria-label="Nota {{ rv_rating }} de 5">
+          {%- for i in (1..5) -%}
+            <span class="material-symbols-outlined{% if i <= rv_rating %} is-filled{% endif %}">star</span>
+          {%- endfor -%}
+        </span>
+        {%- if rv_date != blank -%}
+          <time class="rv-item__date" datetime="{{ rv_date | date: '%Y-%m-%d' }}">{{ rv_date | date: '%d/%m/%Y' }}</time>
+        {%- endif -%}
+      </div>
+      {%- if rv_verified == true -%}
+        <p class="rv-item__verified">
+          <span class="material-symbols-outlined" aria-hidden="true">verified</span>
+          Compra verificada
+        </p>
+      {%- endif -%}
+    </div>
+  </header>
+
+  {%- if rv_text != blank -%}
+    <p class="rv-item__text">{{ rv_text | escape | newline_to_br }}</p>
+  {%- endif -%}
+
+  {%- if rv_photos.size > 0 -%}
+    {%- capture rv_gallery_json -%}
+      [{%- for foto in rv_photos limit: 3 -%}{{ foto | image_url: width: 1600 | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
+    {%- endcapture -%}
+    <ul class="rv-item__photos" data-rv-gallery='{{ rv_gallery_json | strip | escape }}'>
+      {%- for foto in rv_photos limit: 3 -%}
+        <li>
+          <button type="button" class="rv-thumb" data-rv-photo="{{ forloop.index0 }}" aria-label="Ampliar foto {{ forloop.index }} da avaliação de {{ rv_name | escape }}">
+            {{ foto | image_url: width: 240, height: 240, crop: 'center' | image_tag: loading: 'lazy', width: 80, height: 80, alt: rv_photo_alt }}
+          </button>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</article>
