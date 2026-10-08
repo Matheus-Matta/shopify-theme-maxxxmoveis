@@ -1,0 +1,163 @@
+{%- comment -%}
+  Pop-up de boas-vindas com cupom de 1ª compra (section estática, incluída no layout).
+  Só aparece com banner cadastrado e para quem ainda não comprou: visitante sem
+  login ou cliente logado sem pedidos. O banner é background-image do bloco, com
+  largura, altura e posição configuráveis por tela; com só um banner cadastrado,
+  ele vale para as duas. Envie a imagem no dobro do tamanho configurado (tela retina).
+{%- endcomment -%}
+{%- liquid
+  assign pc_desktop = section.settings.image_desktop | default: section.settings.image_mobile
+  assign pc_mobile = section.settings.image_mobile | default: section.settings.image_desktop
+  assign pc_code = section.settings.coupon_code | strip | upcase
+  assign pc_show = true
+  if section.settings.enabled == false or pc_desktop == blank
+    assign pc_show = false
+  endif
+  if customer and customer.orders_count > 0
+    assign pc_show = false
+  endif
+  # Carrinho, checkout e conta: o cliente já está comprando ou cuidando da conta.
+  if template.name == 'cart' or request.path contains '/account' or request.path contains '/checkout'
+    assign pc_show = false
+  endif
+  if request.design_mode and section.settings.enabled and pc_desktop != blank
+    assign pc_show = true
+  endif
+
+  assign pc_link = section.settings.link
+-%}
+
+{%- if pc_show -%}
+  <style>
+    .pc-popup { padding: 0; border: 0; background: transparent; max-width: none; max-height: none; overflow: visible; }
+    .pc-popup::backdrop { background: var(--color-overlay, rgba(0, 0, 0, 0.55)); }
+    .pc-popup[open] { animation: pc-in 220ms ease; }
+    @keyframes pc-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+    .pc-popup__card {
+      position: relative; width: min({{ section.settings.width_mobile }}px, calc(100vw - 32px));
+      max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto;
+      border-radius: var(--gc-card-radius, 16px); background: var(--color-bg, #fff);
+      box-shadow: 0 24px 60px -20px rgba(16, 24, 40, 0.45);
+    }
+    .pc-popup__media {
+      display: block; width: 100%; height: {{ section.settings.height_mobile }}px;
+      background-image: url('{{ pc_mobile | image_url: width: 960 }}');
+      background-size: {{ section.settings.bg_size }}; background-repeat: no-repeat;
+      background-position: {{ section.settings.position_mobile }};
+      background-color: var(--color-bg-soft, #F7F7F7);
+    }
+    .pc-popup__close {
+      position: absolute; top: 10px; right: 10px; z-index: 1; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; cursor: pointer;
+      background: rgba(17, 24, 39, 0.72); color: #fff;
+    }
+    .pc-popup__close:hover { background: rgba(17, 24, 39, 0.9); }
+    .pc-popup__body { display: grid; gap: 12px; padding: 16px 20px 20px; }
+    .pc-popup__coupon {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 10px 10px 16px; border: 2px dashed var(--color-primary); border-radius: var(--radius-md, 12px);
+      background: var(--color-primary-soft, #EAF3FF);
+    }
+    .pc-popup__label { display: block; font-size: 12px; color: var(--color-text-muted); }
+    .pc-popup__code { font-size: 20px; font-weight: 800; letter-spacing: 0.08em; color: var(--color-primary); }
+    .pc-popup__copy {
+      flex: 0 0 auto; min-height: 40px; padding: 8px 14px; border-radius: 10px; cursor: pointer;
+      border: 1px solid var(--color-button-secondary-border); background: var(--color-button-secondary-bg);
+      color: var(--color-button-secondary-text); font-weight: 700; font-size: 13px;
+    }
+    .pc-popup__copy:hover { background: var(--color-button-secondary-bg-hover); }
+    @media (min-width: 768px) {
+      .pc-popup__card { width: min({{ section.settings.width_desktop }}px, calc(100vw - 48px)); }
+      .pc-popup__media {
+        height: {{ section.settings.height_desktop }}px;
+        background-image: url('{{ pc_desktop | image_url: width: 2000 }}');
+        background-position: {{ section.settings.position_desktop }};
+      }
+    }
+  </style>
+
+  <dialog
+    class="pc-popup"
+    aria-label="{{ section.settings.aria_label | escape }}"
+    data-pc-popup
+    data-delay="{{ section.settings.delay }}"
+    data-days="{{ section.settings.days_hidden }}"
+    {% if request.design_mode %}data-design-mode="true"{% endif %}
+  >
+    <div class="pc-popup__card">
+      <button type="button" class="pc-popup__close" aria-label="Fechar" data-pc-close>
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+
+      {%- assign pc_alt = pc_desktop.alt | default: section.settings.aria_label -%}
+      {%- if pc_link != blank and pc_code == blank -%}
+        <a class="pc-popup__media" href="{{ pc_link }}" role="img" aria-label="{{ pc_alt | escape }}" data-pc-accept></a>
+      {%- else -%}
+        <div class="pc-popup__media" role="img" aria-label="{{ pc_alt | escape }}"></div>
+      {%- endif -%}
+
+      {%- if pc_code != blank -%}
+        <div class="pc-popup__body">
+          <div class="pc-popup__coupon">
+            <div>
+              <span class="pc-popup__label">Seu cupom de 1ª compra</span>
+              <span class="pc-popup__code" data-pc-code>{{ pc_code | escape }}</span>
+            </div>
+            <button type="button" class="pc-popup__copy" data-pc-copy>Copiar</button>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </dialog>
+
+  <script src="{{ 'popup-primeira-compra.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Pop-up 1ª compra",
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Ativar pop-up", "default": true },
+    { "type": "image_picker", "id": "image_desktop", "label": "Banner desktop", "info": "Com o tamanho padrão (720 × 480): envie 1440 × 960 px (3:2), JPG ou WebP até 300 KB. Sem nenhum banner o pop-up não aparece." },
+    { "type": "image_picker", "id": "image_mobile", "label": "Banner celular", "info": "Com o tamanho padrão (360 × 450): envie 720 × 900 px (4:5), JPG ou WebP até 200 KB. Vazio: usa o banner desktop." },
+    { "type": "text", "id": "coupon_code", "label": "Código do cupom", "info": "Crie o desconto em Admin → Descontos (ex.: válido só para a 1ª compra). Vazio: mostra só o banner." },
+    { "type": "url", "id": "link", "label": "Link do banner", "info": "Usado quando não há código de cupom cadastrado." },
+    { "type": "text", "id": "aria_label", "label": "Descrição para acessibilidade", "default": "Cupom de desconto para a sua primeira compra" },
+    { "type": "header", "content": "Banner desktop" },
+    { "type": "range", "id": "width_desktop", "label": "Largura", "min": 400, "max": 1000, "step": 20, "default": 720, "unit": "px" },
+    { "type": "range", "id": "height_desktop", "label": "Altura do banner", "min": 200, "max": 800, "step": 10, "default": 480, "unit": "px" },
+    { "type": "select", "id": "position_desktop", "label": "Posição da imagem", "default": "center center", "options": [
+        { "value": "center center", "label": "Centro" },
+        { "value": "center top", "label": "Topo" },
+        { "value": "center bottom", "label": "Base" },
+        { "value": "left center", "label": "Esquerda" },
+        { "value": "right center", "label": "Direita" },
+        { "value": "left top", "label": "Topo esquerdo" },
+        { "value": "right top", "label": "Topo direito" },
+        { "value": "left bottom", "label": "Base esquerda" },
+        { "value": "right bottom", "label": "Base direita" }
+      ] },
+    { "type": "header", "content": "Banner celular" },
+    { "type": "range", "id": "width_mobile", "label": "Largura", "info": "Nunca passa da largura da tela menos 32 px.", "min": 280, "max": 480, "step": 10, "default": 360, "unit": "px" },
+    { "type": "range", "id": "height_mobile", "label": "Altura do banner", "min": 200, "max": 700, "step": 10, "default": 450, "unit": "px" },
+    { "type": "select", "id": "position_mobile", "label": "Posição da imagem", "default": "center center", "options": [
+        { "value": "center center", "label": "Centro" },
+        { "value": "center top", "label": "Topo" },
+        { "value": "center bottom", "label": "Base" },
+        { "value": "left center", "label": "Esquerda" },
+        { "value": "right center", "label": "Direita" },
+        { "value": "left top", "label": "Topo esquerdo" },
+        { "value": "right top", "label": "Topo direito" },
+        { "value": "left bottom", "label": "Base esquerda" },
+        { "value": "right bottom", "label": "Base direita" }
+      ] },
+    { "type": "select", "id": "bg_size", "label": "Ajuste da imagem (desktop e celular)", "default": "cover", "options": [
+        { "value": "cover", "label": "Preencher (pode cortar as bordas)" },
+        { "value": "contain", "label": "Mostrar inteira (pode sobrar fundo)" }
+      ] },
+    { "type": "header", "content": "Exibição" },
+    { "type": "range", "id": "delay", "label": "Aparecer depois de", "min": 0, "max": 30, "step": 1, "default": 3, "unit": "s" },
+    { "type": "range", "id": "days_hidden", "label": "Depois de fechar, mostrar de novo em", "min": 1, "max": 30, "step": 1, "default": 7, "unit": "d" }
+  ]
+}
+{% endschema %}

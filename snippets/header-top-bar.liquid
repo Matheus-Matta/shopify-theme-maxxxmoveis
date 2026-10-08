@@ -1,0 +1,42 @@
+{%- comment -%}
+  Barra de avisos do topo, renderizada dentro das barras fixas do header (desktop e
+  mobile). Tudo vem do bloco "Top Bar" da seção Header (configurações + Frase 1–10); o
+  CSS fica no <style> do header e a animação em assets/top-bar.js. Sem JS, a primeira
+  frase aparece parada no centro.
+
+  Parâmetros:
+  - topbar_block: o bloco "topbar" do header
+{%- endcomment -%}
+{%- assign tb = topbar_block.settings -%}
+<div
+  class="tb"
+  role="region"
+  aria-label="{{ tb.aria_label | escape }}"
+  data-tb
+  data-mode="{{ tb.mode }}"
+  data-direction="{{ tb.direction }}"
+  data-speed="{{ tb.speed }}"
+  data-hold="{{ tb.hold }}"
+  data-gap="{{ tb.gap }}"
+  data-pause-hover="{{ tb.pause_on_hover }}"
+  data-respect-reduced-motion="{{ tb.respect_reduced_motion }}"
+  {{ topbar_block.shopify_attributes }}
+>
+  <div class="tb__viewport">
+    <ul class="tb__list">
+      {%- for i in (1..10) -%}
+        {%- assign phrase_key = 'phrase_' | append: i -%}
+        {%- assign link_key = 'link_' | append: i -%}
+        {%- if tb[phrase_key] != blank -%}
+          <li class="tb__item" data-tb-item>
+            {%- if tb[link_key] != blank -%}
+              <a href="{{ tb[link_key] }}">{{ tb[phrase_key] | escape }}</a>
+            {%- else -%}
+              <span>{{ tb[phrase_key] | escape }}</span>
+            {%- endif -%}
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>

@@ -499,13 +499,13 @@
     {% endif %}
 
     <a class="skip-link" href="#MainContent">Pular para o conteúdo</a>
-    {% section 'top-bar' %}
     {% section 'header' %}
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
     <main id="MainContent" class="site-main" role="main">
       {{ content_for_layout }}
     </main>
     {% section 'footer' %}
+    {% section 'popup-primeira-compra' %}
     <script src="{{ 'carousel.js' | asset_url }}" defer></script>
     <script src="{{ 'discount-code.js' | asset_url }}" defer></script>
     <script src="{{ 'purchase-toast.js' | asset_url }}" defer></script>

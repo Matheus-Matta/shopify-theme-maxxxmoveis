@@ -55,9 +55,10 @@
   if search_empty_products == blank
     assign search_empty_products = 'Digite para ver produtos relevantes.'
   endif
-  assign search_limit = section.settings.search_dropdown_limit
+  assign search_limit = 15
   assign mega_items_count = 0
   assign nav_items_count = 0
+  assign topbar_block = nil
   assign first_mega_item_id = ''
 
   for block in section.blocks
@@ -70,7 +71,25 @@
     if block.type == 'nav_link_item' or block.type == 'nav_dropdown_menu'
       assign nav_items_count = nav_items_count | plus: 1
     endif
+    if block.type == 'topbar' and topbar_block == nil
+      assign topbar_block = block
+    endif
   endfor
+
+  assign show_topbar = false
+  if topbar_block
+    for i in (1..10)
+      assign topbar_phrase_key = 'phrase_' | append: i
+      if topbar_block.settings[topbar_phrase_key] != blank
+        assign show_topbar = true
+        break
+      endif
+    endfor
+  endif
+  assign topbar_border = topbar_block.settings.border_color
+  if topbar_border == 'rgba(0,0,0,0)'
+    assign topbar_border = blank
+  endif
 %}
 
 <style>
@@ -456,6 +475,34 @@
       right: 0;
       z-index: 10150;
     }
+
+    #shopify-section-{{ section.id }} .header-search-overlay {
+      width: min(960px, calc(100vw - 32px));
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    }
+
+    #shopify-section-{{ section.id }} [data-search-products] {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    #shopify-section-{{ section.id }} [data-search-products] > * {
+      margin-top: 0 !important;
+    }
+
+    #shopify-section-{{ section.id }} .header-search-product-item {
+      min-width: 0;
+      gap: 10px !important;
+      padding: 6px;
+    }
+
+    #shopify-section-{{ section.id }} .header-search-product-image {
+      width: 52px;
+      height: 52px;
+    }
   }
 
   @media (max-width: 1023px) {
@@ -716,12 +763,47 @@
     pointer-events: auto;
   }
 
+  /* Top bar: fica dentro das barras fixas do header, ocupando a largura toda. */
+  #shopify-section-{{ section.id }} .tb {
+    --tb-size: {{ topbar_block.settings.font_size_mobile }}px;
+    --tb-py: {{ topbar_block.settings.padding_y }}px;
+    width: 100%;
+    background: {{ topbar_block.settings.bg_color }};
+    color: {{ topbar_block.settings.text_color }};
+    {%- if topbar_border != blank %}
+    border-bottom: 1px solid {{ topbar_border }};
+    {%- endif %}
+  }
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .tb { --tb-size: {{ topbar_block.settings.font_size_desktop }}px; }
+  }
+  #shopify-section-{{ section.id }} .tb__viewport {
+    position: relative; overflow: hidden;
+    height: calc(var(--tb-size) * 1.5 + var(--tb-py) * 2);
+  }
+  #shopify-section-{{ section.id }} .tb__list { margin: 0; padding: 0; list-style: none; }
+  #shopify-section-{{ section.id }} .tb__item {
+    position: absolute; top: 50%; left: 0;
+    white-space: nowrap; line-height: 1.5;
+    font-size: var(--tb-size); font-weight: {{ topbar_block.settings.font_weight }};
+    {%- if topbar_block.settings.uppercase %} text-transform: uppercase; letter-spacing: 0.04em;{% endif %}
+    /* Fora da barra até o JS mandar entrar. */
+    transform: translate(-100%, -50%); opacity: 0;
+    will-change: transform;
+  }
+  #shopify-section-{{ section.id }} .tb__item a { color: inherit; text-decoration: none; }
+  #shopify-section-{{ section.id }} .tb__item a:hover { text-decoration: underline; }
+  /* Sem JS (ou antes dele carregar): primeira frase parada no centro. */
+  #shopify-section-{{ section.id }} .tb:not(.is-ready) .tb__item:first-child {
+    left: 50%; transform: translate(-50%, -50%); opacity: 1;
+  }
 </style>
 
 <header class="w-full z-[9999] shadow-sm relative">
   <div style="height: 4px; background-color: {{ header_top_bar_bg }};"></div>
   <div class="header-desktop-main-spacer hidden lg:block" aria-hidden="true"></div>
   <div class="header-desktop-main hidden lg:block" style="background-color: {{ header_bg }}; color: {{ header_text }};">
+    {%- if show_topbar -%}{% render 'header-top-bar', topbar_block: topbar_block %}{%- endif -%}
     <div class="max-w-none mx-auto px-6 pt-4 flex items-center gap-8" style="max-width: var(--page-width);">
       <a class="font-black italic tracking-tighter shrink-0" href="{{ routes.root_url }}" aria-label="{{ shop.name }}" style="color: {{ logo_color }}; font-size: {{ brand_font_size }}px;">
         {% assign header_logo = settings.logo %}
@@ -734,6 +816,9 @@
       </a>
 
       <form class="flex-1 relative" action="{{ routes.search_url }}" method="get" role="search" data-search-form>
+        <input type="hidden" name="type" value="product">
+        <input type="hidden" name="options[unavailable_products]" value="hide">
+        <input type="hidden" name="options[prefix]" value="last">
         <input class="w-full rounded-full py-2.5 pl-12 pr-11 focus:ring-2 font-body border header-search-input" style="--tw-ring-color: {{ section.settings.search_focus_ring_color }}; background-color: {{ search_bg }}; color: {{ search_text }}; border-color: {{ search_border }}; font-size: {{ search_font_size }}px;" name="q" placeholder="{{ section.settings.search_placeholder }}" type="search" aria-label="Buscar produtos">
         <span class="header-search-leading-icon material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2" style="color: {{ search_icon }};">search</span>
         <button type="button" class="header-search-clear absolute right-3 top-1/2 -translate-y-1/2" aria-label="Limpar busca" data-search-clear hidden>
@@ -972,33 +1057,39 @@
 
   <div class="lg:hidden" style="background-color: {{ header_bg }}; color: {{ header_text }};">
     <div class="header-mobile-topbar-spacer" aria-hidden="true"></div>
-    <div class="header-mobile-topbar px-4 pt-3 pb-2 flex items-center justify-between gap-3">
-      <button type="button" class="p-2 rounded-lg" data-mobile-menu-open aria-label="Abrir menu" style="color: {{ account_color }};">
-        <span class="material-symbols-outlined text-2xl">menu</span>
-      </button>
+    <div class="header-mobile-topbar">
+      {%- if show_topbar -%}{% render 'header-top-bar', topbar_block: topbar_block %}{%- endif -%}
+      <div class="px-4 pt-3 pb-2 flex items-center justify-between gap-3">
+        <button type="button" class="p-2 rounded-lg" data-mobile-menu-open aria-label="Abrir menu" style="color: {{ account_color }};">
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
 
-      <a class="font-black italic tracking-tighter text-center min-w-0 truncate" href="{{ routes.root_url }}" aria-label="{{ shop.name }}" style="color: {{ logo_color }}; font-size: {{ brand_font_size | minus: 2 }}px;">
-        {% assign header_logo_mobile = settings.logo %}
-        {% assign header_brand_name_mobile = settings.brand_name | default: shop.name %}
-        {% if header_logo_mobile != blank %}
-          {{ header_logo_mobile | image_url: width: 180 | image_tag: class: 'header__logo', alt: header_brand_name_mobile }}
-        {% else %}
-          {{ header_brand_name_mobile }}
-        {% endif %}
-      </a>
+        <a class="font-black italic tracking-tighter text-center min-w-0 truncate" href="{{ routes.root_url }}" aria-label="{{ shop.name }}" style="color: {{ logo_color }}; font-size: {{ brand_font_size | minus: 2 }}px;">
+          {% assign header_logo_mobile = settings.logo %}
+          {% assign header_brand_name_mobile = settings.brand_name | default: shop.name %}
+          {% if header_logo_mobile != blank %}
+            {{ header_logo_mobile | image_url: width: 180 | image_tag: class: 'header__logo', alt: header_brand_name_mobile }}
+          {% else %}
+            {{ header_brand_name_mobile }}
+          {% endif %}
+        </a>
 
-      <a class="relative p-2 header-cart-link transition-colors" href="{{ routes.cart_url }}" aria-label="Carrinho" data-cart-link>
-        <span class="material-symbols-outlined text-2xl" data-cart-icon>shopping_cart</span>
-        {% if cart.item_count > 0 %}
-          <span class="header-cart-badge absolute -top-1 -right-1 font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-lg" data-cart-count-badge style="background-color: {{ badge_bg }}; color: {{ badge_text }}; font-size: {{ badge_font_size }}px;">{{ cart.item_count }}</span>
-        {% else %}
-          <span class="header-cart-badge absolute -top-1 -right-1 font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-lg" data-cart-count-badge style="background-color: {{ badge_bg }}; color: {{ badge_text }}; font-size: {{ badge_font_size }}px;">0</span>
-        {% endif %}
-      </a>
+        <a class="relative p-2 header-cart-link transition-colors" href="{{ routes.cart_url }}" aria-label="Carrinho" data-cart-link>
+          <span class="material-symbols-outlined text-2xl" data-cart-icon>shopping_cart</span>
+          {% if cart.item_count > 0 %}
+            <span class="header-cart-badge absolute -top-1 -right-1 font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-lg" data-cart-count-badge style="background-color: {{ badge_bg }}; color: {{ badge_text }}; font-size: {{ badge_font_size }}px;">{{ cart.item_count }}</span>
+          {% else %}
+            <span class="header-cart-badge absolute -top-1 -right-1 font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-lg" data-cart-count-badge style="background-color: {{ badge_bg }}; color: {{ badge_text }}; font-size: {{ badge_font_size }}px;">0</span>
+          {% endif %}
+        </a>
+      </div>
     </div>
 
     <div class="px-4 pb-3">
       <form class="relative" action="{{ routes.search_url }}" method="get" role="search" data-search-form>
+        <input type="hidden" name="type" value="product">
+        <input type="hidden" name="options[unavailable_products]" value="hide">
+        <input type="hidden" name="options[prefix]" value="last">
         <div class="relative">
           <input class="w-full rounded-full py-2.5 pl-11 pr-11 focus:ring-2 font-body border header-search-input" style="--tw-ring-color: {{ section.settings.search_focus_ring_color }}; background-color: {{ search_bg }}; color: {{ search_text }}; border-color: {{ search_border }}; font-size: {{ search_font_size }}px;" name="q" placeholder="{{ section.settings.search_placeholder }}" type="search" aria-label="Buscar produtos">
           <span class="header-search-leading-icon material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2" style="color: {{ search_icon }};">search</span>
@@ -1446,6 +1537,8 @@
 
     const emptyProductsLabel = {{ search_empty_products | json }};
     const searchResourceLimit = {{ search_limit | json }};
+    const storefrontToken = {{ settings.storefront_access_token | default: '' | json }};
+    const storefrontApiVersion = {{ settings.storefront_api_version | default: '2025-01' | json }};
     let activeRequestId = 0;
 
     const parseProductPriceValue = (value) => {
@@ -1616,12 +1709,85 @@
       productsContainer.innerHTML = items;
     };
 
-    const fetchPredictiveResults = async (query, requestId, productsContainer) => {
+    const STOREFRONT_SEARCH_QUERY = `
+      query HeaderProductSearch($query: String!, $first: Int!) {
+        search(
+          query: $query
+          first: $first
+          types: [PRODUCT]
+          unavailableProducts: HIDE
+          prefix: LAST
+        ) {
+          nodes {
+            ... on Product {
+              handle
+              title
+              availableForSale
+              featuredImage { url(transform: { maxWidth: 160 }) }
+              variants(first: 100) {
+                nodes {
+                  availableForSale
+                  price { amount }
+                  compareAtPrice { amount }
+                }
+              }
+            }
+          }
+        }
+      }`;
+
+    const fetchStorefrontResults = async (query) => {
+      if (!storefrontToken) return null;
+
+      const storefrontEndpoint = window.location.origin + '/api/' + storefrontApiVersion + '/graphql.json';
+      const response = await fetch(storefrontEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': storefrontToken
+        },
+        body: JSON.stringify({
+          query: STOREFRONT_SEARCH_QUERY,
+          variables: { query, first: searchResourceLimit }
+        })
+      });
+
+      if (!response.ok) throw new Error('Busca Storefront indisponível');
+
+      const payload = await response.json();
+      if (payload.errors) throw new Error('Resposta inválida da busca Storefront');
+
+      const nodes = payload.data && payload.data.search && Array.isArray(payload.data.search.nodes)
+        ? payload.data.search.nodes
+        : [];
+
+      return nodes.filter((product) => product && product.availableForSale).map((product) => {
+        const variants = product.variants && Array.isArray(product.variants.nodes)
+          ? product.variants.nodes.filter((variant) => variant.availableForSale)
+          : [];
+        const cheapestVariant = variants.reduce((cheapest, variant) => {
+          if (!cheapest) return variant;
+          return Number(variant.price.amount) < Number(cheapest.price.amount) ? variant : cheapest;
+        }, null);
+
+        return {
+          title: product.title,
+          handle: product.handle,
+          url: window.ThemeUtils.buildStoreUrl('products/' + encodeURIComponent(product.handle)),
+          featured_image: product.featuredImage ? { url: product.featuredImage.url } : null,
+          _price: cheapestVariant ? cheapestVariant.price.amount : '',
+          _compareAt: cheapestVariant && cheapestVariant.compareAtPrice ? cheapestVariant.compareAtPrice.amount : ''
+        };
+      });
+    };
+
+    const fetchAjaxPredictiveResults = async (query) => {
       const params = new URLSearchParams({
         q: query,
         'resources[type]': 'product',
-        'resources[limit]': String(searchResourceLimit),
-        'resources[options][fields]': 'title,product_type,variants.title,vendor',
+        'resources[limit]': String(Math.min(searchResourceLimit, 10)),
+        'resources[options][fields]': 'title,product_type,tag,variants.title,vendor',
+        'resources[options][prefix]': 'last',
         'resources[options][unavailable_products]': 'hide'
       });
 
@@ -1637,7 +1803,6 @@
       }
 
       const payload = await response.json();
-      if (requestId !== activeRequestId) return;
 
       const resources = payload.resources && payload.resources.results ? payload.resources.results : {};
       const products = Array.isArray(resources.products) ? resources.products : [];
@@ -1650,8 +1815,24 @@
           return Object.assign({}, prod, { _price: pricing.price, _compareAt: pricing.compareAt });
         })
       );
+      return enriched;
+    };
+
+    const fetchPredictiveResults = async (query, requestId, productsContainer) => {
+      let products;
+
+      try {
+        products = await fetchStorefrontResults(query);
+      } catch (error) {
+        products = null;
+      }
+
+      if (products === null) {
+        products = await fetchAjaxPredictiveResults(query);
+      }
+
       if (requestId !== activeRequestId) return;
-      renderProducts(enriched, productsContainer);
+      renderProducts(products.slice(0, searchResourceLimit), productsContainer);
     };
 
     const bindPredictiveSearchForm = (searchForm) => {
@@ -1738,6 +1919,8 @@
   });
 </script>
 
+{%- if show_topbar -%}<script src="{{ 'top-bar.js' | asset_url }}" defer></script>{%- endif -%}
+
 {% schema %}
 {
   "name": "Header",
@@ -1771,9 +1954,9 @@
       "id": "search_dropdown_limit",
       "label": "Limite de sugestões/produtos",
       "min": 3,
-      "max": 10,
+      "max": 15,
       "step": 1,
-      "default": 5
+      "default": 15
     },
     {
       "type": "checkbox",
@@ -2923,6 +3106,79 @@
     }
   ],
   "blocks": [
+    {
+      "type": "topbar",
+      "name": "Top Bar",
+      "limit": 1,
+      "settings": [
+        { "type": "paragraph", "content": "Barra de avisos no topo do header. Cada frase passa sozinha pela barra." },
+        { "type": "text", "id": "aria_label", "label": "Descrição para acessibilidade", "default": "Avisos da loja" },
+        {
+          "type": "select", "id": "mode", "label": "Movimento", "default": "cross",
+          "options": [
+            { "value": "cross", "label": "Atravessar a barra sem parar" },
+            { "value": "center", "label": "Entrar, parar no centro e sair" }
+          ]
+        },
+        {
+          "type": "select", "id": "direction", "label": "Direção", "default": "rtl",
+          "options": [
+            { "value": "rtl", "label": "Da direita para a esquerda" },
+            { "value": "ltr", "label": "Da esquerda para a direita" }
+          ]
+        },
+        { "type": "range", "id": "speed", "label": "Velocidade (pixels por segundo)", "info": "Igual para frases curtas e longas.", "min": 30, "max": 300, "step": 10, "default": 120, "unit": "px" },
+        { "type": "range", "id": "hold", "label": "Tempo parada no centro", "info": "Só no movimento \"parar no centro\".", "min": 1, "max": 10, "step": 0.5, "default": 3, "unit": "s" },
+        { "type": "range", "id": "gap", "label": "Pausa antes da próxima frase", "min": 0, "max": 5, "step": 0.1, "default": 0.5, "unit": "s" },
+        { "type": "checkbox", "id": "pause_on_hover", "label": "Pausar com o mouse em cima", "default": true },
+        { "type": "checkbox", "id": "respect_reduced_motion", "label": "Respeitar \"reduzir movimento\" do sistema", "info": "Ligado: em computadores com animações desativadas (acessibilidade), a frase fica parada no centro e só troca.", "default": false },
+        { "type": "range", "id": "font_size_desktop", "label": "Tamanho do texto no desktop", "min": 11, "max": 20, "step": 1, "default": 15, "unit": "px" },
+        { "type": "range", "id": "font_size_mobile", "label": "Tamanho do texto no celular", "min": 10, "max": 18, "step": 1, "default": 13, "unit": "px" },
+        {
+          "type": "select", "id": "font_weight", "label": "Peso da fonte", "default": "400",
+          "options": [
+            { "value": "400", "label": "Normal" },
+            { "value": "600", "label": "Seminegrito" },
+            { "value": "700", "label": "Negrito" }
+          ]
+        },
+        { "type": "checkbox", "id": "uppercase", "label": "Letras maiúsculas", "default": false },
+        { "type": "range", "id": "padding_y", "label": "Espaço acima e abaixo", "min": 4, "max": 20, "step": 1, "default": 8, "unit": "px" },
+        { "type": "color", "id": "bg_color", "label": "Fundo", "default": "#a37b16" },
+        { "type": "color", "id": "text_color", "label": "Texto", "default": "#ffffff" },
+        { "type": "color", "id": "border_color", "label": "Borda inferior", "info": "Transparente: sem borda." },
+        { "type": "header", "content": "Frase 1" },
+        { "type": "text", "id": "phrase_1", "label": "Texto", "info": "Emojis funcionam (ex.: 🚚💨). Frases vazias são ignoradas." },
+        { "type": "url", "id": "link_1", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 2" },
+        { "type": "text", "id": "phrase_2", "label": "Texto" },
+        { "type": "url", "id": "link_2", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 3" },
+        { "type": "text", "id": "phrase_3", "label": "Texto" },
+        { "type": "url", "id": "link_3", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 4" },
+        { "type": "text", "id": "phrase_4", "label": "Texto" },
+        { "type": "url", "id": "link_4", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 5" },
+        { "type": "text", "id": "phrase_5", "label": "Texto" },
+        { "type": "url", "id": "link_5", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 6" },
+        { "type": "text", "id": "phrase_6", "label": "Texto" },
+        { "type": "url", "id": "link_6", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 7" },
+        { "type": "text", "id": "phrase_7", "label": "Texto" },
+        { "type": "url", "id": "link_7", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 8" },
+        { "type": "text", "id": "phrase_8", "label": "Texto" },
+        { "type": "url", "id": "link_8", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 9" },
+        { "type": "text", "id": "phrase_9", "label": "Texto" },
+        { "type": "url", "id": "link_9", "label": "Link (opcional)" },
+        { "type": "header", "content": "Frase 10" },
+        { "type": "text", "id": "phrase_10", "label": "Texto" },
+        { "type": "url", "id": "link_10", "label": "Link (opcional)" }
+      ]
+    },
     {
       "type": "nav_link_item",
       "name": "Nav: Item com link",
