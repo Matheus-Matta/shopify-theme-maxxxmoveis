@@ -46,28 +46,30 @@
     function frames(item) {
       const W = viewport.clientWidth;
       const w = item.offsetWidth;
-      const y = 'translateY(-50%)';
-      // Posições em x: fora de um lado -> fora do outro.
-      const start = ltr ? -w : W;
-      const end = ltr ? W : -w;
-      const center = (W - w) / 2;
-      const at = (x) => ({ transform: 'translateX(' + x + 'px) ' + y, opacity: 1 });
+      // Posições relativas (left em % da barra + translateX em % da frase), sem conta
+      // em px: o layout usa zoom: 0.9 no desktop e cada navegador mede offsetWidth/
+      // clientWidth de um jeito com zoom, o que tirava a frase do centro. As medidas
+      // em px só entram na duração (velocidade).
+      const at = (left, x) => ({ left: left + '%', transform: 'translate(' + x + '%, -50%)', opacity: 1 });
+      const start = ltr ? at(0, -100) : at(100, 0);
+      const end = ltr ? at(100, 0) : at(0, -100);
+      const center = () => at(50, -50);
 
       // Frase maior que a barra não tem como "parar no centro": atravessa.
       if (mode === 'center' && w < W) {
-        const half = Math.abs(center - start) / speed * 1000;
+        const half = (W + w) / 2 / speed * 1000;
         const total = half * 2 + hold;
         return {
           keyframes: [
-            at(start),
-            Object.assign(at(center), { offset: half / total }),
-            Object.assign(at(center), { offset: (half + hold) / total }),
-            at(end),
+            start,
+            Object.assign(center(), { offset: half / total }),
+            Object.assign(center(), { offset: (half + hold) / total }),
+            end,
           ],
           duration: total,
         };
       }
-      return { keyframes: [at(start), at(end)], duration: Math.abs(end - start) / speed * 1000 };
+      return { keyframes: [start, end], duration: (W + w) / speed * 1000 };
     }
 
     function next() {
@@ -89,7 +91,8 @@
       }
       if (reduced.matches) {
         // Sem movimento: a frase aparece parada no centro e troca depois de um tempo.
-        item.style.transform = 'translate(' + (viewport.clientWidth - item.offsetWidth) / 2 + 'px, -50%)';
+        item.style.left = '50%';
+        item.style.transform = 'translate(-50%, -50%)';
         item.style.opacity = '1';
         timer = setTimeout(() => {
           if (cycle !== generation) return;
